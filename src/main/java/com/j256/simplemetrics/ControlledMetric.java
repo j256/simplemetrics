@@ -2,9 +2,6 @@ package com.j256.simplemetrics;
 
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-
 import com.j256.simplejmx.common.JmxAttributeMethod;
 import com.j256.simplejmx.common.JmxFolderName;
 import com.j256.simplejmx.common.JmxSelfNaming;
@@ -36,23 +33,23 @@ public abstract class ControlledMetric<V, MV extends MetricValue<V, MV>> impleme
 		if (name == null) {
 			throw new NullPointerException("Name cannot be null");
 		}
-		if (StringUtils.isBlank(name)) {
+		if (MiscUtils.isBlank(name)) {
 			throw new IllegalArgumentException("Name cannot be an empty or blank string");
 		}
 		if (component == null) {
 			throw new NullPointerException("Component cannot be null");
 		}
-		if (StringUtils.isBlank(component)) {
+		if (MiscUtils.isBlank(component)) {
 			throw new IllegalArgumentException("Component cannot be an empty or blank string");
 		}
 		this.name = name;
 		this.component = component;
-		if (StringUtils.isBlank(module)) {
+		if (MiscUtils.isBlank(module)) {
 			this.module = null;
 		} else {
 			this.module = module;
 		}
-		if (StringUtils.isBlank(description)) {
+		if (MiscUtils.isBlank(description)) {
 			this.decription = null;
 		} else {
 			this.decription = description;
@@ -166,19 +163,28 @@ public abstract class ControlledMetric<V, MV extends MetricValue<V, MV>> impleme
 		return new JmxFolderName[] { new JmxFolderName("metrics"), new JmxFolderName(component) };
 	}
 
-	@JmxAttributeMethod(description = "Metric name")
-	public String getName() {
-		return name;
-	}
-
+	/**
+	 * Component name of the metric. This can be something like "heap".
+	 */
 	@JmxAttributeMethod(description = "Metric component")
 	public String getComponent() {
 		return component;
 	}
 
+	/**
+	 * Component name of the metric or null if none. This can be something like "oldGen".
+	 */
 	@JmxAttributeMethod(description = "Metric module")
 	public String getModule() {
 		return module;
+	}
+
+	/**
+	 * Component name of the metric. This can be something like "usedPercentage".
+	 */
+	@JmxAttributeMethod(description = "Metric name")
+	public String getName() {
+		return name;
 	}
 
 	@JmxAttributeMethod(description = "Metric description")
@@ -194,25 +200,44 @@ public abstract class ControlledMetric<V, MV extends MetricValue<V, MV>> impleme
 	@Override
 	public int compareTo(ControlledMetric<V, MV> metric) {
 		int compare = component.compareTo(metric.component);
-		if (compare == 0) {
-			return name.compareTo(metric.name);
-		} else {
+		if (compare != 0) {
 			return compare;
 		}
+		if (module != null) {
+			compare = module.compareTo(metric.module);
+			if (compare != 0) {
+				return compare;
+			}
+		}
+		return name.compareTo(metric.name);
 	}
 
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder().append(component).append(name).toHashCode();
+		final int prime = 31;
+		int result = prime + component.hashCode();
+		result = prime * result + ((module == null) ? 0 : module.hashCode());
+		result = prime * result + name.hashCode();
+		return result;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null || (!(obj instanceof ControlledMetric))) {
+		if (obj == null || getClass() != obj.getClass()) {
 			return false;
 		}
 		ControlledMetric<?, ?> other = (ControlledMetric<?, ?>) obj;
-		return (other.component.equals(component) && other.name.equals(name));
+		if (!component.equals(other.component)) {
+			return false;
+		}
+		if (module == null) {
+			if (other.module != null) {
+				return false;
+			}
+		} else if (!module.equals(other.module)) {
+			return false;
+		}
+		return name.equals(other.name);
 	}
 
 	@Override

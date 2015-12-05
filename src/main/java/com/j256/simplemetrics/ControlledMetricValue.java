@@ -9,7 +9,7 @@ import com.j256.simplemetrics.ControlledMetricValue.ValueCount;
  * 
  * @author graywatson
  */
-@JmxResource(domainName = "anet.core", description = "Controlled Value")
+@JmxResource(domainName = "com.j256", folderNames = { "metrics" }, description = "Controlled Value")
 public class ControlledMetricValue extends ControlledMetric<Double, ValueCount> {
 
 	/**

@@ -3,11 +3,6 @@ package org.j256.simplemetrics;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
-
-import org.apache.commons.io.FileUtils;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 import com.j256.simplejmx.server.JmxServer;
@@ -18,16 +13,7 @@ import com.j256.simplemetrics.MetricsUpdater;
 
 public class MetricsManagerTest implements MetricsUpdater {
 
-	private final static String TEMP_DIR = "target/metricsManagerTest";
 	private int pollCount = 0;
-
-	@Before
-	@After
-	public void cleanTmp() throws Exception {
-		File tmpDir = new File(TEMP_DIR);
-		tmpDir.delete();
-		FileUtils.deleteDirectory(tmpDir);
-	}
 
 	@Test
 	public void testRegisterGet() {

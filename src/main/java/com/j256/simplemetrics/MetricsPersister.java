@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.Map;
 
 /**
- * Class which publishes a metrics to disk or some repository.
+ * Class which publishes a metrics to disk, a cloud service, or to some repository.
  * 
  * @author graywatson
  */

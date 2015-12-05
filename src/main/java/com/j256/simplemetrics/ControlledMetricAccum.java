@@ -11,7 +11,7 @@ import com.j256.simplemetrics.ControlledMetricAccum.AccumValue;
  * 
  * @author graywatson
  */
-@JmxResource(domainName = "anet.core", description = "Controlled Accumulator")
+@JmxResource(domainName = "com.j256", description = "Controlled Accumulator")
 public class ControlledMetricAccum extends ControlledMetric<Long, AccumValue> {
 
 	// We have this intermediate counter because we want to not have every increment cause another metric value object

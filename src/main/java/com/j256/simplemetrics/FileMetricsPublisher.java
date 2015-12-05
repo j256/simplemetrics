@@ -15,7 +15,7 @@ import com.j256.simplejmx.common.JmxResource;
  * 
  * @author graywatson
  */
-@JmxResource(domainName = "anet.core", beanName = "FileMetrics", folderNames = { "metrics" },
+@JmxResource(domainName = "com.j256", folderNames = { "metrics" },
 		description = "Publisher that reads the file system to publish metrics")
 public class FileMetricsPublisher implements MetricsUpdater {
 

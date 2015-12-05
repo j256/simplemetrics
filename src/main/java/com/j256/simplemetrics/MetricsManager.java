@@ -20,7 +20,7 @@ import com.j256.simplejmx.server.JmxServer;
  * 
  * @author graywatson
  */
-@JmxResource(domainName = "anet.core", folderNames = { "metrics" }, description = "Metrics Manager")
+@JmxResource(domainName = "com.j256", folderNames = { "metrics" }, description = "Metrics Manager")
 public class MetricsManager {
 
 	private final List<ControlledMetric<?, ?>> metrics = new ArrayList<ControlledMetric<?, ?>>();

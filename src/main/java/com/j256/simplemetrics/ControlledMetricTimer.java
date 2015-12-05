@@ -19,7 +19,7 @@ import com.j256.simplejmx.common.JmxResource;
  * 
  * @author graywatson
  */
-@JmxResource(domainName = "anet.core", description = "Controlled Timer Value")
+@JmxResource(domainName = "com.j256", folderNames = { "metrics" }, description = "Controlled Timer Value")
 public class ControlledMetricTimer extends ControlledMetricValue {
 
 	/**

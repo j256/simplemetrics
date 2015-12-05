@@ -10,7 +10,8 @@ import com.j256.simplemetrics.ControlledMetricRatio.RatioValue;
  * 
  * @author graywatson
  */
-@JmxResource(domainName = "anet.core", description = "Controlled metric ratio between two values")
+@JmxResource(domainName = "com.j256", folderNames = { "metrics" },
+		description = "Controlled metric ratio between two values")
 public class ControlledMetricRatio extends ControlledMetric<NumeratorDenominator, RatioValue> {
 
 	/**

@@ -5,8 +5,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
-import org.apache.commons.io.IOUtils;
-
 /**
  * Metric read from a file on the file-system. Often used to read from the /proc file-system under Linux.
  * 
@@ -182,7 +180,7 @@ public class FileMetric {
 		} catch (IOException e) {
 			throw new IOException("Problems reading metric " + metricName + " from file " + metricFile, e);
 		} finally {
-			IOUtils.closeQuietly(reader);
+			MiscUtils.closeQuietly(reader);
 		}
 		if (line == null) {
 			if (prefix == null) {
