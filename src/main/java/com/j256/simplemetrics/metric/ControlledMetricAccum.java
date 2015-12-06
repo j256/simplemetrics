@@ -131,7 +131,7 @@ public class ControlledMetricAccum extends ControlledMetric<Long, AccumValue> {
 		}
 
 		@Override
-		public Number getNumber() {
+		public Number getValue() {
 			return Long.valueOf(value);
 		}
 

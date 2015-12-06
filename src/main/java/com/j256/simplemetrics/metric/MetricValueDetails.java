@@ -1,19 +1,19 @@
 package com.j256.simplemetrics.metric;
 
 /**
- * Value information for the metric shared externally.
+ * Value detail information for the metric.
  * 
  * @author graywatson
  */
 public class MetricValueDetails {
 
-	private final Number number;
+	private final Number value;
 	private final int numSamples;
 	private final Number min;
 	private final Number max;
 
 	public MetricValueDetails(MetricValue<?, ?> metricValue) {
-		this.number = metricValue.getNumber();
+		this.value = metricValue.getValue();
 		this.numSamples = metricValue.getNumSamples();
 		this.min = metricValue.getMin();
 		this.max = metricValue.getMax();
@@ -22,8 +22,8 @@ public class MetricValueDetails {
 	/**
 	 * Get the number from this metric value.
 	 */
-	public Number getNumber() {
-		return number;
+	public Number getValue() {
+		return value;
 	}
 
 	/**

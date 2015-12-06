@@ -57,7 +57,7 @@ public class MetricsManagerTest implements MetricsUpdater {
 		MetricValueDetails details = valueDetailsMap.get(metric);
 		assertNotNull(details);
 		assertEquals(1, details.getNumSamples());
-		assertEquals(val, details.getNumber().longValue());
+		assertEquals(val, details.getValue().longValue());
 		assertEquals(val, details.getMin().longValue());
 		assertEquals(val, details.getMax().longValue());
 		manager.unregisterMetric(metric);

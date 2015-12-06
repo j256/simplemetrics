@@ -93,7 +93,7 @@ public class ControlledMetricValue extends ControlledMetric<Double, ValueCount> 
 		}
 
 		@Override
-		public Number getNumber() {
+		public Number getValue() {
 			double doubleValue = value;
 			if (count > 1) {
 				// value is an _average_ of all the adjustments

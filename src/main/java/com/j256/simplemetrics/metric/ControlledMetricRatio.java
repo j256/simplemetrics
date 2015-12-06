@@ -153,7 +153,7 @@ public class ControlledMetricRatio extends ControlledMetric<NumeratorDenominator
 		}
 
 		@Override
-		public Number getNumber() {
+		public Number getValue() {
 			double value;
 			double adjustedDenominator = denominator * count;
 			if (adjustedDenominator == 0) {

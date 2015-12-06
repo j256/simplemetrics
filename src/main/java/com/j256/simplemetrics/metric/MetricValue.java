@@ -31,9 +31,9 @@ public interface MetricValue<V, MV extends MetricValue<V, MV>> {
 	public boolean isResetNext();
 
 	/**
-	 * Get the number from this metric value.
+	 * Get the number value from this metric value.
 	 */
-	public Number getNumber();
+	public Number getValue();
 
 	/**
 	 * Get the number of samples from the metric value.

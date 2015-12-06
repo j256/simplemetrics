@@ -96,7 +96,7 @@ public abstract class ControlledMetric<V, MV extends MetricValue<V, MV>> impleme
 	 */
 	@JmxAttributeMethod(description = "Current value of metric.")
 	public Number getValue() {
-		return getMetricValue(false).getNumber();
+		return getMetricValue(false).getValue();
 	}
 
 	/**
@@ -110,7 +110,7 @@ public abstract class ControlledMetric<V, MV extends MetricValue<V, MV>> impleme
 	 * Get the current number for persisting purposes. This causes the metrics to be set to reset on next adjustment.
 	 */
 	public Number getValueToPersist() {
-		return getMetricValue(true).getNumber();
+		return getMetricValue(true).getValue();
 	}
 
 	/**
