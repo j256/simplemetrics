@@ -18,22 +18,25 @@ import com.j256.simplemetrics.manager.MetricsUpdater;
 import com.j256.simplemetrics.metric.ControlledMetricValue;
 
 /**
- * Class which outputs some important system metrics internal to the JVM.
+ * Class which outputs some important system metrics internal to the JVM. If you are using the no-arg constructor (like
+ * with Spring) you will need to make sure that {@link #initialize()} is called.
  * 
  * @author graywatson
  */
 public class SystemMetricsPublisher implements MetricsUpdater {
 
 	private static final String METRIC_COMPONENT_NAME = "java";
+
+	private final MBeanServer mbeanServer = ManagementFactory.getPlatformMBeanServer();
+	private static final ObjectName operatingSystemObject;
+
+	private MetricsManager metricsManager;
+
 	private ClassLoadingMXBean classLoadingMxBean;
 	private MemoryPoolMXBean oldGenMxBean;
 	private ThreadMXBean threadMxBean;
 	private long lastCpuPollTimeMillis;
 	private long lastCpuTimeMillis;
-	private final MBeanServer mbeanServer = ManagementFactory.getPlatformMBeanServer();
-	private static final ObjectName operatingSystemObject;
-
-	private MetricsManager metricsManager;
 
 	private ControlledMetricValue numberThreads;
 	private ControlledMetricValue totalMemory;
@@ -121,7 +124,7 @@ public class SystemMetricsPublisher implements MetricsUpdater {
 		metricsManager.registerMetric(threadLoadAveragePercentage);
 		metricsManager.registerMetric(oldGenMemoryPercentageUsed);
 		metricsManager.registerMetric(processLoadAveragePercentage);
-		metricsManager.registerUpdatePoll(this);
+		metricsManager.registerUpdater(this);
 	}
 
 	/**

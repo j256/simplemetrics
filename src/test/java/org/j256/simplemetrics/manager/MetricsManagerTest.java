@@ -30,7 +30,7 @@ public class MetricsManagerTest implements MetricsUpdater {
 	public void testCallback() throws Exception {
 		MetricsManager manager = new MetricsManager();
 		int before = pollCount;
-		manager.registerUpdatePoll(this);
+		manager.registerUpdater(this);
 		manager.setMetricsPersisters(new MetricsPersister[0]);
 		manager.persist();
 		assertEquals(before + 1, pollCount);

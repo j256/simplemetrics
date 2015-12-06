@@ -246,9 +246,9 @@ public abstract class ControlledMetric<V, MV extends MetricValue<V, MV>> impleme
 		StringBuilder sb = new StringBuilder();
 		sb.append(component);
 		if (module != null) {
-			sb.append(':').append(module);
+			sb.append('.').append(module);
 		}
-		sb.append(':').append(name);
+		sb.append('.').append(name);
 		return sb.toString();
 	}
 

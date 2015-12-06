@@ -13,7 +13,8 @@ import com.j256.simplemetrics.manager.MetricsUpdater;
 
 /**
  * Class that will expose some good metrics that can be found from files on file-system. Often used to read from the
- * /proc file-system under Linux.
+ * /proc file-system under Linux. If you are using the no-arg constructor (like with Spring) you will need to make sure
+ * that {@link #initialize()} is called.
  * 
  * @author graywatson
  */
@@ -23,7 +24,8 @@ public class FileMetricsPublisher implements MetricsUpdater {
 
 	private MetricsManager metricsManager;
 	private List<FileMetric> fileMetrics;
-	private AtomicLong failedUpdateCount = new AtomicLong(0);
+
+	private final AtomicLong failedUpdateCount = new AtomicLong(0);
 
 	public FileMetricsPublisher() {
 		// for spring
@@ -36,13 +38,14 @@ public class FileMetricsPublisher implements MetricsUpdater {
 	}
 
 	/**
-	 * Should be called after the file metrics have been set. Maybe by Springs init mechanism?
+	 * Should be called if the no-arg construct is being used and after the file metrics have been set. Maybe by Springs
+	 * init mechanism?
 	 */
 	public void initialize() {
 		for (FileMetric metric : fileMetrics) {
 			metricsManager.registerMetric(metric.getMetric());
 		}
-		this.metricsManager.registerUpdatePoll(this);
+		this.metricsManager.registerUpdater(this);
 	}
 
 	// @Required
@@ -55,7 +58,7 @@ public class FileMetricsPublisher implements MetricsUpdater {
 		this.fileMetrics = new ArrayList<FileMetric>(fileMetrics.length);
 		// only add those that are enabled
 		for (FileMetric metric : fileMetrics) {
-			if (metric.isEnabled()) {
+			if (metric.isInitialized()) {
 				this.fileMetrics.add(metric);
 			}
 		}
@@ -76,13 +79,13 @@ public class FileMetricsPublisher implements MetricsUpdater {
 		}
 	}
 
-	@JmxAttributeMethod(description = "number of failed updates")
+	@JmxAttributeMethod(description = "Number of failed updates")
 	public long getFailedUpdateCount() {
 		return failedUpdateCount.get();
 	}
 
-	@JmxAttributeMethod(description = "File metrics")
-	public String[] getFileMetricsJmx() {
+	@JmxAttributeMethod(description = "Values of configured file metrics")
+	public String[] getMetricsValues() {
 		List<String> results = new ArrayList<String>();
 		for (FileMetric fileMetric : fileMetrics) {
 			results.add(fileMetric.getMetric().toString() + fileMetric.getMetric().getValue());

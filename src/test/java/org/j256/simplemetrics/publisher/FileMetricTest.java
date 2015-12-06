@@ -31,7 +31,7 @@ public class FileMetricTest {
 		metric.initialize();
 		assertNotNull(metric.getMetric());
 		assertEquals(label, metric.getMetric().getName());
-		assertTrue(metric.isEnabled());
+		assertTrue(metric.isInitialized());
 		metric.updateValue();
 	}
 
@@ -50,7 +50,7 @@ public class FileMetricTest {
 		metric.initialize();
 		assertNotNull(metric.getMetric());
 		assertEquals(label, metric.getMetric().getName());
-		assertTrue(metric.isEnabled());
+		assertTrue(metric.isInitialized());
 		metric.updateValue();
 	}
 
@@ -69,7 +69,7 @@ public class FileMetricTest {
 		metric.initialize();
 		assertNotNull(metric.getMetric());
 		assertEquals(label, metric.getMetric().getName());
-		assertTrue(metric.isEnabled());
+		assertTrue(metric.isInitialized());
 		metric.updateValue();
 	}
 
@@ -86,7 +86,7 @@ public class FileMetricTest {
 		metric.initialize();
 		assertNotNull(metric.getMetric());
 		assertEquals(label, metric.getMetric().getName());
-		assertTrue(metric.isEnabled());
+		assertTrue(metric.isInitialized());
 		metric.updateValue();
 	}
 
@@ -105,7 +105,7 @@ public class FileMetricTest {
 		metric.initialize();
 		assertNotNull(metric.getMetric());
 		assertEquals(label, metric.getMetric().getName());
-		assertTrue(metric.isEnabled());
+		assertTrue(metric.isInitialized());
 		metric.updateValue();
 	}
 
@@ -125,7 +125,7 @@ public class FileMetricTest {
 		metric.initialize();
 		assertNotNull(metric.getMetric());
 		assertEquals(label, metric.getMetric().getName());
-		assertTrue(metric.isEnabled());
+		assertTrue(metric.isInitialized());
 		metric.updateValue();
 	}
 
@@ -141,7 +141,7 @@ public class FileMetricTest {
 		metric.initialize();
 		assertNotNull(metric.getMetric());
 		assertEquals(label, metric.getMetric().getName());
-		assertTrue(metric.isEnabled());
+		assertTrue(metric.isInitialized());
 		metric.updateValue();
 	}
 
@@ -157,7 +157,7 @@ public class FileMetricTest {
 		metric.initialize();
 		assertNotNull(metric.getMetric());
 		assertEquals(label, metric.getMetric().getName());
-		assertTrue(metric.isEnabled());
+		assertTrue(metric.isInitialized());
 		metric.updateValue();
 	}
 
@@ -201,7 +201,7 @@ public class FileMetricTest {
 		metric.setColumn(2);
 		metric.setMetricFile(PROC_PREFIX + "/does-not-exist");
 		metric.initialize();
-		assertFalse(metric.isEnabled());
+		assertFalse(metric.isInitialized());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -217,6 +217,6 @@ public class FileMetricTest {
 		metric.setRequired(true);
 		metric.initialize();
 		assertEquals(label, metric.getMetric().getName());
-		assertFalse(metric.isEnabled());
+		assertFalse(metric.isInitialized());
 	}
 }

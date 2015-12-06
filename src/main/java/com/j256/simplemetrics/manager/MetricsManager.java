@@ -25,18 +25,19 @@ import com.j256.simplemetrics.persister.MetricsPersister;
 @JmxResource(domainName = "com.j256", folderNames = { "metrics" }, description = "Metrics Manager")
 public class MetricsManager {
 
+	private JmxServer jmxServer;
+	private MetricsPersister[] metricsPersisters = new MetricsPersister[0];
+
 	private final List<ControlledMetric<?, ?>> metrics = new ArrayList<ControlledMetric<?, ?>>();
 	private final List<MetricsUpdater> metricsUpdaters = new ArrayList<MetricsUpdater>();
-	private JmxServer jmxServer;
-	private MetricsPersister[] metricsPersisters;
 
 	/**
 	 * Register a metric with the manager.
 	 */
 	public void registerMetric(ControlledMetric<?, ?> metric) {
 		synchronized (metrics) {
-			if (metrics.add(metric)) {
-				// register it with JMX
+			if (metrics.add(metric) && jmxServer != null) {
+				// register it with JMX if injected
 				try {
 					jmxServer.register(metric);
 				} catch (JMException e) {
@@ -51,7 +52,7 @@ public class MetricsManager {
 	 */
 	public void unregisterMetric(ControlledMetric<?, ?> metric) {
 		synchronized (metrics) {
-			if (metrics.remove(metric)) {
+			if (metrics.remove(metric) && jmxServer != null) {
 				jmxServer.unregister(metric);
 			}
 		}
@@ -60,26 +61,36 @@ public class MetricsManager {
 	/**
 	 * Register a {@link MetricsUpdater} to be called right before persist writes the metrics.
 	 */
-	public synchronized void registerUpdatePoll(MetricsUpdater updatePoll) {
-		metricsUpdaters.add(updatePoll);
+	public void registerUpdater(MetricsUpdater metricsUpdater) {
+		synchronized (metricsUpdaters) {
+			metricsUpdaters.add(metricsUpdater);
+		}
 	}
 
 	/**
-	 * Persists the configured metrics.
+	 * Persists the configured metrics by calling to the registered updaters, extracting the values from the metrics,
+	 * and then calling the registered persisters.
 	 */
-	public synchronized void persist() throws IOException {
-		long timeMillis = System.currentTimeMillis();
+	public void persist() throws IOException {
+
+		// update the metrics
 		updateMetrics();
-		Exception wasThrown = null;
-		// first we make a map of metric -> persisted value for the persisters
-		Map<ControlledMetric<?, ?>, Number> metricValues = new HashMap<ControlledMetric<?, ?>, Number>(metrics.size());
-		for (ControlledMetric<?, ?> metric : metrics) {
-			metricValues.put(metric, metric.getValueToPersist());
+
+		// first we make a unmodifiable map of metric -> persisted value for the persisters
+		Map<ControlledMetric<?, ?>, Number> metricValues;
+		synchronized (metrics) {
+			metricValues = new HashMap<ControlledMetric<?, ?>, Number>(metrics.size());
+			for (ControlledMetric<?, ?> metric : metrics) {
+				metricValues.put(metric, metric.getValueToPersist());
+			}
+			metricValues = Collections.unmodifiableMap(metricValues);
 		}
-		metricValues = Collections.unmodifiableMap(metricValues);
+
+		long timeCollectedMillis = System.currentTimeMillis();
+		Exception wasThrown = null;
 		for (MetricsPersister persister : metricsPersisters) {
 			try {
-				persister.persist(metricValues, timeMillis);
+				persister.persist(metricValues, timeCollectedMillis);
 			} catch (Exception e) {
 				// hold any exceptions thrown by them so we can get through all persisters
 				wasThrown = e;
@@ -97,15 +108,17 @@ public class MetricsManager {
 	/**
 	 * Update the various classes' metrics.
 	 */
-	@JmxOperation(description = "Poll the various metrics to get their values")
+	@JmxOperation(description = "Update the various metrics")
 	public void updateMetrics() {
-		// call our classes to update their stats
-		for (MetricsUpdater metricsUpdater : metricsUpdaters) {
-			metricsUpdater.updateMetrics();
+		synchronized (metricsUpdaters) {
+			// call our classes to update their stats
+			for (MetricsUpdater metricsUpdater : metricsUpdaters) {
+				metricsUpdater.updateMetrics();
+			}
 		}
 	}
 
-	@JmxOperation(description = "Persist metrics to disk or ...")
+	@JmxOperation(description = "Persist metrics using the registered persisters")
 	public String persistJmx() {
 		try {
 			persist();
@@ -116,13 +129,15 @@ public class MetricsManager {
 	}
 
 	/**
-	 * @return The collection of metrics we are managing.
+	 * @return An unmodifiable collection of metrics we are managing.
 	 */
 	public Collection<ControlledMetric<?, ?>> getMetrics() {
-		return Collections.unmodifiableList(metrics);
+		synchronized (metrics) {
+			return Collections.unmodifiableList(metrics);
+		}
 	}
 
-	// @Required
+	// @NotRequired("Default ius none")
 	public void setJmxServer(JmxServer jmxServer) {
 		this.jmxServer = jmxServer;
 	}
@@ -132,14 +147,15 @@ public class MetricsManager {
 		this.metricsPersisters = metricsPersisters;
 	}
 
-	@JmxAttributeMethod(description = "Metrics we are managing")
+	@JmxAttributeMethod(description = "Metric values we are managing")
 	public String[] getMetricValues() {
 		// update the metrics
 		updateMetrics();
-		Collection<ControlledMetric<?, ?>> metrics = getMetrics();
 		List<String> values = new ArrayList<String>(metrics.size());
-		for (ControlledMetric<?, ?> metric : metrics) {
-			values.add(metric.getComponent() + "." + metric.getName() + '=' + metric.getValue());
+		synchronized (metrics) {
+			for (ControlledMetric<?, ?> metric : metrics) {
+				values.add(metric.getComponent() + "." + metric.getName() + '=' + metric.getValue());
+			}
 		}
 		return values.toArray(new String[values.size()]);
 	}

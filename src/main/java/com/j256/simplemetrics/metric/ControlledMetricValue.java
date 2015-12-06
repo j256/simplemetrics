@@ -54,9 +54,9 @@ public class ControlledMetricValue extends ControlledMetric<Double, ValueCount> 
 	public static class ValueCount implements MetricValue<Double, ValueCount> {
 		private final double value;
 		private final int count;
-		private final boolean resetNext;
 		private final double min;
 		private final double max;
+		private final boolean resetNext;
 
 		private ValueCount(double value, int count, double min, double max, boolean resetNext) {
 			this.value = value;
@@ -75,22 +75,16 @@ public class ControlledMetricValue extends ControlledMetric<Double, ValueCount> 
 		public ValueCount makeAdjusted(Double value) {
 			if (resetNext) {
 				return new ValueCount(value, 1, value, value, false);
-			} else {
-				double min;
-				double max;
-				if (value < this.min) {
-					min = value;
-					max = this.max;
-				} else if (value > this.max) {
-					min = this.min;
-					max = value;
-				} else {
-					min = this.min;
-					max = this.max;
-				}
-				// NOTE: we are adding in the value because we will be averaging later divided by count
-				return new ValueCount(this.value + value, this.count + 1, min, max, false);
 			}
+			double min = this.min;
+			double max = this.max;
+			if (value < min) {
+				min = value;
+			} else if (value > max) {
+				max = value;
+			}
+			// NOTE: we are adding in the value because we will be averaging later divided by count
+			return new ValueCount(this.value + value, this.count + 1, min, max, false);
 		}
 
 		@Override

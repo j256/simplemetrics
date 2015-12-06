@@ -18,7 +18,7 @@ import com.j256.simplemetrics.metric.ControlledMetricValue;
 public class FileMetric {
 
 	private boolean required = false;
-	private boolean enabled = false;
+	private boolean initialized = false;
 	private File metricFile;
 	private String metricName;
 	private String metricComponent;
@@ -92,7 +92,7 @@ public class FileMetric {
 			default :
 				throw new IllegalArgumentException("unknown kind " + kind + " for proc metric with name " + metricName);
 		}
-		enabled = true;
+		initialized = true;
 	}
 
 	/**
@@ -116,8 +116,8 @@ public class FileMetric {
 		return metric;
 	}
 
-	public boolean isEnabled() {
-		return enabled;
+	public boolean isInitialized() {
+		return initialized;
 	}
 
 	// @Required
