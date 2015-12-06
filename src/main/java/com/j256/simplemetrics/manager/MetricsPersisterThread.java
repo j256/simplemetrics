@@ -23,7 +23,7 @@ public class MetricsPersisterThread implements Runnable {
 	}
 
 	/**
-	 * Create the MetricsPersisterThread and initialize it.
+	 * Create the MetricsPersisterThread and calls {@link #initialize()}.
 	 */
 	public MetricsPersisterThread(MetricsManager metricsManager, long delayTimeMillis, long periodTimeMillis,
 			boolean daemonThread) {
@@ -49,6 +49,7 @@ public class MetricsPersisterThread implements Runnable {
 	 */
 	public void destroy() {
 		this.thread.interrupt();
+		// NOTE: we are not waiting for the thread to finish on purpose
 	}
 
 	@Override

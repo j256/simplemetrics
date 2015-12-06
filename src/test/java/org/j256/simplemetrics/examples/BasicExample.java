@@ -10,7 +10,7 @@ import com.j256.simplemetrics.persister.MetricsPersister;
 import com.j256.simplemetrics.persister.SystemOutMetricsPersister;
 
 /**
- * Basic example which shows some of the featurs of the SimpleMetrics package.
+ * Basic example which shows some of the features of the SimpleMetrics package.
  * 
  * @author graywatson
  */
@@ -20,7 +20,7 @@ public class BasicExample {
 		// instantiate our manager
 		MetricsManager manager = new MetricsManager();
 
-		// construct our metrics
+		// instantiate a couple of metrics
 		ControlledMetricAccum hitsMetric =
 				new ControlledMetricAccum("example", null, "hits", "number of hits to the cache", null);
 		ControlledMetricAccum missesMetric =
@@ -30,13 +30,14 @@ public class BasicExample {
 		manager.registerMetric(hitsMetric);
 		manager.registerMetric(missesMetric);
 
-		// create a simple metrics persisterO
+		// create a simple metrics persister that writes to System.out
 		SystemOutMetricsPersister metricsPersister = new SystemOutMetricsPersister();
 		manager.setMetricsPersisters(new MetricsPersister[] { metricsPersister });
 
 		// start up the persisting thread to persist the metrics every so often
 		MetricsPersisterThread persisterThread = new MetricsPersisterThread(manager, 1000, 1000, true);
 
+		// now we run our application which is just doing some random counting
 		Random random = new Random();
 		for (long i = 0; i < 1000000000L; i++) {
 			if (random.nextBoolean()) {
@@ -45,7 +46,7 @@ public class BasicExample {
 				missesMetric.increment();
 			}
 		}
-		// persist at the end
+		// persist at the very end
 		manager.persist();
 
 		// shutdown the persister thread

@@ -31,6 +31,9 @@ public class FileMetricsPublisher implements MetricsUpdater {
 		// for spring
 	}
 
+	/**
+	 * Constructs our publisher and calls {@link #initialize()}.
+	 */
 	public FileMetricsPublisher(MetricsManager metricsManager, List<FileMetric> fileMetrics) {
 		this.metricsManager = metricsManager;
 		this.fileMetrics = fileMetrics;

@@ -151,8 +151,9 @@ public class MetricsManager {
 	public String[] getMetricValues() {
 		// update the metrics
 		updateMetrics();
-		List<String> values = new ArrayList<String>(metrics.size());
+		List<String> values;
 		synchronized (metrics) {
+			values = new ArrayList<String>(metrics.size());
 			for (ControlledMetric<?, ?> metric : metrics) {
 				values.add(metric.getComponent() + "." + metric.getName() + '=' + metric.getValue());
 			}

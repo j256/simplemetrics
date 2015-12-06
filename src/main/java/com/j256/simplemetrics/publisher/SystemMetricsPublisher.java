@@ -61,6 +61,9 @@ public class SystemMetricsPublisher implements MetricsUpdater {
 		// for spring
 	}
 
+	/**
+	 * Constructs our publisher and calls {@link #initialize()}.
+	 */
 	public SystemMetricsPublisher(MetricsManager metricsManager) {
 		this.metricsManager = metricsManager;
 		initialize();
