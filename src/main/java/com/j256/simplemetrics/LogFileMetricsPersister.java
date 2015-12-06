@@ -22,12 +22,18 @@ import com.j256.simplejmx.common.JmxResource;
 public class LogFileMetricsPersister implements MetricsPersister {
 
 	private static final String NEWLINE = System.getProperty("line.separator");
-	public static final String SEPARATING_STRING = "=";
+	/**
+	 * Default string that separates a metric from its value. This is exposed so the parser can use it.
+	 */
+	public static final String DEFAULT_SEPARATING_STRING = "=";
 
 	private File outputDirectory;
 	private String logFileNamePrefix;
-	private AtomicLong dumpLogCount = new AtomicLong(0);
-	private AtomicLong cleanupLogCount = new AtomicLong(0);
+	private boolean appendSysTimeMillis = true;
+	private String separatingString = DEFAULT_SEPARATING_STRING;
+
+	private final AtomicLong dumpLogCount = new AtomicLong(0);
+	private final AtomicLong cleanupLogCount = new AtomicLong(0);
 	private long lastDumpTimeMillis;
 
 	/**
@@ -36,7 +42,10 @@ public class LogFileMetricsPersister implements MetricsPersister {
 	@Override
 	public void persist(Map<ControlledMetric<?, ?>, Number> metricValues, long timeMillis) throws IOException {
 
-		String logName = logFileNamePrefix + timeMillis;
+		String logName = logFileNamePrefix;
+		if (appendSysTimeMillis) {
+			logName = logFileNamePrefix + timeMillis;
+		}
 		Writer writer = null;
 		// write to a temp file
 		File outputFile = new File(outputDirectory, logName + ".t");
@@ -51,7 +60,7 @@ public class LogFileMetricsPersister implements MetricsPersister {
 				}
 				writer.append('.');
 				writer.append(metric.getName());
-				writer.append(SEPARATING_STRING);
+				writer.append(separatingString);
 				Number value = entry.getValue();
 				// try to see if we have an integer value
 				if (value.doubleValue() == value.longValue()) {
@@ -89,7 +98,7 @@ public class LogFileMetricsPersister implements MetricsPersister {
 		}
 	}
 
-	@JmxAttributeMethod(description = "File format we are writing")
+	@JmxAttributeMethod(description = "File prefix we are writing")
 	public String getLogFileNamePrefix() {
 		return logFileNamePrefix;
 	}
@@ -99,7 +108,22 @@ public class LogFileMetricsPersister implements MetricsPersister {
 		this.logFileNamePrefix = logFileNamePrefix;
 	}
 
-	@JmxAttributeMethod(description = "Number of times we've dumped metrics")
+	@JmxAttributeMethod(description = "Whether we are appending the sys time millis to the output file")
+	public boolean isAppendSysTimeMillis() {
+		return appendSysTimeMillis;
+	}
+
+	@JmxAttributeMethod(description = "Whether we are appending the sys time millis to the output file")
+	public void setAppendSysTimeMillis(boolean appendSysTimeMillis) {
+		this.appendSysTimeMillis = appendSysTimeMillis;
+	}
+
+	// @NotRequired("Default is " + DEFAULT_SEPARATING_STRING)
+	public void setSeparatingString(String separatingString) {
+		this.separatingString = separatingString;
+	}
+
+	@JmxAttributeMethod(description = "Number of times we've written metrics")
 	public long getDumpLogCount() {
 		return dumpLogCount.get();
 	}
@@ -109,7 +133,7 @@ public class LogFileMetricsPersister implements MetricsPersister {
 		return cleanupLogCount.get();
 	}
 
-	@JmxAttributeMethod(description = "Last time the metrics were dumped")
+	@JmxAttributeMethod(description = "Last time the metrics were written")
 	public String getLastDumpTimeMillisString() {
 		if (lastDumpTimeMillis == 0) {
 			return "never";
@@ -118,7 +142,7 @@ public class LogFileMetricsPersister implements MetricsPersister {
 		}
 	}
 
-	@JmxAttributeMethod(description = "Directory where log files are dropped")
+	@JmxAttributeMethod(description = "Directory where log files are written")
 	public File getOutputDirectory() {
 		return outputDirectory;
 	}
