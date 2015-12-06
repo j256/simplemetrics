@@ -1,4 +1,4 @@
-package org.j256.simplemetrics.persister;
+package com.j256.simplemetrics.persister;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

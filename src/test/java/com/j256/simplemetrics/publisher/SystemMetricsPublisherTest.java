@@ -1,4 +1,4 @@
-package org.j256.simplemetrics.publisher;
+package com.j256.simplemetrics.publisher;
 
 import org.junit.Test;
 

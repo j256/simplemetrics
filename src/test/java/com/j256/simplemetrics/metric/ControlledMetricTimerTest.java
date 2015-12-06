@@ -1,4 +1,4 @@
-package org.j256.simplemetrics.metric;
+package com.j256.simplemetrics.metric;
 
 import java.util.Random;
 

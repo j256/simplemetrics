@@ -1,4 +1,4 @@
-package org.j256.simplemetrics.examples;
+package com.j256.simplemetrics.examples;
 
 import java.io.IOException;
 import java.util.Random;
@@ -40,13 +40,14 @@ public class BasicExample {
 		// now we run our application which is just doing some random counting
 		Random random = new Random();
 		for (long i = 0; i < 1000000000L; i++) {
+			// ok, we don't have a cache so we'll simulate using random
 			if (random.nextBoolean()) {
 				hitsMetric.increment();
 			} else {
 				missesMetric.increment();
 			}
 		}
-		// persist at the very end
+		// persist at the very end in case your computer is faster than mine (or its the future)
 		manager.persist();
 
 		// shutdown the persister thread

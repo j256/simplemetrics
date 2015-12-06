@@ -1,4 +1,4 @@
-package org.j256.simplemetrics.publisher;
+package com.j256.simplemetrics.publisher;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
