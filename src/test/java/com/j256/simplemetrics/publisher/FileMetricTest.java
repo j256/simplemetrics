@@ -9,7 +9,6 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-import com.j256.simplemetrics.publisher.FileMetric;
 import com.j256.simplemetrics.publisher.FileMetric.ProcMetricKind;
 
 public class FileMetricTest {

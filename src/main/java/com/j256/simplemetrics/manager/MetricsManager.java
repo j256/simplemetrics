@@ -15,6 +15,7 @@ import com.j256.simplejmx.common.JmxOperation;
 import com.j256.simplejmx.common.JmxResource;
 import com.j256.simplejmx.server.JmxServer;
 import com.j256.simplemetrics.metric.ControlledMetric;
+import com.j256.simplemetrics.metric.MetricValueDetails;
 import com.j256.simplemetrics.persister.MetricsPersister;
 
 /**
@@ -30,6 +31,7 @@ public class MetricsManager {
 
 	private final List<ControlledMetric<?, ?>> metrics = new ArrayList<ControlledMetric<?, ?>>();
 	private final List<MetricsUpdater> metricsUpdaters = new ArrayList<MetricsUpdater>();
+	private int persistCount;
 
 	/**
 	 * Register a metric with the manager.
@@ -77,14 +79,7 @@ public class MetricsManager {
 		updateMetrics();
 
 		// first we make a unmodifiable map of metric -> persisted value for the persisters
-		Map<ControlledMetric<?, ?>, Number> metricValues;
-		synchronized (metrics) {
-			metricValues = new HashMap<ControlledMetric<?, ?>, Number>(metrics.size());
-			for (ControlledMetric<?, ?> metric : metrics) {
-				metricValues.put(metric, metric.getValueToPersist());
-			}
-			metricValues = Collections.unmodifiableMap(metricValues);
-		}
+		Map<ControlledMetric<?, ?>, Number> metricValues = Collections.unmodifiableMap(getMetricsValueMap());
 
 		long timeCollectedMillis = System.currentTimeMillis();
 		Exception wasThrown = null;
@@ -102,6 +97,39 @@ public class MetricsManager {
 			} else {
 				throw new IOException(wasThrown);
 			}
+		}
+		persistCount++;
+	}
+
+	/**
+	 * Return a map of the controlled metrics and their current associated values.
+	 * 
+	 * NOTE: this does not call {@link #updateMetrics()} beforehand.
+	 */
+	public Map<ControlledMetric<?, ?>, Number> getMetricsValueMap() {
+		synchronized (metrics) {
+			Map<ControlledMetric<?, ?>, Number> metricValues =
+					new HashMap<ControlledMetric<?, ?>, Number>(metrics.size());
+			for (ControlledMetric<?, ?> metric : metrics) {
+				metricValues.put(metric, metric.getValue());
+			}
+			return metricValues;
+		}
+	}
+
+	/**
+	 * Return a map of the controlled metrics and their current associated values.
+	 * 
+	 * NOTE: this does not call {@link #updateMetrics()} beforehand.
+	 */
+	public Map<ControlledMetric<?, ?>, MetricValueDetails> getMetricsValueDetailsMap() {
+		synchronized (metrics) {
+			Map<ControlledMetric<?, ?>, MetricValueDetails> metricValueDetails =
+					new HashMap<ControlledMetric<?, ?>, MetricValueDetails>(metrics.size());
+			for (ControlledMetric<?, ?> metric : metrics) {
+				metricValueDetails.put(metric, metric.getValueDetails());
+			}
+			return metricValueDetails;
 		}
 	}
 
@@ -159,5 +187,10 @@ public class MetricsManager {
 			}
 		}
 		return values.toArray(new String[values.size()]);
+	}
+
+	@JmxAttributeMethod(description = "Number of times we have persisted the metrics")
+	public int getPersistCount() {
+		return persistCount;
 	}
 }

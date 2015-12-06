@@ -171,6 +171,11 @@ public class FileMetric {
 		this.required = required;
 	}
 
+	@Override
+	public String toString() {
+		return metric.toString();
+	}
+
 	private Double extractNumberFromFile() throws IOException {
 		String line;
 		BufferedReader reader = null;

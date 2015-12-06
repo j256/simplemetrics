@@ -16,7 +16,6 @@ import org.junit.Test;
 import com.j256.simplemetrics.metric.ControlledMetric;
 import com.j256.simplemetrics.metric.ControlledMetricAccum;
 import com.j256.simplemetrics.metric.ControlledMetricValue;
-import com.j256.simplemetrics.persister.LogFileMetricsPersister;
 
 public class LogFileMetricsPersisterTest {
 

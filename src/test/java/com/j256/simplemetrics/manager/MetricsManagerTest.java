@@ -10,11 +10,10 @@ import java.util.Map;
 import org.junit.Test;
 
 import com.j256.simplejmx.server.JmxServer;
-import com.j256.simplemetrics.manager.MetricsManager;
-import com.j256.simplemetrics.manager.MetricsUpdater;
 import com.j256.simplemetrics.metric.ControlledMetric;
 import com.j256.simplemetrics.metric.ControlledMetricAccum;
 import com.j256.simplemetrics.metric.ControlledMetricValue;
+import com.j256.simplemetrics.metric.MetricValueDetails;
 import com.j256.simplemetrics.persister.MetricsPersister;
 
 public class MetricsManagerTest implements MetricsUpdater {
@@ -28,6 +27,39 @@ public class MetricsManagerTest implements MetricsUpdater {
 		manager.registerMetric(metric);
 		assertEquals(1, manager.getMetrics().size());
 		assertTrue(manager.getMetrics().contains(metric));
+		manager.unregisterMetric(metric);
+	}
+
+	@Test
+	public void testMetricValueMap() {
+		MetricsManager manager = new MetricsManager();
+		ControlledMetricValue metric = new ControlledMetricValue("comp", "mod", "label", "desc", null);
+		manager.registerMetric(metric);
+		assertEquals(1, manager.getMetrics().size());
+		long val = 12321321321L;
+		metric.adjustValue(val);
+		Map<ControlledMetric<?, ?>, Number> valueMap = manager.getMetricsValueMap();
+		Number value = valueMap.get(metric);
+		assertNotNull(value);
+		assertEquals(val, value.longValue());
+		manager.unregisterMetric(metric);
+	}
+
+	@Test
+	public void testMetricValueDetailsMap() {
+		MetricsManager manager = new MetricsManager();
+		ControlledMetricValue metric = new ControlledMetricValue("comp", "mod", "label", "desc", null);
+		manager.registerMetric(metric);
+		assertEquals(1, manager.getMetrics().size());
+		long val = 12321321321L;
+		metric.adjustValue(val);
+		Map<ControlledMetric<?, ?>, MetricValueDetails> valueDetailsMap = manager.getMetricsValueDetailsMap();
+		MetricValueDetails details = valueDetailsMap.get(metric);
+		assertNotNull(details);
+		assertEquals(1, details.getNumSamples());
+		assertEquals(val, details.getNumber().longValue());
+		assertEquals(val, details.getMin().longValue());
+		assertEquals(val, details.getMax().longValue());
 		manager.unregisterMetric(metric);
 	}
 

@@ -9,7 +9,7 @@ import java.io.IOException;
  * 
  * @author graywatson
  */
-public class MetricsPersisterThread implements Runnable {
+public class MetricsPersisterJob implements Runnable {
 
 	private MetricsManager metricsManager;
 	private long delayTimeMillis = -1;
@@ -18,14 +18,14 @@ public class MetricsPersisterThread implements Runnable {
 
 	private Thread thread;
 
-	public MetricsPersisterThread() {
+	public MetricsPersisterJob() {
 		// for spring
 	}
 
 	/**
 	 * Create the MetricsPersisterThread and calls {@link #initialize()}.
 	 */
-	public MetricsPersisterThread(MetricsManager metricsManager, long delayTimeMillis, long periodTimeMillis,
+	public MetricsPersisterJob(MetricsManager metricsManager, long delayTimeMillis, long periodTimeMillis,
 			boolean daemonThread) {
 		this.metricsManager = metricsManager;
 		this.delayTimeMillis = delayTimeMillis;

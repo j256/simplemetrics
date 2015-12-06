@@ -7,8 +7,6 @@ import java.util.Random;
 
 import org.junit.Test;
 
-import com.j256.simplemetrics.metric.ControlledMetricValue;
-
 public class ControlledMetricValueTest {
 
 	@Test

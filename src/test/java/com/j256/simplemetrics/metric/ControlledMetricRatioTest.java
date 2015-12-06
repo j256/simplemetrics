@@ -4,8 +4,6 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import com.j256.simplemetrics.metric.ControlledMetricRatio;
-
 public class ControlledMetricRatioTest {
 
 	@Test

@@ -5,8 +5,6 @@ import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
 
-import com.j256.simplemetrics.metric.ControlledMetricAccum;
-
 public class ControlledMetricAccumTest {
 
 	@Test
