@@ -1,10 +1,10 @@
-package org.j256.simplemetrics;
+package org.j256.simplemetrics.metric;
 
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import com.j256.simplemetrics.ControlledMetricRatio;
+import com.j256.simplemetrics.metric.ControlledMetricRatio;
 
 public class ControlledMetricRatioTest {
 

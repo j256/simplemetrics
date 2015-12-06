@@ -1,12 +1,12 @@
-package org.j256.simplemetrics;
+package org.j256.simplemetrics.metric;
 
 import java.util.Random;
 
 import org.junit.Test;
 
 import com.j256.simplejmx.server.JmxServer;
-import com.j256.simplemetrics.ControlledMetricTimer;
-import com.j256.simplemetrics.MetricsManager;
+import com.j256.simplemetrics.manager.MetricsManager;
+import com.j256.simplemetrics.metric.ControlledMetricTimer;
 
 public class ControlledMetricTimerTest {
 

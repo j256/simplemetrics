@@ -1,4 +1,4 @@
-package com.j256.simplemetrics;
+package com.j256.simplemetrics.persister;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -12,6 +12,8 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import com.j256.simplejmx.common.JmxAttributeMethod;
 import com.j256.simplejmx.common.JmxResource;
+import com.j256.simplemetrics.MiscUtils;
+import com.j256.simplemetrics.metric.ControlledMetric;
 
 /**
  * Publishes metrics to the log file on disk.

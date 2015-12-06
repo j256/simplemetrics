@@ -1,10 +1,10 @@
-package org.j256.simplemetrics;
+package org.j256.simplemetrics.publisher;
 
 import org.junit.Test;
 
 import com.j256.simplejmx.server.JmxServer;
-import com.j256.simplemetrics.MetricsManager;
-import com.j256.simplemetrics.SystemMetricsPublisher;
+import com.j256.simplemetrics.manager.MetricsManager;
+import com.j256.simplemetrics.publisher.SystemMetricsPublisher;
 
 public class SystemMetricsPublisherTest {
 

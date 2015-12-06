@@ -1,4 +1,5 @@
-package com.j256.simplemetrics;
+package com.j256.simplemetrics.metric;
+
 
 /**
  * Value information for the metric shared externally.

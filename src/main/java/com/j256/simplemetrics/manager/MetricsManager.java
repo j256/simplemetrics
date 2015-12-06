@@ -1,4 +1,4 @@
-package com.j256.simplemetrics;
+package com.j256.simplemetrics.manager;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,6 +14,8 @@ import com.j256.simplejmx.common.JmxAttributeMethod;
 import com.j256.simplejmx.common.JmxOperation;
 import com.j256.simplejmx.common.JmxResource;
 import com.j256.simplejmx.server.JmxServer;
+import com.j256.simplemetrics.metric.ControlledMetric;
+import com.j256.simplemetrics.persister.MetricsPersister;
 
 /**
  * Class which manages the various metrics that are in the system so they can be queried by operations.

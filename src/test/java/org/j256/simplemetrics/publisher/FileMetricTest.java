@@ -1,4 +1,4 @@
-package org.j256.simplemetrics;
+package org.j256.simplemetrics.publisher;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -9,8 +9,8 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-import com.j256.simplemetrics.FileMetric;
-import com.j256.simplemetrics.FileMetric.ProcMetricKind;
+import com.j256.simplemetrics.publisher.FileMetric;
+import com.j256.simplemetrics.publisher.FileMetric.ProcMetricKind;
 
 public class FileMetricTest {
 

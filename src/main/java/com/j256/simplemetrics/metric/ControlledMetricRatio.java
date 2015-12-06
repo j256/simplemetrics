@@ -1,8 +1,8 @@
-package com.j256.simplemetrics;
+package com.j256.simplemetrics.metric;
 
 import com.j256.simplejmx.common.JmxResource;
-import com.j256.simplemetrics.ControlledMetricRatio.NumeratorDenominator;
-import com.j256.simplemetrics.ControlledMetricRatio.RatioValue;
+import com.j256.simplemetrics.metric.ControlledMetricRatio.NumeratorDenominator;
+import com.j256.simplemetrics.metric.ControlledMetricRatio.RatioValue;
 
 /**
  * A metric which tracks the relationship between two values. For example, if you want to account for a cache hit ratio

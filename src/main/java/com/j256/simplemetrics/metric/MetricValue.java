@@ -1,4 +1,4 @@
-package com.j256.simplemetrics;
+package com.j256.simplemetrics.metric;
 
 /**
  * Metric values that wraps a raw metric value.

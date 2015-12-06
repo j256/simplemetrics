@@ -1,7 +1,9 @@
-package com.j256.simplemetrics;
+package com.j256.simplemetrics.persister;
 
 import java.io.IOException;
 import java.util.Map;
+
+import com.j256.simplemetrics.metric.ControlledMetric;
 
 /**
  * Class which publishes a metrics to disk, a cloud service, or to some repository.

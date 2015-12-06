@@ -1,4 +1,4 @@
-package com.j256.simplemetrics;
+package com.j256.simplemetrics.publisher;
 
 import java.lang.management.ClassLoadingMXBean;
 import java.lang.management.ManagementFactory;
@@ -12,6 +12,10 @@ import javax.management.AttributeList;
 import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
+
+import com.j256.simplemetrics.manager.MetricsManager;
+import com.j256.simplemetrics.manager.MetricsUpdater;
+import com.j256.simplemetrics.metric.ControlledMetricValue;
 
 /**
  * Class which outputs some important system metrics internal to the JVM.

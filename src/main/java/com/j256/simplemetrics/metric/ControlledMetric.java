@@ -1,10 +1,11 @@
-package com.j256.simplemetrics;
+package com.j256.simplemetrics.metric;
 
 import java.util.concurrent.atomic.AtomicReference;
 
 import com.j256.simplejmx.common.JmxAttributeMethod;
 import com.j256.simplejmx.common.JmxFolderName;
 import com.j256.simplejmx.common.JmxSelfNaming;
+import com.j256.simplemetrics.MiscUtils;
 
 /**
  * Base metric class which defines some common fields and methods.

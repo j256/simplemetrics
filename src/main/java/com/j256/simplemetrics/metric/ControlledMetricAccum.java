@@ -1,9 +1,9 @@
-package com.j256.simplemetrics;
+package com.j256.simplemetrics.metric;
 
 import java.util.concurrent.atomic.AtomicLong;
 
 import com.j256.simplejmx.common.JmxResource;
-import com.j256.simplemetrics.ControlledMetricAccum.AccumValue;
+import com.j256.simplemetrics.metric.ControlledMetricAccum.AccumValue;
 
 /**
  * Managed {@link ControlledMetric} for metrics like page-count or database-accesses that you are adding to continually

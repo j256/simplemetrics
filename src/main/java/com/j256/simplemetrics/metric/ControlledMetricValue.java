@@ -1,7 +1,7 @@
-package com.j256.simplemetrics;
+package com.j256.simplemetrics.metric;
 
 import com.j256.simplejmx.common.JmxResource;
-import com.j256.simplemetrics.ControlledMetricValue.ValueCount;
+import com.j256.simplemetrics.metric.ControlledMetricValue.ValueCount;
 
 /**
  * Managed {@link ControlledMetric} for metrics like Thread-Count or page response times where you are reseting it each

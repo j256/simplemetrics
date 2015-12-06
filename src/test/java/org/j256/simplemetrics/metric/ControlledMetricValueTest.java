@@ -1,4 +1,4 @@
-package org.j256.simplemetrics;
+package org.j256.simplemetrics.metric;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -7,7 +7,7 @@ import java.util.Random;
 
 import org.junit.Test;
 
-import com.j256.simplemetrics.ControlledMetricValue;
+import com.j256.simplemetrics.metric.ControlledMetricValue;
 
 public class ControlledMetricValueTest {
 

@@ -1,4 +1,4 @@
-package com.j256.simplemetrics;
+package com.j256.simplemetrics.publisher;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -8,6 +8,8 @@ import java.util.concurrent.atomic.AtomicLong;
 import com.j256.simplejmx.common.JmxAttributeMethod;
 import com.j256.simplejmx.common.JmxOperation;
 import com.j256.simplejmx.common.JmxResource;
+import com.j256.simplemetrics.manager.MetricsManager;
+import com.j256.simplemetrics.manager.MetricsUpdater;
 
 /**
  * Class that will expose some good metrics that can be found from files on file-system. Often used to read from the

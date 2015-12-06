@@ -1,4 +1,4 @@
-package com.j256.simplemetrics;
+package com.j256.simplemetrics.metric;
 
 import com.j256.simplejmx.common.JmxResource;
 

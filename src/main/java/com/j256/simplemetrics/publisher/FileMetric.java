@@ -1,9 +1,14 @@
-package com.j256.simplemetrics;
+package com.j256.simplemetrics.publisher;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+
+import com.j256.simplemetrics.MiscUtils;
+import com.j256.simplemetrics.metric.ControlledMetric;
+import com.j256.simplemetrics.metric.ControlledMetricAccum;
+import com.j256.simplemetrics.metric.ControlledMetricValue;
 
 /**
  * Metric read from a file on the file-system. Often used to read from the /proc file-system under Linux.

@@ -1,4 +1,4 @@
-package org.j256.simplemetrics;
+package org.j256.simplemetrics.manager;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -6,10 +6,10 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 import com.j256.simplejmx.server.JmxServer;
-import com.j256.simplemetrics.ControlledMetricValue;
-import com.j256.simplemetrics.MetricsManager;
-import com.j256.simplemetrics.MetricsPersister;
-import com.j256.simplemetrics.MetricsUpdater;
+import com.j256.simplemetrics.manager.MetricsManager;
+import com.j256.simplemetrics.manager.MetricsUpdater;
+import com.j256.simplemetrics.metric.ControlledMetricValue;
+import com.j256.simplemetrics.persister.MetricsPersister;
 
 public class MetricsManagerTest implements MetricsUpdater {
 

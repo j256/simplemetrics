@@ -1,4 +1,4 @@
-package org.j256.simplemetrics;
+package org.j256.simplemetrics.persister;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -13,10 +13,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.j256.simplemetrics.ControlledMetric;
-import com.j256.simplemetrics.ControlledMetricAccum;
-import com.j256.simplemetrics.ControlledMetricValue;
-import com.j256.simplemetrics.LogFileMetricsPersister;
+import com.j256.simplemetrics.metric.ControlledMetric;
+import com.j256.simplemetrics.metric.ControlledMetricAccum;
+import com.j256.simplemetrics.metric.ControlledMetricValue;
+import com.j256.simplemetrics.persister.LogFileMetricsPersister;
 
 public class LogFileMetricsPersisterTest {
 
