@@ -13,7 +13,13 @@ public class MetricValueDetails {
 	private final Number max;
 
 	public MetricValueDetails(MetricValue<?, ?> metricValue) {
-		this.value = metricValue.getValue();
+		Number value = metricValue.getValue();
+		// convert the value to a long if possible
+		if (value.doubleValue() == value.longValue()) {
+			this.value = Long.valueOf(value.longValue());
+		} else {
+			this.value = value;
+		}
 		this.numSamples = metricValue.getNumSamples();
 		this.min = metricValue.getMin();
 		this.max = metricValue.getMax();
@@ -45,5 +51,11 @@ public class MetricValueDetails {
 	 */
 	public Number getMax() {
 		return max;
+	}
+
+	@Override
+	public String toString() {
+		return "MetricValueDetails [value=" + value + ", numSamples=" + numSamples + ", min=" + min + ", max=" + max
+				+ "]";
 	}
 }

@@ -110,7 +110,13 @@ public abstract class ControlledMetric<V, MV extends MetricValue<V, MV>> impleme
 	 * Get the current number for persisting purposes. This causes the metrics to be set to reset on next adjustment.
 	 */
 	public Number getValueToPersist() {
-		return getMetricValue(true).getValue();
+		Number value = getMetricValue(true).getValue();
+		// see if we can return a long
+		if (value.doubleValue() == value.longValue()) {
+			return value.longValue();
+		} else {
+			return value;
+		}
 	}
 
 	/**

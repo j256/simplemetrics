@@ -20,8 +20,8 @@ import com.j256.simplemetrics.metric.ControlledMetric;
  * 
  * @author graywatson
  */
-@JmxResource(domainName = "com.j256", folderNames = { "metrics" }, description = "Log File Metrics Persister")
-public class LogFileMetricsPersister implements MetricsPersister {
+@JmxResource(domainName = "com.j256", folderNames = { "metrics" }, description = "Text File Metrics Persister")
+public class TextFileMetricsPersister implements MetricValuesPersister {
 
 	private static final String NEWLINE = System.getProperty("line.separator");
 	/**
@@ -63,13 +63,7 @@ public class LogFileMetricsPersister implements MetricsPersister {
 				writer.append('.');
 				writer.append(metric.getName());
 				writer.append(separatingString);
-				Number value = entry.getValue();
-				// try to see if we have an integer value
-				if (value.doubleValue() == value.longValue()) {
-					writer.append(Long.toString(value.longValue()));
-				} else {
-					writer.append(value.toString());
-				}
+				writer.append(entry.getValue().toString());
 				writer.append(NEWLINE);
 			}
 		} catch (IOException e) {

@@ -6,12 +6,12 @@ import java.util.Map;
 import com.j256.simplemetrics.metric.ControlledMetric;
 
 /**
- * Class which publishes a metrics to disk, a cloud service, or to some other repository. This most likely is going to
- * need to be implemented by the user of the system unless the {@link LogFileMetricsPersister} is all they need.
+ * Class which publishes our metrics to disk, a cloud service, or to some other repository. This most likely is going to
+ * need to be implemented by the user of the system unless the {@link TextFileMetricsPersister} is all they need.
  * 
  * @author graywatson
  */
-public interface MetricsPersister {
+public interface MetricValuesPersister {
 
 	/**
 	 * Persists the metrics parameters to disk or some repository.

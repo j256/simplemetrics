@@ -28,7 +28,7 @@ public class FileMetricsPublisherTest {
 		new FileMetricsPublisher(manager, Arrays.asList(metric));
 
 		manager.updateMetrics();
-		Map<ControlledMetric<?, ?>, Number> metricsValueMap = manager.getMetricsValueMap();
+		Map<ControlledMetric<?, ?>, Number> metricsValueMap = manager.getMetricValuesMap();
 
 		Number value = metricsValueMap.get(metric.getMetric());
 		assertNotNull(value);

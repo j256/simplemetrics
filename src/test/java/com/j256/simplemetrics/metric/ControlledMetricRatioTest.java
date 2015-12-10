@@ -27,11 +27,11 @@ public class ControlledMetricRatioTest {
 		long num = 1;
 		long denom = 2;
 		metric.adjustValue(num, denom);
-		Number details = metric.getValueToPersist();
-		assertEquals((double) num / (double) denom, (Double) details, 0.5);
+		Number value = metric.getValueToPersist();
+		assertEquals((double) num / (double) denom, (Double) value, 0.5);
 		assertEquals((double) num / (double) denom, (Double) metric.getValue(), 0.5);
-		details = metric.getValueToPersist();
-		assertEquals(0.0, details);
+		value = metric.getValueToPersist();
+		assertEquals(0L, value);
 	}
 
 	@Test

@@ -8,11 +8,11 @@ import org.junit.Test;
 import com.j256.simplemetrics.metric.ControlledMetric;
 import com.j256.simplemetrics.metric.ControlledMetricAccum;
 
-public class SystemOutMetricsPersisterTest {
+public class JavaUtilLoggingMetricsPersisterTest {
 
 	@Test
 	public void testStuff() {
-		SystemOutMetricsPersister persister = new SystemOutMetricsPersister();
+		LoggingMetricsPersister persister = new LoggingMetricsPersister();
 		ControlledMetricAccum metric = new ControlledMetricAccum("comp", "mod", "label", "desc", null);
 		Map<ControlledMetric<?, ?>, Number> metricValues = new HashMap<ControlledMetric<?, ?>, Number>();
 		long value = 123123123213L;

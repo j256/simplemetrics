@@ -10,7 +10,7 @@ import com.j256.simplemetrics.metric.ControlledMetric;
  * 
  * @author graywatson
  */
-public class SystemOutMetricsPersister implements MetricsPersister {
+public class SystemOutMetricsPersister implements MetricValuesPersister {
 
 	@Override
 	public void persist(Map<ControlledMetric<?, ?>, Number> metricValues, long timeCollectedMillis) {

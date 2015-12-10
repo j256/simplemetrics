@@ -76,27 +76,39 @@ public class ControlledMetricAccum extends ControlledMetric<Long, AccumValue> {
 
 	@Override
 	public Number getValue() {
-		long value = counter.getAndSet(0);
-		if (value > 0) {
-			// we adjust here only when the value is needed so we don't generate a new object on every adjustment
-			super.adjustValue(value);
-		}
+		adjustValue();
 		return super.getValue();
 	}
 
 	@Override
+	public MetricValueDetails getValueDetails() {
+		adjustValue();
+		return super.getValueDetails();
+	}
+
+	@Override
 	public Number getValueToPersist() {
-		long value = counter.getAndSet(0);
-		if (value > 0) {
-			// we adjust here only when the value is needed so we don't generate a new object on every adjustment
-			super.adjustValue(value);
-		}
+		adjustValue();
 		return super.getValueToPersist();
+	}
+
+	@Override
+	public MetricValueDetails getValueDetailsToPersist() {
+		adjustValue();
+		return super.getValueDetailsToPersist();
 	}
 
 	@Override
 	protected AggregationType getAggregationType() {
 		return AggregationType.SUM;
+	}
+
+	private void adjustValue() {
+		long value = counter.getAndSet(0);
+		if (value > 0) {
+			// we adjust here only when the value is needed so we don't generate a new object on every adjustment
+			super.adjustValue(value);
+		}
 	}
 
 	/**
@@ -106,7 +118,7 @@ public class ControlledMetricAccum extends ControlledMetric<Long, AccumValue> {
 		private final long value;
 		private final boolean resetNext;
 
-		private AccumValue(long value, boolean resetNext) {
+		AccumValue(long value, boolean resetNext) {
 			this.value = value;
 			this.resetNext = resetNext;
 		}

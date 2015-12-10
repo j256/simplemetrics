@@ -55,6 +55,18 @@ public class ControlledMetricAccumTest {
 		assertEquals(delta + 1, metric.getValue());
 	}
 
+	@Test
+	public void testMetricDetails() {
+		ControlledMetricAccum metric = new ControlledMetricAccum("c", "m", "n", "d", null);
+		long delta = 100;
+		metric.add(delta);
+		MetricValueDetails details = metric.getValueDetails();
+		assertEquals(delta, details.getNumSamples());
+		assertEquals(delta, details.getMin());
+		assertEquals(delta, details.getMax());
+		assertEquals(delta, details.getValue());
+	}
+
 	@Test(expected = NullPointerException.class)
 	public void testControlledLabelNull() {
 		new ControlledMetricAccum("c", "m", null, "d", null);

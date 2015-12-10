@@ -71,40 +71,46 @@ Gray Watson @uref{http://256.com/gray/}
 @cindex getting started
 @cindex how to get started
 @cindex quick start
-@cindex ContentInfoUtil
 To use SimpleMetrics you need to do the following steps.  For more information, @pxref{Using}.
 
 @enumerate
 
-@item Download SimpleMetrics from the @uref{http://256.com/sources/simplemetrics/releases/, SimpleMetrics release page}.  @xref{Downloading}.
+@item Download SimpleMetrics from the @uref{http://256.com/sources/simplemetrics/releases/, SimpleMetrics release page}.
+@xref{Downloading}.
 
-@item Use the @code{ContentInfoUtil} class to get content-types for files or @code{byte[]}:
+@item Create an instance of the @code{MetricsManager} class which manages the metrics in our application.
 
 @example
-ContentInfoUtil util = new ContentInfoUtil();
-ContentInfo info = util.findMatch("/tmp/upload.tmp");
-// or   ContentInfo info = util.findMatch(inputStream);
-// or   ContentInfo info = util.findMatch(contentByteArray);
-// display content type information
-if (info == null) @{
-   System.out.println("Unknown content-type");
-@} else @{
-   // other information in ContentInfo type
-   System.out.println("Content-type is: " + info.getName());
-@}
+MetricsManager metricsManager = new MetricsManager();
+@end example
+
+@item Create a persister such as the @code{LoggingMetricsPersister} which logs the metrics and values to
+@code{java.util.Logger}.
+
+@example
+LoggingMetricsPersister persister =
+   new LoggingMetricsPersister();
+metricsManager.registerMetric(hitCounter);
+@end example
+
+@item Create at least one metrics which monitors an application value and register them with the manager.
+
+@example
+ControlledMetricAccum hitCounter =
+   new ControlledMetricAccum("example", null, "hits",
+      "number of hits to the cache", null);
+metricsManager.registerMetric(hitCounter);
+@end example
+
+@item Possible use the @code{MetricsPersisterJob} which starts a background thread to call @code{persist()} on
+the @code{MetricsManager} every so often automatically.
+
+@example
+MetricsPersisterJob persisterThread =
+   new MetricsPersisterJob(manager, 1000, 1000, true);
 @end example
 
 @end enumerate
-
-Here are some examples of @code{ContentInfo} output:
-
-@itemize @bullet
-@item HTML, mime 'text/html', msg 'HTML document text'
-@item PDF, mime 'application/pdf', msg 'PDF document, version 1.4'
-@item GIF, mime 'image/gif', msg 'GIF image data, version 89a, 16 x 16'
-@item JPEG, mime 'image/jpeg', msg 'JPEG image data, JFIF standard 1.01'
-@item Java, msg 'Java serialization data, version 5'
-@end itemize
 
 For somewhat more extensive instructions, @pxref{Using}.
 
@@ -115,14 +121,16 @@ For somewhat more extensive instructions, @pxref{Using}.
 @cindex how to use
 @cindex using SimpleMetrics
 @menu
-* Downloading ::                Downloading the SimpleMetrics jar.
-* Loading Metrics Entries ::      Loading in the metrics entries from files.
-* Finding Content Info ::       Finding the content type from data.
-@ Maven ::                      How to use with Maven.
+* Downloading ::                  Downloading the SimpleMetrics jar.
+* Creating a MetricsManager ::    Creating a MetricsManager instance.
+* Using Metrics Persisters ::     Using or creating a metrics persister.
+* Registering Metrics ::          Creating and registering metrics.
+* Using MetricsUpdater ::         Using the MetricsUpdate interface.
+* Maven ::                        How to use with Maven.
 @end menu
 
 @c ----------------------------------------------------------------
-@node Downloading, Loading Metrics Entries, Using, Using
+@node Downloading, Creating a MetricsManager, Using, Using
 @section Downloading Jar
 
 @cindex how to download the jars
@@ -135,15 +143,13 @@ central maven repository}.
 The code works with Java 6 or later.
 
 @c ----------------------------------------------------------------
-@node Loading Metrics Entries, Finding Content Info, Downloading, Using
-@section How To Load Metrics Entries
+@node Creating a MetricsManager, Using Metrics Persisters, Downloading, Using
+@section Creating a MetricsManager Instance
 
-@cindex default metrics entries
-@cindex system metrics entries
-The library uses various metrics byte information to be able to find and determine details about random blocks of bytes.
-By default, SimpleMetrics has a built in version of a metrics file that was copied from a CentOS Linux system.  It contains, 
-~2400 metrics file entries describing a number of different file types.  It also has an additional ~6600 lines which provide
-more details about the detected content types.
+@cindex MetricsManager
+@cindex managing the metrics
+The @code{MetricsManager} is the class which manages the metrics in the application, updates the values of the metrics
+when necessary, and persisting the metrics to disk or network when requests.
 
 @cindex loading metrics entries
 @cindex metrics files

@@ -17,7 +17,7 @@ import com.j256.simplemetrics.metric.ControlledMetric;
 import com.j256.simplemetrics.metric.ControlledMetricAccum;
 import com.j256.simplemetrics.metric.ControlledMetricValue;
 
-public class LogFileMetricsPersisterTest {
+public class TextFileMetricsPersisterTest {
 
 	private final static String TEMP_DIR = "target/metricsManagerTest";
 
@@ -27,19 +27,9 @@ public class LogFileMetricsPersisterTest {
 		deleteFile(new File(TEMP_DIR));
 	}
 
-	private void deleteFile(File file) {
-		File[] files = file.listFiles();
-		if (files != null) {
-			for (File subFile : files) {
-				deleteFile(subFile);
-			}
-		}
-		file.delete();
-	}
-
-	@Test(timeout = 10000)
+	@Test
 	public void testDoAll() throws Exception {
-		LogFileMetricsPersister persister = new LogFileMetricsPersister();
+		TextFileMetricsPersister persister = new TextFileMetricsPersister();
 		String prefix = "log.";
 		persister.setLogFileNamePrefix(prefix);
 		File tmpDir = new File(TEMP_DIR);
@@ -61,17 +51,9 @@ public class LogFileMetricsPersisterTest {
 		assertTrue(findEntry(prefix, component + "." + model + "." + label, before, after) != -1L);
 	}
 
-	private Map<ControlledMetric<?, ?>, Number> metricValueMap(ControlledMetric<?, ?>... metrics) {
-		Map<ControlledMetric<?, ?>, Number> metricMap = new HashMap<ControlledMetric<?, ?>, Number>();
-		for (ControlledMetric<?, ?> metric : metrics) {
-			metricMap.put(metric, metric.getValueToPersist());
-		}
-		return metricMap;
-	}
-
 	@Test
 	public void testGetOutputDirectory() {
-		LogFileMetricsPersister persister = new LogFileMetricsPersister();
+		TextFileMetricsPersister persister = new TextFileMetricsPersister();
 		File tmpDir = new File(TEMP_DIR);
 		persister.setOutputDirectory(tmpDir);
 		assertEquals(tmpDir, persister.getOutputDirectory());
@@ -79,7 +61,7 @@ public class LogFileMetricsPersisterTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testSetOutputDirectoryFile() throws Exception {
-		LogFileMetricsPersister manager = new LogFileMetricsPersister();
+		TextFileMetricsPersister manager = new TextFileMetricsPersister();
 		File tmpDir = new File(TEMP_DIR);
 		try {
 			assertTrue(tmpDir.createNewFile());
@@ -91,7 +73,7 @@ public class LogFileMetricsPersisterTest {
 
 	@Test
 	public void testGetFileFormat() {
-		LogFileMetricsPersister manager = new LogFileMetricsPersister();
+		TextFileMetricsPersister manager = new TextFileMetricsPersister();
 		String prefix = "log.";
 		manager.setLogFileNamePrefix(prefix);
 		assertEquals(prefix, manager.getLogFileNamePrefix());
@@ -99,7 +81,7 @@ public class LogFileMetricsPersisterTest {
 
 	@Test
 	public void testRotatePeriods() throws Exception {
-		LogFileMetricsPersister persister = new LogFileMetricsPersister();
+		TextFileMetricsPersister persister = new TextFileMetricsPersister();
 		File tmpDir = new File(TEMP_DIR);
 		tmpDir.mkdirs();
 		persister.setOutputDirectory(tmpDir);
@@ -121,7 +103,7 @@ public class LogFileMetricsPersisterTest {
 
 	@Test
 	public void testSetRotatePeriodsMetricAccum() throws Exception {
-		LogFileMetricsPersister persister = new LogFileMetricsPersister();
+		TextFileMetricsPersister persister = new TextFileMetricsPersister();
 		File tmpDir = new File(TEMP_DIR);
 		tmpDir.mkdirs();
 		persister.setOutputDirectory(tmpDir);
@@ -143,7 +125,7 @@ public class LogFileMetricsPersisterTest {
 
 	@Test
 	public void testSetRotatePeriodsAffectMetrics() throws Exception {
-		LogFileMetricsPersister persister = new LogFileMetricsPersister();
+		TextFileMetricsPersister persister = new TextFileMetricsPersister();
 		File tmpDir = new File(TEMP_DIR);
 		tmpDir.mkdirs();
 		persister.setOutputDirectory(tmpDir);
@@ -170,7 +152,7 @@ public class LogFileMetricsPersisterTest {
 
 	@Test
 	public void testCleanup() throws Exception {
-		LogFileMetricsPersister persister = new LogFileMetricsPersister();
+		TextFileMetricsPersister persister = new TextFileMetricsPersister();
 		File tmpDir = new File(TEMP_DIR);
 		tmpDir.mkdirs();
 		persister.setOutputDirectory(tmpDir);
@@ -228,5 +210,23 @@ public class LogFileMetricsPersisterTest {
 			}
 		}
 		return -1;
+	}
+
+	private void deleteFile(File file) {
+		File[] files = file.listFiles();
+		if (files != null) {
+			for (File subFile : files) {
+				deleteFile(subFile);
+			}
+		}
+		file.delete();
+	}
+
+	private Map<ControlledMetric<?, ?>, Number> metricValueMap(ControlledMetric<?, ?>... metrics) {
+		Map<ControlledMetric<?, ?>, Number> metricMap = new HashMap<ControlledMetric<?, ?>, Number>();
+		for (ControlledMetric<?, ?> metric : metrics) {
+			metricMap.put(metric, metric.getValueToPersist());
+		}
+		return metricMap;
 	}
 }

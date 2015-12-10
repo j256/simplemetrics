@@ -6,7 +6,7 @@ import java.util.Random;
 import com.j256.simplemetrics.manager.MetricsManager;
 import com.j256.simplemetrics.manager.MetricsPersisterJob;
 import com.j256.simplemetrics.metric.ControlledMetricAccum;
-import com.j256.simplemetrics.persister.MetricsPersister;
+import com.j256.simplemetrics.persister.MetricValuesPersister;
 import com.j256.simplemetrics.persister.SystemOutMetricsPersister;
 
 /**
@@ -19,6 +19,9 @@ public class BasicExample {
 	public static void main(String[] args) throws IOException {
 		// instantiate our manager
 		MetricsManager manager = new MetricsManager();
+		// create a simple metrics persister that writes to System.out
+		SystemOutMetricsPersister metricsPersister = new SystemOutMetricsPersister();
+		manager.setMetricValuesPersisters(new MetricValuesPersister[] { metricsPersister });
 
 		// instantiate a couple of metrics
 		ControlledMetricAccum hitsMetric =
@@ -29,10 +32,6 @@ public class BasicExample {
 		// register them with the manager
 		manager.registerMetric(hitsMetric);
 		manager.registerMetric(missesMetric);
-
-		// create a simple metrics persister that writes to System.out
-		SystemOutMetricsPersister metricsPersister = new SystemOutMetricsPersister();
-		manager.setMetricsPersisters(new MetricsPersister[] { metricsPersister });
 
 		// start up the persisting thread to persist the metrics every so often
 		MetricsPersisterJob persisterThread = new MetricsPersisterJob(manager, 1000, 1000, true);
@@ -48,7 +47,7 @@ public class BasicExample {
 			}
 		}
 		// persist at the very end in case your computer is faster than mine (or its the future)
-		manager.persist();
+		manager.persistValues();
 
 		// shutdown the persister thread
 		persisterThread.destroy();
