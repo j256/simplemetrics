@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.j256.simplemetrics</groupId>
 	<artifactId>simplemetrics</artifactId>
-	<version>0.1-SNAPSHOT</version>
+	<version>0.5-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>Simple Metrics</name>
 	<url>http://256.com/sources/simplemetrics/</url>
