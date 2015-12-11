@@ -1,4 +1,4 @@
-package com.j256.simplemetrics.examples;
+package com.j256.simplemetrics.example;
 
 import java.io.IOException;
 import java.util.Random;
