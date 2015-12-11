@@ -1,2 +1,2 @@
-0.1: 12/06/2015
-	* Initial public release after being used internally at two companies for a while.
+0.5: 12/10/2015
+	* Initial public release after being used internally at two companies for a while so started at 0.5.

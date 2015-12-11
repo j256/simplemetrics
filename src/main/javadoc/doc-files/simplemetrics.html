@@ -1,0 +1,902 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
+<html>
+<!-- Created on December 10, 2015 by texi2html 1.82
+texi2html was written by: 
+            Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Many creative people.
+Send bugs and suggestions to <texi2html-bug@nongnu.org>
+-->
+<head>
+<title>SimpleMagic Documentation</title>
+
+<meta name="description" content="SimpleMagic Documentation">
+<meta name="keywords" content="SimpleMagic Documentation">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2html 1.82">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+pre.display {font-family: serif}
+pre.format {font-family: serif}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: serif; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: serif; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.roman {font-family:serif; font-weight:normal;}
+span.sansserif {font-family:sans-serif; font-weight:normal;}
+ul.toc {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+
+<a name="Top"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="#Index-of-Concepts" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<a name="SimpleMetrics"></a>
+<h1 class="settitle">SimpleMetrics</h1>
+
+<p>Version 0.5 &ndash; December 2015
+</p>
+<a name="index-introduction"></a>
+<a name="index-author"></a>
+<a name="index-simple-metrics"></a>
+<p>This package provides some simple metrics and associated operations that allow for the recording of application metrics
+and persisting them to various different local or cloud storage/metric systems.  You code registers metrics
+and then doesn&rsquo;t have to not worry about how they are managed or persisted.
+</p>
+<p>To get started quickly using SimpleMetrics, see section <a href="#Quick-Start">Start Using Quickly</a>.
+There is also a <a href="http://256.com/sources/simplemetrics/docs/simplemetrics.pdf">PDF version of this documentation</a>.
+</p>
+<p>Gray Watson <a href="http://256.com/gray/">http://256.com/gray/</a>
+</p>
+<table class="menu" border="0" cellspacing="0">
+<tr><td align="left" valign="top"><a href="#Quick-Start">1. Start Using Quickly</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                Start using SimpleMetrics quickly.
+</td></tr>
+<tr><td align="left" valign="top"><a href="#Using">2. Using SimpleMetrics</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                      How to use SimpleMetrics.
+</td></tr>
+<tr><td align="left" valign="top"><a href="#License">3. Open Source License</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                    Open Source license for the project.
+</td></tr>
+<tr><td align="left" valign="top"><a href="#Index-of-Concepts">Index of Concepts</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">          Index of concepts in the manual.
+</td></tr>
+</table>
+
+<hr size="1">
+<a name="Quick-Start"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#Top" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Using" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Top" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Top" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="#Using" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="#Index-of-Concepts" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<a name="Start-Using-Quickly"></a>
+<h1 class="chapter">1. Start Using Quickly</h1>
+
+<a name="index-getting-started"></a>
+<a name="index-how-to-get-started"></a>
+<a name="index-quick-start"></a>
+<p>To use SimpleMetrics you need to do the following steps.  For more information, see section <a href="#Using">Using SimpleMetrics</a>.
+</p>
+<ol>
+<li> Download SimpleMetrics from the <a href="http://256.com/sources/simplemetrics/releases/">SimpleMetrics release page</a>.
+See section <a href="#Downloading">Downloading Jar</a>.
+
+</li><li> Create an instance of the <code>MetricsManager</code> class which manages the metrics in our application.
+
+<table><tr><td>&nbsp;</td><td><pre class="example">MetricsManager metricsManager = new MetricsManager();
+</pre></td></tr></table>
+
+</li><li> Create a persister such as the <code>LoggingMetricsPersister</code> which logs the metrics and values to
+<code>java.util.Logger</code>.
+
+<table><tr><td>&nbsp;</td><td><pre class="example">LoggingMetricsPersister persister =
+   new LoggingMetricsPersister();
+metricsManager.registerMetric(hitCounter);
+</pre></td></tr></table>
+
+</li><li> Create at least one metric which monitors a particular application value, and register it with the 
+<code>LoggingMetricsPersister</code>.
+
+<table><tr><td>&nbsp;</td><td><pre class="example">ControlledMetricAccum hitCounter =
+   new ControlledMetricAccum(&quot;example&quot;, null, &quot;hits&quot;,
+      &quot;number of hits to the cache&quot;, null);
+metricsManager.registerMetric(hitCounter);
+</pre></td></tr></table>
+
+</li><li> Possibly use the <code>MetricsPersisterJob</code> to start a background thread that calls <code>persist()</code> on
+the <code>MetricsManager</code> every so often automatically.  Otherwise you will need to do so using some other mechanism.
+
+<table><tr><td>&nbsp;</td><td><pre class="example">MetricsPersisterJob persisterThread =
+   new MetricsPersisterJob(manager, 1000, 1000, true);
+</pre></td></tr></table>
+
+</li></ol>
+
+<p>For somewhat more extensive instructions, see section <a href="#Using">Using SimpleMetrics</a>.
+</p>
+<hr size="6">
+<a name="Using"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#Quick-Start" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Downloading" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Quick-Start" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Top" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="#License" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="#Index-of-Concepts" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<a name="Using-SimpleMetrics"></a>
+<h1 class="chapter">2. Using SimpleMetrics</h1>
+
+<a name="index-how-to-use"></a>
+<a name="index-using-SimpleMetrics"></a>
+<table class="menu" border="0" cellspacing="0">
+<tr><td align="left" valign="top"><a href="#Downloading">2.1 Downloading Jar</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                  Downloading the SimpleMetrics jar.
+</td></tr>
+<tr><td align="left" valign="top"><a href="#Creating-a-MetricsManager">2.2 Creating a MetricsManager Instance</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">    Creating a MetricsManager instance.
+</td></tr>
+<tr><td align="left" valign="top"><a href="#Using-Metrics-Persisters">2.3 Using a Metrics Persister</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">     Using or creating a metrics persister.
+</td></tr>
+<tr><td align="left" valign="top"><a href="#Registering-Metrics">2.4 Creating and Registering Metrics</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">          Creating and registering metrics.
+</td></tr>
+<tr><td align="left" valign="top"><a href="#Using-MetricsUpdater">2.5 Updating Metric Values</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">         How to update metric values.
+</td></tr>
+<tr><td align="left" valign="top"><a href="#Built-in-Utilities">2.6 Using the Built-In Utilities</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">           How to use built-in utilities.
+</td></tr>
+<tr><td align="left" valign="top"><a href="#Using-SimpleJMX">2.7 Publishing Metrics Via JMX</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">              Publishing metric information via JMX.
+</td></tr>
+<tr><td align="left" valign="top"><a href="#Maven">2.8 Using With Maven</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                        How to use with Maven.
+</td></tr>
+</table>
+
+<hr size="6">
+<a name="Downloading"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#Using" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Creating-a-MetricsManager" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Using" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Using" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="#License" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="#Index-of-Concepts" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<a name="Downloading-Jar"></a>
+<h2 class="section">2.1 Downloading Jar</h2>
+
+<a name="index-how-to-download-the-jars"></a>
+<a name="index-downloading-the-jars"></a>
+<a name="index-where-to-get-new-jars"></a>
+<p>To get started with SimpleMetrics, you will need to download the jar file.  The <a href="http://256.com/sources/simplemetrics/releases/">SimpleMetrics release page</a> is the default repository but the jars are also available from the <a href="http://repo1.maven.org/maven2/com/j256/simplemetrics/">central maven repository</a>.
+</p>
+<p>The code works with Java 6 or later.
+</p>
+<hr size="6">
+<a name="Creating-a-MetricsManager"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#Downloading" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Using-Metrics-Persisters" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Using" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Using" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="#License" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="#Index-of-Concepts" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<a name="Creating-a-MetricsManager-Instance"></a>
+<h2 class="section">2.2 Creating a MetricsManager Instance</h2>
+
+<a name="index-MetricsManager"></a>
+<a name="index-managing-the-metrics"></a>
+<a name="index-SimpleJMX"></a>
+<p>The <code>MetricsManager</code> is the class which manages the metrics in the application, updates the values of the metrics
+when necessary, and persisting the metrics to disk or network when requested to do so.  You need to set at least one metrics
+persister on the manager and then register metrics from various places in your application. <code>MetricsManager</code> also
+supports <code>SimpleJmx</code> annotations which allow you to publish the metrics and view them via JMX. 
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">MetricsManager metricsManager = new MetricsManager();
+</pre></td></tr></table>
+
+<hr size="6">
+<a name="Using-Metrics-Persisters"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#Creating-a-MetricsManager" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Registering-Metrics" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Using" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Using" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="#License" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="#Index-of-Concepts" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<a name="Using-a-Metrics-Persister"></a>
+<h2 class="section">2.3 Using a Metrics Persister</h2>
+
+<a name="index-metrics-persisters"></a>
+<a name="index-persisting-metrics"></a>
+<a name="index-storing-metrics"></a>
+<a name="index-cloud-service"></a>
+<a name="index-save-metrics-to-disk"></a>
+<a name="index-logging-metrics"></a>
+<p>Once you have created your <code>MetricsManager</code> you should set metrics persister classes on it.  Metrics persisters
+are the classes which are responsible for saving the metrics information to disk, cloud-service, or other archive so
+they can be reported on and stored for later use.
+</p>
+<a name="index-MetricValuesPersister"></a>
+<a name="index-MetricDetailsPersister"></a>
+<a name="index-MetricValueDetails"></a>
+<a name="index-minimum-value"></a>
+<a name="index-maximum-value"></a>
+<a name="index-average-value"></a>
+<a name="index-number-of-samples"></a>
+<a name="index-samples"></a>
+<p>Persisters implement either the <code>MetricValuesPersister</code> or <code>MetricDetailsPersister</code> interfaces.  The value persister
+gets the metric values as a simple <code>Number</code> class.  The details persister provides more extensive information on
+the metrics such as number of samples, average, minimum, and maximum values through the <code>MetricValueDetails</code> class.
+</p>
+<p>There are a couple simple persister implementations that some with the library although they may only be useful as
+implementation examples;
+</p>
+<ul>
+<li> <code>LoggingMetricsPersister</code> - Logs metrics and their values to <code>java.util.Logger</code>.  This can be used as an
+implementation example so you can log metrics to your application&rsquo;s primary logging class such as <code>log4j</code>.
+
+</li><li> <code>SystemOutMetricsPersister</code> - Prints metrics and their values to <code>System.out</code>.
+
+</li><li> <code>TextFileMetricsPersister</code> - Writes metrics and their values to a text-file on the file-system.  This text file
+can then be imported into some reporting system.  It is able to cleanup old metrics files with the
+<code>cleanMetricFilesOlderThanMillis(...)</code> method.
+
+</li></ul>
+
+<p>Persisters are set on the <code>MetricsManager</code>:
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">// persisters that persist a number per metric
+metricsManager.setMetricValuesPersisters(
+   new MetricDetailsPersister[] { &hellip; };
+// persisters that persist metric details
+metricsManager.setMetricDetailsPersisters(
+   new MetricDetailsPersister[] { &hellip; };
+</pre></td></tr></table>
+
+<hr size="6">
+<a name="Registering-Metrics"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#Using-Metrics-Persisters" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Using-MetricsUpdater" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Using" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Using" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="#License" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="#Index-of-Concepts" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<a name="Creating-and-Registering-Metrics"></a>
+<h2 class="section">2.4 Creating and Registering Metrics</h2>
+
+<a name="index-creating-metrics"></a>
+<a name="index-registering-metrics"></a>
+<a name="index-metrics"></a>
+<p>Once you have created your <code>MetricsManager</code> and created your persisters, you are ready to start creating and 
+registering metrics with the manager.  Metrics are the classes which keep track of the name of the metric as well as
+it&rsquo;s associated value(s).  For example, let&rsquo;s say we wanted to count the number of web-requests made to our web-server
+so we can graph it over time.  We might create a metric like the following and register it on the <code>MetricsManager</code>:
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">ControlledMetricAccum webRequestMetric =
+   new ControlledMetricAccum(&quot;web&quot;, &quot;server&quot;, &quot;requests&quot;,
+      &quot;number of requests handled by our web-server&quot;, null);
+metricsManager.registerMetric(webRequestMetric);
+</pre></td></tr></table>
+
+<p>Whenever a request cames in, you just have to increment the metric:
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">// count a web-request
+webRequestMetric.increment();
+</pre></td></tr></table>
+
+<p>The <code>MetricsManager</code> takes care of persisting the value to disk or network and it also resets the value after it 
+is persisted so the counts per minute (or whatever your persist frequency is) will be accurate.
+</p>
+<p>There are a couple of different types of metrics that are built into the library. 
+</p>
+<a name="index-ControlledMetricAccum"></a>
+<a name="index-accumulator-metric"></a>
+<a name="index-increment_002c-metric"></a>
+<a name="index-ControlledMetricValue"></a>
+<a name="index-value-metric"></a>
+<a name="index-ControlledMetricTimer"></a>
+<a name="index-time-tracking"></a>
+<a name="index-ControlledMetricRatio"></a>
+<a name="index-ratio-metric"></a>
+<ul>
+<li> <code>ControlledMetricAccum</code> - A metric that accumulates in value.  This is used when we are counting some sort
+of event light a web-server request or a thrown exception.  It supports an <code>increment()</code> method although the adjust
+will add any value to the metric.
+
+</li><li> <code>ControlledMetricValue</code> - A metric whose value can go up or down.  This is used when we are monitoring how
+much memory the JVM is using or a cache-hit percentage.  We often use a <code>MetricsUpdater</code> when dealing with values.
+See section <a href="#Using-MetricsUpdater">Updating Metric Values</a>.
+
+</li><li> <code>ControlledMetricTimer</code> - For metrics that are tracking how long a particular operation takes, this class is
+useful for doing so.  It has a <code>start()</code> and <code>stop()</code> method which easily records the elapsed time in
+milliseconds given that it extends <code>ControlledMetricValue</code>.
+
+</li><li> <code>ControlledMetricRatio</code> - This metric separates the numerator from the denominator to keep good precision
+when recording ratios.  You could track cache hit/miss ratios or other information with this.
+
+</li></ul>
+
+<a name="index-BaseControlledMetric"></a>
+<a name="index-metrics-base-class"></a>
+<a name="index-ControlledMetric-interface"></a>
+<a name="index-metrics-interface"></a>
+<p>If these metric types don&rsquo;t fully meet your needs, you can define others that implement the <code>ControlledMetric</code>
+interface and probably extend the <code>BaseControlledMetric</code> class.
+</p>
+<hr size="6">
+<a name="Using-MetricsUpdater"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#Registering-Metrics" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Built-in-Utilities" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Using" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Using" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="#License" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="#Index-of-Concepts" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<a name="Updating-Metric-Values"></a>
+<h2 class="section">2.5 Updating Metric Values</h2>
+
+<p>In many situations, you may poll a value from another object and update a metric at that time.  The <code>MetricsManager</code>
+has support for classes that implement the <code>MetricsUpdater</code> interface that can be registered on the manager.
+Whenever values are to be persisted, the <code>MetricsManager</code> will call the configured updaters beforehand so they can
+calculate or poll the values for their metrics.
+</p>
+<p>For example, let&rsquo;s say you were tracking how much memory your were using in your system.  You would register your
+memory metric with the <code>MetricsManager</code> and also register yourself with the <code>MetricsManager</code> as an updater.
+The <code>MetricsManager</code> will call your <code>updateMetrics()</code> method which gives you an opportunity to calculate
+how much memory your code is using and update the metric with the information.
+</p>
+<hr size="6">
+<a name="Built-in-Utilities"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#Using-MetricsUpdater" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Using-SimpleJMX" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Using" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Using" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="#License" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="#Index-of-Concepts" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<a name="Using-the-Built_002dIn-Utilities"></a>
+<h2 class="section">2.6 Using the Built-In Utilities</h2>
+
+<p>There are a couple of built-in utility classes which are useful for most applications to utilize.
+</p>
+<ul>
+<li> <code>SystemMetricsPublisher</code> - Publishes a number of useful bits of information from the JVM: number of threads,
+total memory used, maximum memory used, free memory, current heap size, number of loaded classes, total process CPU time,
+thread load average percentage, old gen memory presentage, process load average percentage.
+
+</li><li> <code>FileMetricsPublisher</code> - Reads values from files on the file system that are then published via metrics.
+This is used to read numbers from files in thre <code>/proc</code> file-system on linux.  A common file metric that you might
+want to publish is the number of open file-descriptors being used by the JVM.
+
+</li></ul>
+
+<hr size="6">
+<a name="Using-SimpleJMX"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#Built-in-Utilities" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Maven" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Using" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Using" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="#License" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="#Index-of-Concepts" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<a name="Publishing-Metrics-Via-JMX"></a>
+<h2 class="section">2.7 Publishing Metrics Via JMX</h2>
+
+<a name="index-SimpleJMX-1"></a>
+<a name="index-JMX-usage"></a>
+<a name="index-publishing-metrics-using-JMX"></a>
+<a name="index-JmxServer"></a>
+<p>The library uses the SimpleJMX library to allow for easy publishing of metric values via JMX.  It is optional
+to do so but you can set the <code>JmxServer</code> on the <code>MetricsManager</code> and metrics will be registered to the
+<code>JmxServer</code> and publishd into JMX folders.   For more information about SimpleJMX, see the <a href="http://256.com/sources/simplejmx/">SimpleJMX home page</a>.
+</p>
+<hr size="6">
+<a name="Maven"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#Using-SimpleJMX" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#License" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Using" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Using" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="#License" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="#Index-of-Concepts" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<a name="Using-With-Maven"></a>
+<h2 class="section">2.8 Using With Maven</h2>
+
+<a name="index-Maven_002c-use-with"></a>
+<a name="index-pom_002exml-dependency"></a>
+<p>To use SimpleMetrics with maven, include the following dependency in your &lsquo;<tt>pom.xml</tt>&rsquo; file:
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">&lt;dependency&gt;
+	&lt;groupId&gt;com.j256.simplemetrics&lt;/groupId&gt;
+	&lt;artifactId&gt;simplemetrics&lt;/artifactId&gt;
+	&lt;version&gt;0.5&lt;/version&gt;
+&lt;/dependency&gt;
+</pre></td></tr></table>
+
+
+<hr size="6">
+<a name="License"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#Maven" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Index-of-Concepts" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Using" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Top" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="#Index-of-Concepts" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="#Index-of-Concepts" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<a name="Open-Source-License"></a>
+<h1 class="chapter">3. Open Source License</h1>
+
+<a name="index-license"></a>
+<a name="index-open-source-license"></a>
+<p>This document is part of the SimpleMetrics project.
+</p>
+<p>Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby
+granted, provided that this permission notice appear in all copies.
+</p>
+<p>THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING
+ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL,
+DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE
+USE OR PERFORMANCE OF THIS SOFTWARE.
+</p>
+<p>The author may be contacted via <a href="http://256.com/sources/simplemetrics/">http://256.com/sources/simplemetrics/</a>
+</p>
+<hr size="6">
+<a name="Index-of-Concepts"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#License" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[ &gt; ]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#License" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Top" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[ &gt;&gt; ]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="#Index-of-Concepts" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<a name="Index-of-Concepts-1"></a>
+<h1 class="unnumbered">Index of Concepts</h1>
+
+<table><tr><th valign="top">Jump to: &nbsp; </th><td><a href="#Index-of-Concepts-1_cp_letter-A" class="summary-letter"><b>A</b></a>
+ &nbsp; 
+<a href="#Index-of-Concepts-1_cp_letter-B" class="summary-letter"><b>B</b></a>
+ &nbsp; 
+<a href="#Index-of-Concepts-1_cp_letter-C" class="summary-letter"><b>C</b></a>
+ &nbsp; 
+<a href="#Index-of-Concepts-1_cp_letter-D" class="summary-letter"><b>D</b></a>
+ &nbsp; 
+<a href="#Index-of-Concepts-1_cp_letter-G" class="summary-letter"><b>G</b></a>
+ &nbsp; 
+<a href="#Index-of-Concepts-1_cp_letter-H" class="summary-letter"><b>H</b></a>
+ &nbsp; 
+<a href="#Index-of-Concepts-1_cp_letter-I" class="summary-letter"><b>I</b></a>
+ &nbsp; 
+<a href="#Index-of-Concepts-1_cp_letter-J" class="summary-letter"><b>J</b></a>
+ &nbsp; 
+<a href="#Index-of-Concepts-1_cp_letter-L" class="summary-letter"><b>L</b></a>
+ &nbsp; 
+<a href="#Index-of-Concepts-1_cp_letter-M" class="summary-letter"><b>M</b></a>
+ &nbsp; 
+<a href="#Index-of-Concepts-1_cp_letter-N" class="summary-letter"><b>N</b></a>
+ &nbsp; 
+<a href="#Index-of-Concepts-1_cp_letter-O" class="summary-letter"><b>O</b></a>
+ &nbsp; 
+<a href="#Index-of-Concepts-1_cp_letter-P" class="summary-letter"><b>P</b></a>
+ &nbsp; 
+<a href="#Index-of-Concepts-1_cp_letter-Q" class="summary-letter"><b>Q</b></a>
+ &nbsp; 
+<a href="#Index-of-Concepts-1_cp_letter-R" class="summary-letter"><b>R</b></a>
+ &nbsp; 
+<a href="#Index-of-Concepts-1_cp_letter-S" class="summary-letter"><b>S</b></a>
+ &nbsp; 
+<a href="#Index-of-Concepts-1_cp_letter-T" class="summary-letter"><b>T</b></a>
+ &nbsp; 
+<a href="#Index-of-Concepts-1_cp_letter-U" class="summary-letter"><b>U</b></a>
+ &nbsp; 
+<a href="#Index-of-Concepts-1_cp_letter-V" class="summary-letter"><b>V</b></a>
+ &nbsp; 
+<a href="#Index-of-Concepts-1_cp_letter-W" class="summary-letter"><b>W</b></a>
+ &nbsp; 
+</td></tr></table>
+<table border="0" class="index-cp">
+<tr><td></td><th align="left">Index Entry</th><th align="left"> Section</th></tr>
+<tr><td colspan="3"> <hr></td></tr>
+<tr><th><a name="Index-of-Concepts-1_cp_letter-A">A</a></th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#index-accumulator-metric">accumulator metric</a></td><td valign="top"><a href="#Registering-Metrics">2.4 Creating and Registering Metrics</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-author">author</a></td><td valign="top"><a href="#Top">SimpleMetrics</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-average-value">average value</a></td><td valign="top"><a href="#Using-Metrics-Persisters">2.3 Using a Metrics Persister</a></td></tr>
+<tr><td colspan="3"> <hr></td></tr>
+<tr><th><a name="Index-of-Concepts-1_cp_letter-B">B</a></th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#index-BaseControlledMetric">BaseControlledMetric</a></td><td valign="top"><a href="#Registering-Metrics">2.4 Creating and Registering Metrics</a></td></tr>
+<tr><td colspan="3"> <hr></td></tr>
+<tr><th><a name="Index-of-Concepts-1_cp_letter-C">C</a></th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#index-cloud-service">cloud service</a></td><td valign="top"><a href="#Using-Metrics-Persisters">2.3 Using a Metrics Persister</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ControlledMetric-interface">ControlledMetric interface</a></td><td valign="top"><a href="#Registering-Metrics">2.4 Creating and Registering Metrics</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ControlledMetricAccum">ControlledMetricAccum</a></td><td valign="top"><a href="#Registering-Metrics">2.4 Creating and Registering Metrics</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ControlledMetricRatio">ControlledMetricRatio</a></td><td valign="top"><a href="#Registering-Metrics">2.4 Creating and Registering Metrics</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ControlledMetricTimer">ControlledMetricTimer</a></td><td valign="top"><a href="#Registering-Metrics">2.4 Creating and Registering Metrics</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ControlledMetricValue">ControlledMetricValue</a></td><td valign="top"><a href="#Registering-Metrics">2.4 Creating and Registering Metrics</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-creating-metrics">creating metrics</a></td><td valign="top"><a href="#Registering-Metrics">2.4 Creating and Registering Metrics</a></td></tr>
+<tr><td colspan="3"> <hr></td></tr>
+<tr><th><a name="Index-of-Concepts-1_cp_letter-D">D</a></th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#index-downloading-the-jars">downloading the jars</a></td><td valign="top"><a href="#Downloading">2.1 Downloading Jar</a></td></tr>
+<tr><td colspan="3"> <hr></td></tr>
+<tr><th><a name="Index-of-Concepts-1_cp_letter-G">G</a></th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#index-getting-started">getting started</a></td><td valign="top"><a href="#Quick-Start">1. Start Using Quickly</a></td></tr>
+<tr><td colspan="3"> <hr></td></tr>
+<tr><th><a name="Index-of-Concepts-1_cp_letter-H">H</a></th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#index-how-to-download-the-jars">how to download the jars</a></td><td valign="top"><a href="#Downloading">2.1 Downloading Jar</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-how-to-get-started">how to get started</a></td><td valign="top"><a href="#Quick-Start">1. Start Using Quickly</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-how-to-use">how to use</a></td><td valign="top"><a href="#Using">2. Using SimpleMetrics</a></td></tr>
+<tr><td colspan="3"> <hr></td></tr>
+<tr><th><a name="Index-of-Concepts-1_cp_letter-I">I</a></th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#index-increment_002c-metric">increment, metric</a></td><td valign="top"><a href="#Registering-Metrics">2.4 Creating and Registering Metrics</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-introduction">introduction</a></td><td valign="top"><a href="#Top">SimpleMetrics</a></td></tr>
+<tr><td colspan="3"> <hr></td></tr>
+<tr><th><a name="Index-of-Concepts-1_cp_letter-J">J</a></th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#index-JMX-usage">JMX usage</a></td><td valign="top"><a href="#Using-SimpleJMX">2.7 Publishing Metrics Via JMX</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-JmxServer">JmxServer</a></td><td valign="top"><a href="#Using-SimpleJMX">2.7 Publishing Metrics Via JMX</a></td></tr>
+<tr><td colspan="3"> <hr></td></tr>
+<tr><th><a name="Index-of-Concepts-1_cp_letter-L">L</a></th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#index-license">license</a></td><td valign="top"><a href="#License">3. Open Source License</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-logging-metrics">logging metrics</a></td><td valign="top"><a href="#Using-Metrics-Persisters">2.3 Using a Metrics Persister</a></td></tr>
+<tr><td colspan="3"> <hr></td></tr>
+<tr><th><a name="Index-of-Concepts-1_cp_letter-M">M</a></th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#index-managing-the-metrics">managing the metrics</a></td><td valign="top"><a href="#Creating-a-MetricsManager">2.2 Creating a MetricsManager Instance</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-Maven_002c-use-with">Maven, use with</a></td><td valign="top"><a href="#Maven">2.8 Using With Maven</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-maximum-value">maximum value</a></td><td valign="top"><a href="#Using-Metrics-Persisters">2.3 Using a Metrics Persister</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-MetricDetailsPersister">MetricDetailsPersister</a></td><td valign="top"><a href="#Using-Metrics-Persisters">2.3 Using a Metrics Persister</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-metrics">metrics</a></td><td valign="top"><a href="#Registering-Metrics">2.4 Creating and Registering Metrics</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-metrics-base-class">metrics base class</a></td><td valign="top"><a href="#Registering-Metrics">2.4 Creating and Registering Metrics</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-metrics-interface">metrics interface</a></td><td valign="top"><a href="#Registering-Metrics">2.4 Creating and Registering Metrics</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-metrics-persisters">metrics persisters</a></td><td valign="top"><a href="#Using-Metrics-Persisters">2.3 Using a Metrics Persister</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-MetricsManager">MetricsManager</a></td><td valign="top"><a href="#Creating-a-MetricsManager">2.2 Creating a MetricsManager Instance</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-MetricValueDetails">MetricValueDetails</a></td><td valign="top"><a href="#Using-Metrics-Persisters">2.3 Using a Metrics Persister</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-MetricValuesPersister">MetricValuesPersister</a></td><td valign="top"><a href="#Using-Metrics-Persisters">2.3 Using a Metrics Persister</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-minimum-value">minimum value</a></td><td valign="top"><a href="#Using-Metrics-Persisters">2.3 Using a Metrics Persister</a></td></tr>
+<tr><td colspan="3"> <hr></td></tr>
+<tr><th><a name="Index-of-Concepts-1_cp_letter-N">N</a></th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#index-number-of-samples">number of samples</a></td><td valign="top"><a href="#Using-Metrics-Persisters">2.3 Using a Metrics Persister</a></td></tr>
+<tr><td colspan="3"> <hr></td></tr>
+<tr><th><a name="Index-of-Concepts-1_cp_letter-O">O</a></th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#index-open-source-license">open source license</a></td><td valign="top"><a href="#License">3. Open Source License</a></td></tr>
+<tr><td colspan="3"> <hr></td></tr>
+<tr><th><a name="Index-of-Concepts-1_cp_letter-P">P</a></th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#index-persisting-metrics">persisting metrics</a></td><td valign="top"><a href="#Using-Metrics-Persisters">2.3 Using a Metrics Persister</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-pom_002exml-dependency">pom.xml dependency</a></td><td valign="top"><a href="#Maven">2.8 Using With Maven</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-publishing-metrics-using-JMX">publishing metrics using JMX</a></td><td valign="top"><a href="#Using-SimpleJMX">2.7 Publishing Metrics Via JMX</a></td></tr>
+<tr><td colspan="3"> <hr></td></tr>
+<tr><th><a name="Index-of-Concepts-1_cp_letter-Q">Q</a></th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#index-quick-start">quick start</a></td><td valign="top"><a href="#Quick-Start">1. Start Using Quickly</a></td></tr>
+<tr><td colspan="3"> <hr></td></tr>
+<tr><th><a name="Index-of-Concepts-1_cp_letter-R">R</a></th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ratio-metric">ratio metric</a></td><td valign="top"><a href="#Registering-Metrics">2.4 Creating and Registering Metrics</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-registering-metrics">registering metrics</a></td><td valign="top"><a href="#Registering-Metrics">2.4 Creating and Registering Metrics</a></td></tr>
+<tr><td colspan="3"> <hr></td></tr>
+<tr><th><a name="Index-of-Concepts-1_cp_letter-S">S</a></th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#index-samples">samples</a></td><td valign="top"><a href="#Using-Metrics-Persisters">2.3 Using a Metrics Persister</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-save-metrics-to-disk">save metrics to disk</a></td><td valign="top"><a href="#Using-Metrics-Persisters">2.3 Using a Metrics Persister</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-simple-metrics">simple metrics</a></td><td valign="top"><a href="#Top">SimpleMetrics</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-SimpleJMX">SimpleJMX</a></td><td valign="top"><a href="#Creating-a-MetricsManager">2.2 Creating a MetricsManager Instance</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-SimpleJMX-1">SimpleJMX</a></td><td valign="top"><a href="#Using-SimpleJMX">2.7 Publishing Metrics Via JMX</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-storing-metrics">storing metrics</a></td><td valign="top"><a href="#Using-Metrics-Persisters">2.3 Using a Metrics Persister</a></td></tr>
+<tr><td colspan="3"> <hr></td></tr>
+<tr><th><a name="Index-of-Concepts-1_cp_letter-T">T</a></th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#index-time-tracking">time tracking</a></td><td valign="top"><a href="#Registering-Metrics">2.4 Creating and Registering Metrics</a></td></tr>
+<tr><td colspan="3"> <hr></td></tr>
+<tr><th><a name="Index-of-Concepts-1_cp_letter-U">U</a></th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#index-using-SimpleMetrics">using SimpleMetrics</a></td><td valign="top"><a href="#Using">2. Using SimpleMetrics</a></td></tr>
+<tr><td colspan="3"> <hr></td></tr>
+<tr><th><a name="Index-of-Concepts-1_cp_letter-V">V</a></th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#index-value-metric">value metric</a></td><td valign="top"><a href="#Registering-Metrics">2.4 Creating and Registering Metrics</a></td></tr>
+<tr><td colspan="3"> <hr></td></tr>
+<tr><th><a name="Index-of-Concepts-1_cp_letter-W">W</a></th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#index-where-to-get-new-jars">where to get new jars</a></td><td valign="top"><a href="#Downloading">2.1 Downloading Jar</a></td></tr>
+<tr><td colspan="3"> <hr></td></tr>
+</table>
+<table><tr><th valign="top">Jump to: &nbsp; </th><td><a href="#Index-of-Concepts-1_cp_letter-A" class="summary-letter"><b>A</b></a>
+ &nbsp; 
+<a href="#Index-of-Concepts-1_cp_letter-B" class="summary-letter"><b>B</b></a>
+ &nbsp; 
+<a href="#Index-of-Concepts-1_cp_letter-C" class="summary-letter"><b>C</b></a>
+ &nbsp; 
+<a href="#Index-of-Concepts-1_cp_letter-D" class="summary-letter"><b>D</b></a>
+ &nbsp; 
+<a href="#Index-of-Concepts-1_cp_letter-G" class="summary-letter"><b>G</b></a>
+ &nbsp; 
+<a href="#Index-of-Concepts-1_cp_letter-H" class="summary-letter"><b>H</b></a>
+ &nbsp; 
+<a href="#Index-of-Concepts-1_cp_letter-I" class="summary-letter"><b>I</b></a>
+ &nbsp; 
+<a href="#Index-of-Concepts-1_cp_letter-J" class="summary-letter"><b>J</b></a>
+ &nbsp; 
+<a href="#Index-of-Concepts-1_cp_letter-L" class="summary-letter"><b>L</b></a>
+ &nbsp; 
+<a href="#Index-of-Concepts-1_cp_letter-M" class="summary-letter"><b>M</b></a>
+ &nbsp; 
+<a href="#Index-of-Concepts-1_cp_letter-N" class="summary-letter"><b>N</b></a>
+ &nbsp; 
+<a href="#Index-of-Concepts-1_cp_letter-O" class="summary-letter"><b>O</b></a>
+ &nbsp; 
+<a href="#Index-of-Concepts-1_cp_letter-P" class="summary-letter"><b>P</b></a>
+ &nbsp; 
+<a href="#Index-of-Concepts-1_cp_letter-Q" class="summary-letter"><b>Q</b></a>
+ &nbsp; 
+<a href="#Index-of-Concepts-1_cp_letter-R" class="summary-letter"><b>R</b></a>
+ &nbsp; 
+<a href="#Index-of-Concepts-1_cp_letter-S" class="summary-letter"><b>S</b></a>
+ &nbsp; 
+<a href="#Index-of-Concepts-1_cp_letter-T" class="summary-letter"><b>T</b></a>
+ &nbsp; 
+<a href="#Index-of-Concepts-1_cp_letter-U" class="summary-letter"><b>U</b></a>
+ &nbsp; 
+<a href="#Index-of-Concepts-1_cp_letter-V" class="summary-letter"><b>V</b></a>
+ &nbsp; 
+<a href="#Index-of-Concepts-1_cp_letter-W" class="summary-letter"><b>W</b></a>
+ &nbsp; 
+</td></tr></table>
+
+
+<hr size="6">
+<a name="SEC_Contents"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="#Index-of-Concepts" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h1>Table of Contents</h1>
+<div class="contents">
+
+<ul class="toc">
+  <li><a name="toc-Start-Using-Quickly" href="#Quick-Start">1. Start Using Quickly</a></li>
+  <li><a name="toc-Using-SimpleMetrics" href="#Using">2. Using SimpleMetrics</a>
+  <ul class="toc">
+    <li><a name="toc-Downloading-Jar" href="#Downloading">2.1 Downloading Jar</a></li>
+    <li><a name="toc-Creating-a-MetricsManager-Instance" href="#Creating-a-MetricsManager">2.2 Creating a MetricsManager Instance</a></li>
+    <li><a name="toc-Using-a-Metrics-Persister" href="#Using-Metrics-Persisters">2.3 Using a Metrics Persister</a></li>
+    <li><a name="toc-Creating-and-Registering-Metrics" href="#Registering-Metrics">2.4 Creating and Registering Metrics</a></li>
+    <li><a name="toc-Updating-Metric-Values" href="#Using-MetricsUpdater">2.5 Updating Metric Values</a></li>
+    <li><a name="toc-Using-the-Built_002dIn-Utilities" href="#Built-in-Utilities">2.6 Using the Built-In Utilities</a></li>
+    <li><a name="toc-Publishing-Metrics-Via-JMX" href="#Using-SimpleJMX">2.7 Publishing Metrics Via JMX</a></li>
+    <li><a name="toc-Using-With-Maven" href="#Maven">2.8 Using With Maven</a></li>
+  </ul></li>
+  <li><a name="toc-Open-Source-License" href="#License">3. Open Source License</a></li>
+  <li><a name="toc-Index-of-Concepts-1" href="#Index-of-Concepts">Index of Concepts</a></li>
+</ul>
+</div>
+<hr size="1">
+<a name="SEC_About"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="#Index-of-Concepts" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h1>About This Document</h1>
+<p>
+  This document was generated by <em>Gray Watson</em> on <em>December 10, 2015</em> using <a href="http://www.nongnu.org/texi2html/"><em>texi2html 1.82</em></a>.
+</p>
+<p>
+  The buttons in the navigation panels have the following meaning:
+</p>
+<table border="1">
+  <tr>
+    <th> Button </th>
+    <th> Name </th>
+    <th> Go to </th>
+    <th> From 1.2.3 go to</th>
+  </tr>
+  <tr>
+    <td align="center"> [ &lt; ] </td>
+    <td align="center">Back</td>
+    <td>Previous section in reading order</td>
+    <td>1.2.2</td>
+  </tr>
+  <tr>
+    <td align="center"> [ &gt; ] </td>
+    <td align="center">Forward</td>
+    <td>Next section in reading order</td>
+    <td>1.2.4</td>
+  </tr>
+  <tr>
+    <td align="center"> [ &lt;&lt; ] </td>
+    <td align="center">FastBack</td>
+    <td>Beginning of this chapter or previous chapter</td>
+    <td>1</td>
+  </tr>
+  <tr>
+    <td align="center"> [ Up ] </td>
+    <td align="center">Up</td>
+    <td>Up section</td>
+    <td>1.2</td>
+  </tr>
+  <tr>
+    <td align="center"> [ &gt;&gt; ] </td>
+    <td align="center">FastForward</td>
+    <td>Next chapter</td>
+    <td>2</td>
+  </tr>
+  <tr>
+    <td align="center"> [Top] </td>
+    <td align="center">Top</td>
+    <td>Cover (top) of document</td>
+    <td> &nbsp; </td>
+  </tr>
+  <tr>
+    <td align="center"> [Contents] </td>
+    <td align="center">Contents</td>
+    <td>Table of contents</td>
+    <td> &nbsp; </td>
+  </tr>
+  <tr>
+    <td align="center"> [Index] </td>
+    <td align="center">Index</td>
+    <td>Index</td>
+    <td> &nbsp; </td>
+  </tr>
+  <tr>
+    <td align="center"> [ ? ] </td>
+    <td align="center">About</td>
+    <td>About (help)</td>
+    <td> &nbsp; </td>
+  </tr>
+</table>
+
+<p>
+  where the <strong> Example </strong> assumes that the current position is at <strong> Subsubsection One-Two-Three </strong> of a document of the following structure:
+</p>
+
+<ul>
+  <li> 1. Section One
+    <ul>
+      <li>1.1 Subsection One-One
+        <ul>
+          <li>...</li>
+        </ul>
+      </li>
+      <li>1.2 Subsection One-Two
+        <ul>
+          <li>1.2.1 Subsubsection One-Two-One</li>
+          <li>1.2.2 Subsubsection One-Two-Two</li>
+          <li>1.2.3 Subsubsection One-Two-Three &nbsp; &nbsp;
+            <strong>&lt;== Current Position </strong></li>
+          <li>1.2.4 Subsubsection One-Two-Four</li>
+        </ul>
+      </li>
+      <li>1.3 Subsection One-Three
+        <ul>
+          <li>...</li>
+        </ul>
+      </li>
+      <li>1.4 Subsection One-Four</li>
+    </ul>
+  </li>
+</ul>
+
+<hr size="1">
+<p>
+ <font size="-1">
+  This document was generated by <em>Gray Watson</em> on <em>December 10, 2015</em> using <a href="http://www.nongnu.org/texi2html/"><em>texi2html 1.82</em></a>.
+ </font>
+ <br>
+
+</p>
+</body>
+</html>
