@@ -55,13 +55,7 @@ public class TextFileMetricsPersister implements MetricValuesPersister {
 			writer = new BufferedWriter(new FileWriter(outputFile));
 			for (Map.Entry<ControlledMetric<?, ?>, Number> entry : metricValues.entrySet()) {
 				ControlledMetric<?, ?> metric = entry.getKey();
-				writer.append(metric.getComponent());
-				if (metric.getModule() != null) {
-					writer.append('.');
-					writer.append(metric.getModule());
-				}
-				writer.append('.');
-				writer.append(metric.getName());
+				writer.append(MiscUtils.metricToString(metric));
 				writer.append(separatingString);
 				writer.append(entry.getValue().toString());
 				writer.append(NEWLINE);

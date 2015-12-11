@@ -46,12 +46,11 @@ public class MiscUtils {
 	public static String metricToString(ControlledMetric<?, ?> metric) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(metric.getComponent());
-		if (metric.getModule() != null) {
-			sb.append('.');
-			sb.append(metric.getModule());
+		String mod = metric.getModule();
+		if (mod != null) {
+			sb.append('.').append(mod);
 		}
-		sb.append('.');
-		sb.append(metric.getName());
+		sb.append('.').append(metric.getName());
 		return sb.toString();
 	}
 }

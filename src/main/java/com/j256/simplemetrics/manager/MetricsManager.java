@@ -19,6 +19,7 @@ import com.j256.simplemetrics.metric.ControlledMetric;
 import com.j256.simplemetrics.metric.MetricValueDetails;
 import com.j256.simplemetrics.persister.MetricDetailsPersister;
 import com.j256.simplemetrics.persister.MetricValuesPersister;
+import com.j256.simplemetrics.utils.MiscUtils;
 
 /**
  * Class which manages the various metrics that are in the system so they can be queried by operations. You register
@@ -305,7 +306,7 @@ public class MetricsManager {
 		synchronized (metrics) {
 			values = new ArrayList<String>(metrics.size());
 			for (ControlledMetric<?, ?> metric : metrics) {
-				values.add(metric + "=" + metric.getValue());
+				values.add(MiscUtils.metricToString(metric) + "=" + metric.getValue());
 			}
 		}
 		return values.toArray(new String[values.size()]);

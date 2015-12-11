@@ -172,7 +172,7 @@ public class FileMetric {
 
 	@Override
 	public String toString() {
-		return metric.toString();
+		return MiscUtils.metricToString(metric);
 	}
 
 	private Double extractNumberFromFile() throws IOException {

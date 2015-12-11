@@ -5,6 +5,7 @@ import java.util.logging.Logger;
 
 import com.j256.simplejmx.common.JmxResource;
 import com.j256.simplemetrics.metric.ControlledMetric;
+import com.j256.simplemetrics.utils.MiscUtils;
 
 /**
  * Publishes metrics to the java.util.Logger class using the {@link Logger#info(String)} method.
@@ -21,7 +22,7 @@ public class LoggingMetricsPersister implements MetricValuesPersister {
 		for (Map.Entry<ControlledMetric<?, ?>, Number> entry : metricValues.entrySet()) {
 			ControlledMetric<?, ?> metric = entry.getKey();
 			Number value = entry.getValue();
-			logger.info(metric.toString() + " = " + value);
+			logger.info(MiscUtils.metricToString(metric) + " = " + value);
 		}
 	}
 }
