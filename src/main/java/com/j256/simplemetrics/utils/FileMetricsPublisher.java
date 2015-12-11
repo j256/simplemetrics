@@ -1,4 +1,4 @@
-package com.j256.simplemetrics.publisher;
+package com.j256.simplemetrics.utils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,9 +12,12 @@ import com.j256.simplemetrics.manager.MetricsManager;
 import com.j256.simplemetrics.manager.MetricsUpdater;
 
 /**
- * Class that will expose some good metrics that can be found from files on file-system. Often used to read from the
- * /proc file-system under Linux. If you are using the no-arg constructor (like with Spring) you will need to make sure
- * that {@link #initialize()} is called.
+ * Exposes metrics that can be found from files on file-system. This is often used to read from the /proc file-system
+ * under Linux. Metrics are configured with the {@link FileMetric} class. A common file metric is the number of open
+ * file-descriptors being used by the JVM.
+ * 
+ * NOTE: If you are using the no-arg constructor (like with Spring) you will need to make sure that
+ * {@link #initialize()} is called.
  * 
  * @author graywatson
  */

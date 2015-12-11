@@ -303,7 +303,7 @@ public class MetricsManager {
 		synchronized (metrics) {
 			values = new ArrayList<String>(metrics.size());
 			for (ControlledMetric<?, ?> metric : metrics) {
-				values.add(metric.getComponent() + "." + metric.getName() + '=' + metric.getValue());
+				values.add(metric + "=" + metric.getValue());
 			}
 		}
 		return values.toArray(new String[values.size()]);

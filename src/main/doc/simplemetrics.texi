@@ -43,9 +43,9 @@ Version @value{simplemetrics_version} -- @value{simplemetrics_date}
 @cindex introduction
 @cindex author
 @cindex simple metrics
-This package provides some simple metrics features that allow for the simple recording on application metrics and publishing them to
-various different local or cloud storage and cloud metric systems.  You code can register a metric and then not worry about how it
-is published or persisted.
+This package provides some simple metrics and associated operations that allow for the recording of application metrics
+and persisting them to various different local or cloud storage/metric systems.  You code registers metrics
+and then doesn't have to not worry about how they are managed or persisted.
 
 To get started quickly using SimpleMetrics, @pxref{Quick Start}.
 @ifhtml
@@ -93,7 +93,8 @@ LoggingMetricsPersister persister =
 metricsManager.registerMetric(hitCounter);
 @end example
 
-@item Create at least one metrics which monitors an application value and register them with the manager.
+@item Create at least one metric which monitors a particular application value, and register it with the 
+@code{LoggingMetricsPersister}.
 
 @example
 ControlledMetricAccum hitCounter =
@@ -102,8 +103,8 @@ ControlledMetricAccum hitCounter =
 metricsManager.registerMetric(hitCounter);
 @end example
 
-@item Possible use the @code{MetricsPersisterJob} which starts a background thread to call @code{persist()} on
-the @code{MetricsManager} every so often automatically.
+@item Possibly use the @code{MetricsPersisterJob} to start a background thread that calls @code{persist()} on
+the @code{MetricsManager} every so often automatically.  Otherwise you will need to do so using some other mechanism.
 
 @example
 MetricsPersisterJob persisterThread =
@@ -125,7 +126,9 @@ For somewhat more extensive instructions, @pxref{Using}.
 * Creating a MetricsManager ::    Creating a MetricsManager instance.
 * Using Metrics Persisters ::     Using or creating a metrics persister.
 * Registering Metrics ::          Creating and registering metrics.
-* Using MetricsUpdater ::         Using the MetricsUpdate interface.
+* Using MetricsUpdater ::         How to update metric values.
+* Built in Utilities ::           How to use built-in utilities.
+* Using SimpleJMX ::              Publishing metric information via JMX.
 * Maven ::                        How to use with Maven.
 @end menu
 
@@ -148,148 +151,182 @@ The code works with Java 6 or later.
 
 @cindex MetricsManager
 @cindex managing the metrics
+@cindex SimpleJMX
 The @code{MetricsManager} is the class which manages the metrics in the application, updates the values of the metrics
-when necessary, and persisting the metrics to disk or network when requests.
-
-@cindex loading metrics entries
-@cindex metrics files
-The metrics entries are relatively complex but in general look something like the following.  The configuration line says to
-look at the start of the file for the string @code{"GIF8"}.  If it is there then the file is "GIF image data".
-
-@cindex sample metrics definition
-@example
-0       string          GIF8            GIF image data
-@end example
-
-@cindex alternative metrics files
-@cindex /etc/metrics
-If you do not want to use the internal metrics definitions, you can also construct the @code{ContentInfoUtil} class with a file
-or directory to have it parse and use another definition file.
+when necessary, and persisting the metrics to disk or network when requested to do so.  You need to set at least one metrics
+persister on the manager and then register metrics from various places in your application. @code{MetricsManager} also
+supports @code{SimpleJmx} annotations which allow you to publish the metrics and view them via JMX. 
 
 @example
-ContentInfoUtil util = new ContentInfoUtil("/etc/metrics");
+MetricsManager metricsManager = new MetricsManager();
 @end example
-
-@emph{WARNING:} although we've tried to support different types of metrics entries, there are local per-OS variations that may
-not be supported.  
 
 @c ----------------------------------------------------------------
-@node Finding Content Info, Content Info, Downloading, Using
-@section How To Find The Content Info
+@node Using Metrics Persisters, Registering Metrics, Creating a MetricsManager, Using
+@section Using a Metrics Persister
 
-Once you have loaded the metrics entry information into your @code{ContentInfoUtil}, you can use the utility class to find
-the content info of files, byte arrays, or @code{InputStream}s.  The base method gets content info information from a
-@code{byte[]}.
+@cindex metrics persisters
+@cindex persisting metrics
+@cindex storing metrics
+@cindex cloud service
+@cindex save metrics to disk
+@cindex logging metrics
+Once you have created your @code{MetricsManager} you should set metrics persister classes on it.  Metrics persisters
+are the classes which are responsible for saving the metrics information to disk, cloud-service, or other archive so
+they can be reported on and stored for later use.
 
-@cindex byte array content
-@example
-byte[] uploadedBytes = ...;
-ContentInfo info = util.findMatch(uploadedBytes);
-@end example
+@cindex MetricValuesPersister
+@cindex MetricDetailsPersister
+@cindex MetricValueDetails
+@cindex minimum value
+@cindex maximum value
+@cindex average value
+@cindex number of samples
+@cindex samples
+Persisters implement either the @code{MetricValuesPersister} or @code{MetricDetailsPersister} interfaces.  The value persister
+gets the metric values as a simple @code{Number} class.  The details persister provides more extensive information on
+the metrics such as number of samples, average, minimum, and maximum values through the @code{MetricValueDetails} class.
 
-You can also get the content type of a file which is read with a @code{FileInputStream}:
-
-@cindex file content
-@example
-ContentInfo info = util.findMatch("/tmp/uploadedFile.tmp");
-// File uploadedFile = ...
-// ContentInfo info = util.findMatch(uploadedFile);
-@end example
-
-@cindex input stream content
-If you have an @code{InputStream}, you can also use it directly:
-
-@example
-InputStream inputStream = ...
-ContentInfo info = util.findMatch(inputStream);
-@end example
-
-@cindex ContentInfoInputStreamWrapper
-@cindex wrapped input stream
-@cindex delegate to input stream
-@cindex input stream wrapper
-If you want to process a stream of bytes as the bytes are being read, you can use the @code{ContentInfoInputStreamWrapper}
-utility class.  This takes an @code{InputStream} which it wraps and delegates to.  After you have read the bytes through
-the wrapper, you can call the @code{findMatch()} method to get its content information.
-
-@example
-HttpServletRequest request = ...
-ContentInfoInputStreamWrapper inputStream
-   = new ContentInfoInputStreamWrapper(request.getInputStream());
-// read in the file from the http request, ...
-// after we have read it in, we can get its content-info 
-ContentInfo info = inputStream.findMatch();
-@end example
-
-For the file and stream versions, the first 10 kilobytes of the data is read and processed.
-
-There is also a long internal list of file types copied from the Apache list --
-@uref{http://svn.apache.org/viewvc/httpd/httpd/trunk/docs/conf/mime.types?view=co}.  Not all of the files in this list
-have associated metrics number information.  However, with the list you can look up mime-types or by file-extension and
-get the associated information. 
-
-@cindex file extensions
-@cindex extensions
-You can use the internal list to lookup by file-extension:
-
-@example
-// find details about files with .pdf extension
-ContentInfo info =
-   ContentInfoUtil.findExtensionMatch("file.pdf");
-// you can even just pass in the extension name
-ContentInfo info =
-   ContentInfoUtil.findExtensionMatch("DOC");
-@end example
-
-@cindex mime-type
-Or you can look up by mime-type:
-
-@example
-// find details about this mime-type
-ContentInfo info =
-   ContentInfoUtil.findMimeTypeMatch("image/vnd.dwg");
-@end example
-
-Some internal entries provide more information than others.  This list is a work in progress.  Please submit improvements
-and edits as necessary.
-
-@c ----------------------------------------------------------------
-@node Content Info, License, Finding Content Info, Using
-@section Content Information
-
-If the @code{findMatch(...)} method does not recognize the content then it will return null.  If it does match one of the
-entries then it will return a @code{ContentInfo} class which provides:
+There are a couple simple persister implementations that some with the library although they may only be useful as
+implementation examples;
 
 @itemize @bullet
-@item Enumerated content-type if the type is common otherwise set to @code{OTHER}.  This is determined by mapping the
-mime-type string to an internal enumerated type and is not determined from the metrics file entries.
-@item Approximate content-name.  If the content-type is known then this will be a constant string.  If not know then this
-is usually the first word of the full message from the metrics file. 
-@item Details about the content produced by the metrics file.
-@cindex mime-type
-@item Mime-type string if one configured by the config file.
-@cindex file extensions
-@cindex extensions
-@item Associated file-extensions if in the internal list.
+
+@item @code{LoggingMetricsPersister} - Logs metrics and their values to @code{java.util.Logger}.  This can be used as an
+implementation example so you can log metrics to your application's primary logging class such as @code{log4j}.
+
+@item @code{SystemOutMetricsPersister} - Prints metrics and their values to @code{System.out}.
+
+@item @code{TextFileMetricsPersister} - Writes metrics and their values to a text-file on the file-system.  This text file
+can then be imported into some reporting system.  It is able to cleanup old metrics files with the
+@code{cleanMetricFilesOlderThanMillis(...)} method.
+
 @end itemize
 
-Here are some examples of @code{ContentInfo} output:
+Persisters are set on the @code{MetricsManager}:
+
+@example
+// persisters that persist a number per metric
+metricsManager.setMetricValuesPersisters(
+   new MetricDetailsPersister[] @{ @dots{} @};
+// persisters that persist metric details
+metricsManager.setMetricDetailsPersisters(
+   new MetricDetailsPersister[] @{ @dots{} @};
+@end example
+
+@c ----------------------------------------------------------------
+@node Registering Metrics, Using MetricsUpdater, Using Metrics Persisters, Using
+@section Creating and Registering Metrics
+
+@cindex creating metrics
+@cindex registering metrics
+@cindex metrics
+Once you have created your @code{MetricsManager} and created your persisters, you are ready to start creating and 
+registering metrics with the manager.  Metrics are the classes which keep track of the name of the metric as well as
+it's associated value(s).  For example, let's say we wanted to count the number of web-requests made to our web-server
+so we can graph it over time.  We might create a metric like the following and register it on the @code{MetricsManager}:
+
+@example
+ControlledMetricAccum webRequestMetric =
+   new ControlledMetricAccum("web", "server", "requests",
+      "number of requests handled by our web-server", null);
+metricsManager.registerMetric(webRequestMetric);
+@end example
+
+Whenever a request cames in, you just have to increment the metric:
+
+@example
+// count a web-request
+webRequestMetric.increment();
+@end example
+
+The @code{MetricsManager} takes care of persisting the value to disk or network and it also resets the value after it 
+is persisted so the counts per minute (or whatever your persist frequency is) will be accurate.
+
+There are a couple of different types of metrics that are built into the library. 
+
+@cindex ControlledMetricAccum
+@cindex accumulator metric
+@cindex increment, metric
+@cindex ControlledMetricValue
+@cindex value metric
+@cindex ControlledMetricTimer
+@cindex time tracking
+@cindex ControlledMetricRatio
+@cindex ratio metric
+@itemize @bullet
+
+@item @code{ControlledMetricAccum} - A metric that accumulates in value.  This is used when we are counting some sort
+of event light a web-server request or a thrown exception.  It supports an @code{increment()} method although the adjust
+will add any value to the metric.
+
+@item @code{ControlledMetricValue} - A metric whose value can go up or down.  This is used when we are monitoring how
+much memory the JVM is using or a cache-hit percentage.  We often use a @code{MetricsUpdater} when dealing with values.
+@xref{Using MetricsUpdater}.
+
+@item @code{ControlledMetricTimer} - For metrics that are tracking how long a particular operation takes, this class is
+useful for doing so.  It has a @code{start()} and @code{stop()} method which easily records the elapsed time in
+milliseconds given that it extends @code{ControlledMetricValue}.
+
+@item @code{ControlledMetricRatio} - This metric separates the numerator from the denominator to keep good precision
+when recording ratios.  You could track cache hit/miss ratios or other information with this.
+
+@end itemize
+
+@cindex BaseControlledMetric
+@cindex metrics base class
+@cindex ControlledMetric interface
+@cindex metrics interface
+If these metric types don't fully meet your needs, you can define others that implement the @code{ControlledMetric}
+interface and probably extend the @code{BaseControlledMetric} class.
+
+@c ----------------------------------------------------------------
+@node Using MetricsUpdater, Built in Utilities, Registering Metrics, Using
+@section Updating Metric Values
+
+In many situations, you may poll a value from another object and update a metric at that time.  The @code{MetricsManager}
+has support for classes that implement the @code{MetricsUpdater} interface that can be registered on the manager.
+Whenever values are to be persisted, the @code{MetricsManager} will call the configured updaters beforehand so they can
+calculate or poll the values for their metrics.
+
+For example, let's say you were tracking how much memory your were using in your system.  You would register your
+memory metric with the @code{MetricsManager} and also register yourself with the @code{MetricsManager} as an updater.
+The @code{MetricsManager} will call your @code{updateMetrics()} method which gives you an opportunity to calculate
+how much memory your code is using and update the metric with the information.
+
+@c ----------------------------------------------------------------
+@node Built in Utilities, Using SimpleJMX, Using MetricsUpdater, Using
+@section Using the Built-In Utilities
+
+There are a couple of built-in utility classes which are useful for most applications to utilize.
 
 @itemize @bullet
-@item html, mime 'text/html', msg 'HTML document text'
-@item java, msg 'Java serialization data, version 5'
-@item pdf, mime 'application/pdf', msg 'PDF document, version 1.4'
-@item gzip, mime 'application/x-gzip', msg 'gzip compressed data, was "", from Unix...'
-@item gif, mime 'image/gif', msg 'GIF image data, version 89a, 16 x 16'
-@item png, mime 'image/png', msg 'PNG image, 600 x 371, 8-bit/color RGB, non-interlaced'
-@item mp4a, mime 'audio/mp4', msg 'ISO Media, MPEG v4 system, iTunes AAC-LC'
-@item word, mime 'application/msword', msg 'Microsoft Word Document'
-@item wav, mime 'audio/x-wav', msg 'RIFF (little-endian) data, WAVE audio...'
-@item jpeg, mime 'image/jpeg', msg 'JPEG image data, JFIF standard 1.01'
+
+@item @code{SystemMetricsPublisher} - Publishes a number of useful bits of information from the JVM: number of threads,
+total memory used, maximum memory used, free memory, current heap size, number of loaded classes, total process CPU time,
+thread load average percentage, old gen memory presentage, process load average percentage.
+
+@item @code{FileMetricsPublisher} - Reads values from files on the file system that are then published via metrics.
+This is used to read numbers from files in thre @code{/proc} file-system on linux.  A common file metric that you might
+want to publish is the number of open file-descriptors being used by the JVM.
+
 @end itemize
 
 @c ----------------------------------------------------------------
-@node Maven, License, Content Info, Using
+@node Using SimpleJMX, Maven, Built in Utilities, Using
+@section Publishing Metrics Via JMX
+
+@cindex SimpleJMX
+@cindex JMX usage
+@cindex publishing metrics using JMX
+@cindex JmxServer
+The library uses the SimpleJMX library to allow for easy publishing of metric values via JMX.  It is optional
+to do so but you can set the @code{JmxServer} on the @code{MetricsManager} and metrics will be registered to the
+@code{JmxServer} and publishd into JMX folders.   For more information about SimpleJMX, see the @uref{http://256.com/sources/simplejmx/,
+SimpleJMX home page}.
+
+@c ----------------------------------------------------------------
+@node Maven, License, Using SimpleJMX, Using
 @section Using With Maven
 
 @cindex Maven, use with

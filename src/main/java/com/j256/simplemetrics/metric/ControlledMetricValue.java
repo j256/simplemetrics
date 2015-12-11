@@ -10,7 +10,7 @@ import com.j256.simplemetrics.metric.ControlledMetricValue.ValueCount;
  * @author graywatson
  */
 @JmxResource(domainName = "com.j256", folderNames = { "metrics" }, description = "Controlled Value")
-public class ControlledMetricValue extends ControlledMetric<Double, ValueCount> {
+public class ControlledMetricValue extends BaseControlledMetric<Double, ValueCount> {
 
 	/**
 	 * @param component
@@ -29,22 +29,22 @@ public class ControlledMetricValue extends ControlledMetric<Double, ValueCount> 
 	}
 
 	@Override
-	protected ValueCount createInitialValue() {
+	public ValueCount createInitialValue() {
 		return new ValueCount(0.0, 0, 0.0, 0.0, true);
 	}
 
 	@Override
-	protected Double makeValueFromLong(long value) {
+	public Double makeValueFromLong(long value) {
 		return (double) value;
 	}
 
 	@Override
-	protected Double makeValueFromNumber(Number value) {
+	public Double makeValueFromNumber(Number value) {
 		return value.doubleValue();
 	}
 
 	@Override
-	protected AggregationType getAggregationType() {
+	public AggregationType getAggregationType() {
 		return AggregationType.AVERAGE;
 	}
 

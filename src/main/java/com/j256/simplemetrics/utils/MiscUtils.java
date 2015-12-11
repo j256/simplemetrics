@@ -1,7 +1,9 @@
-package com.j256.simplemetrics;
+package com.j256.simplemetrics.utils;
 
 import java.io.Closeable;
 import java.io.IOException;
+
+import com.j256.simplemetrics.metric.ControlledMetric;
 
 /**
  * Set of common utility methods copied from the Net.
@@ -36,5 +38,20 @@ public class MiscUtils {
 			}
 		}
 		return true;
+	}
+
+	/**
+	 * Return the name of the metric build by looking at the fields.
+	 */
+	public static String metricToString(ControlledMetric<?, ?> metric) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(metric.getComponent());
+		if (metric.getModule() != null) {
+			sb.append('.');
+			sb.append(metric.getModule());
+		}
+		sb.append('.');
+		sb.append(metric.getName());
+		return sb.toString();
 	}
 }

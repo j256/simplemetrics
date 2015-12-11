@@ -12,7 +12,7 @@ import com.j256.simplemetrics.metric.ControlledMetricRatio.RatioValue;
  */
 @JmxResource(domainName = "com.j256", folderNames = { "metrics" },
 		description = "Controlled metric ratio between two values")
-public class ControlledMetricRatio extends ControlledMetric<NumeratorDenominator, RatioValue> {
+public class ControlledMetricRatio extends BaseControlledMetric<NumeratorDenominator, RatioValue> {
 
 	/**
 	 * @param component
@@ -31,22 +31,22 @@ public class ControlledMetricRatio extends ControlledMetric<NumeratorDenominator
 	}
 
 	@Override
-	protected RatioValue createInitialValue() {
+	public RatioValue createInitialValue() {
 		return new RatioValue(0.0, 0.0, 0, 0.0, 0.0, true);
 	}
 
 	@Override
-	protected NumeratorDenominator makeValueFromLong(long value) {
+	public NumeratorDenominator makeValueFromLong(long value) {
 		return new NumeratorDenominator(value, 1);
 	}
 
 	@Override
-	protected NumeratorDenominator makeValueFromNumber(Number number) {
+	public NumeratorDenominator makeValueFromNumber(Number number) {
 		return new NumeratorDenominator(number.doubleValue(), 1);
 	}
 
 	@Override
-	protected AggregationType getAggregationType() {
+	public AggregationType getAggregationType() {
 		return AggregationType.AVERAGE;
 	}
 

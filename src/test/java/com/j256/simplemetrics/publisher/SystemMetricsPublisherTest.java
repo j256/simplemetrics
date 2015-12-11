@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import com.j256.simplejmx.server.JmxServer;
 import com.j256.simplemetrics.manager.MetricsManager;
+import com.j256.simplemetrics.utils.SystemMetricsPublisher;
 
 public class SystemMetricsPublisherTest {
 

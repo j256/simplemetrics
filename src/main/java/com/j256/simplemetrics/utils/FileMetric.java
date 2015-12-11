@@ -1,11 +1,10 @@
-package com.j256.simplemetrics.publisher;
+package com.j256.simplemetrics.utils;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
-import com.j256.simplemetrics.MiscUtils;
 import com.j256.simplemetrics.metric.ControlledMetric;
 import com.j256.simplemetrics.metric.ControlledMetricAccum;
 import com.j256.simplemetrics.metric.ControlledMetricValue;

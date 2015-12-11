@@ -12,7 +12,7 @@ import com.j256.simplemetrics.metric.ControlledMetricAccum.AccumValue;
  * @author graywatson
  */
 @JmxResource(domainName = "com.j256", description = "Controlled Accumulator")
-public class ControlledMetricAccum extends ControlledMetric<Long, AccumValue> {
+public class ControlledMetricAccum extends BaseControlledMetric<Long, AccumValue> {
 
 	// We have this intermediate counter because we want to not have every increment cause another metric value object
 	private final AtomicLong counter = new AtomicLong();
@@ -34,17 +34,17 @@ public class ControlledMetricAccum extends ControlledMetric<Long, AccumValue> {
 	}
 
 	@Override
-	protected AccumValue createInitialValue() {
+	public AccumValue createInitialValue() {
 		return new AccumValue(0, true);
 	}
 
 	@Override
-	protected Long makeValueFromLong(long value) {
+	public Long makeValueFromLong(long value) {
 		return Long.valueOf(value);
 	}
 
 	@Override
-	protected Long makeValueFromNumber(Number value) {
+	public Long makeValueFromNumber(Number value) {
 		return value.longValue();
 	}
 
@@ -99,7 +99,7 @@ public class ControlledMetricAccum extends ControlledMetric<Long, AccumValue> {
 	}
 
 	@Override
-	protected AggregationType getAggregationType() {
+	public AggregationType getAggregationType() {
 		return AggregationType.SUM;
 	}
 

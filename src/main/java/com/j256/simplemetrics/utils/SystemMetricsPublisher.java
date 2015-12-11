@@ -1,4 +1,4 @@
-package com.j256.simplemetrics.publisher;
+package com.j256.simplemetrics.utils;
 
 import java.lang.management.ClassLoadingMXBean;
 import java.lang.management.ManagementFactory;
@@ -18,8 +18,8 @@ import com.j256.simplemetrics.manager.MetricsUpdater;
 import com.j256.simplemetrics.metric.ControlledMetricValue;
 
 /**
- * Class which outputs some important system metrics internal to the JVM. If you are using the no-arg constructor (like
- * with Spring) you will need to make sure that {@link #initialize()} is called.
+ * Publishes some important system metrics internal to the JVM. If you are using the no-arg constructor (like with
+ * Spring) you will need to make sure that {@link #initialize()} is called.
  * 
  * @author graywatson
  */

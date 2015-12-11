@@ -11,7 +11,9 @@ import org.junit.Test;
 
 import com.j256.simplemetrics.manager.MetricsManager;
 import com.j256.simplemetrics.metric.ControlledMetric;
-import com.j256.simplemetrics.publisher.FileMetric.ProcMetricKind;
+import com.j256.simplemetrics.utils.FileMetric;
+import com.j256.simplemetrics.utils.FileMetricsPublisher;
+import com.j256.simplemetrics.utils.FileMetric.ProcMetricKind;
 
 public class FileMetricsPublisherTest {
 

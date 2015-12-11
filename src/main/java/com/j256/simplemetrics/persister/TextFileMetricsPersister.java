@@ -12,8 +12,8 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import com.j256.simplejmx.common.JmxAttributeMethod;
 import com.j256.simplejmx.common.JmxResource;
-import com.j256.simplemetrics.MiscUtils;
 import com.j256.simplemetrics.metric.ControlledMetric;
+import com.j256.simplemetrics.utils.MiscUtils;
 
 /**
  * Publishes metrics to the log file on disk.
