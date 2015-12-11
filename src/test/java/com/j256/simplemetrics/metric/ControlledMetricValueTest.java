@@ -33,10 +33,10 @@ public class ControlledMetricValueTest {
 		long val = 10;
 		metric.adjustValue(val);
 		Number details = metric.getValueToPersist();
-		assertEquals(Double.valueOf(val), details);
+		assertEquals(val, details);
 		assertEquals(Double.valueOf(val), metric.getValue());
 		details = metric.getValueToPersist();
-		assertEquals(0.0, details);
+		assertEquals(0L, details);
 		assertEquals(0.0, metric.getValue());
 	}
 
