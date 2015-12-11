@@ -1,6 +1,8 @@
-package com.j256.simplemetrics.manager;
+package com.j256.simplemetrics.persister;
 
 import java.io.IOException;
+
+import com.j256.simplemetrics.manager.MetricsManager;
 
 /**
  * Metrics persister thread that can be used to call {@link MetricsManager#persistValues()} at a specific frequency. This is

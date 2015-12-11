@@ -16,7 +16,7 @@ public class MetricValueDetails {
 		Number value = metricValue.getValue();
 		// convert the value to a long if possible
 		if (value.doubleValue() == value.longValue()) {
-			this.value = Long.valueOf(value.longValue());
+			this.value = value.longValue();
 		} else {
 			this.value = value;
 		}

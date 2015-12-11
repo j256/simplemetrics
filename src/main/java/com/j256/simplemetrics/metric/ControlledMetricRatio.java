@@ -77,7 +77,7 @@ public class ControlledMetricRatio extends BaseControlledMetric<NumeratorDenomin
 	}
 
 	/**
-	 * Wrapper around a current value and count so we can calculate averages internally.
+	 * Wrapper around a numerator and denominator.
 	 */
 	public static class RatioValue implements MetricValue<NumeratorDenominator, RatioValue> {
 		private final double numerator;

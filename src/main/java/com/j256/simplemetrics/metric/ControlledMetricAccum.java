@@ -112,7 +112,7 @@ public class ControlledMetricAccum extends BaseControlledMetric<Long, AccumValue
 	}
 
 	/**
-	 * Wrapper around a counter long value and a reset flag.
+	 * Wrapper around a long counter and a reset flag.
 	 */
 	public static class AccumValue implements MetricValue<Long, AccumValue> {
 		private final long value;

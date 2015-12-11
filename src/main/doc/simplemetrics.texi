@@ -107,8 +107,9 @@ metricsManager.registerMetric(hitCounter);
 the @code{MetricsManager} every so often automatically.  Otherwise you will need to do so using some other mechanism.
 
 @example
+// persist our metrics every minute (60000 millis)
 MetricsPersisterJob persisterThread =
-   new MetricsPersisterJob(manager, 1000, 1000, true);
+   new MetricsPersisterJob(manager, 60000, 60000, true);
 @end example
 
 @end enumerate

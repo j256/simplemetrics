@@ -4,9 +4,9 @@ import java.io.IOException;
 import java.util.Random;
 
 import com.j256.simplemetrics.manager.MetricsManager;
-import com.j256.simplemetrics.manager.MetricsPersisterJob;
 import com.j256.simplemetrics.metric.ControlledMetricAccum;
 import com.j256.simplemetrics.persister.MetricValuesPersister;
+import com.j256.simplemetrics.persister.MetricsPersisterJob;
 import com.j256.simplemetrics.persister.SystemOutMetricsPersister;
 
 /**
@@ -34,6 +34,7 @@ public class BasicExample {
 		manager.registerMetric(missesMetric);
 
 		// start up the persisting thread to persist the metrics every so often
+		// this is persisting every 1 second but you'll probably want to do a minute (60000) or something
 		MetricsPersisterJob persisterThread = new MetricsPersisterJob(manager, 1000, 1000, true);
 
 		// now we run our application which is just doing some random counting

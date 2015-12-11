@@ -5,15 +5,13 @@ import com.j256.simplejmx.common.JmxResource;
 /**
  * Convenience to allow tracking of the elapsed time of events as a metric. Basically you do a:
  * 
- * ControlledMetricTimer timer = new ControlledMetricTimer("ils_time", "fe", "Description...");
- * 
+ * <pre>
+ * ControlledMetricTimer timer = new ControlledMetricTimer(...);
  * ...
- * 
- * long msecs = timer.start();
- * 
- * ilsClient.createEntry(...);
- * 
- * timer.end(msecs);
+ * long millis = timer.start();
+ * dao.createEntry(...);
+ * timer.end(millis);
+ * </pre>
  * 
  * The rest is done by the class and the metric system.
  * 

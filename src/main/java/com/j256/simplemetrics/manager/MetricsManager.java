@@ -21,7 +21,9 @@ import com.j256.simplemetrics.persister.MetricDetailsPersister;
 import com.j256.simplemetrics.persister.MetricValuesPersister;
 
 /**
- * Class which manages the various metrics that are in the system so they can be queried by operations.
+ * Class which manages the various metrics that are in the system so they can be queried by operations. You register
+ * metrics with this class, register classes that need to manually update metrics values, and controls the metrics
+ * persistence.
  * 
  * @author graywatson
  */
@@ -224,7 +226,7 @@ public class MetricsManager {
 				Number value = metric.getValue();
 				// convert the value to a long if possible
 				if (value.doubleValue() == value.longValue()) {
-					value = Long.valueOf(value.longValue());
+					value = value.longValue();
 				}
 				metricValues.put(metric, value);
 			}

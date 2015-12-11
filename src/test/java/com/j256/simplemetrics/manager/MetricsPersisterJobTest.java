@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+import com.j256.simplemetrics.persister.MetricsPersisterJob;
+
 public class MetricsPersisterJobTest {
 
 	@Test

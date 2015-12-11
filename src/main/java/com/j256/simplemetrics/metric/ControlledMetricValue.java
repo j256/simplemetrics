@@ -1,11 +1,13 @@
 package com.j256.simplemetrics.metric;
 
 import com.j256.simplejmx.common.JmxResource;
+import com.j256.simplemetrics.manager.MetricsUpdater;
 import com.j256.simplemetrics.metric.ControlledMetricValue.ValueCount;
 
 /**
- * Managed {@link ControlledMetric} for metrics like Thread-Count or page response times where you are reseting it each
- * time as opposed to a {@link ControlledMetricAccum}.
+ * Managed {@link ControlledMetric} for metrics like number of threads running or the JVM memory usage. It is used where
+ * you are reseting it each time as opposed to a {@link ControlledMetricAccum}. If you need to poll a system property or
+ * other object value then you may want your class to implement {@link MetricsUpdater}.
  * 
  * @author graywatson
  */

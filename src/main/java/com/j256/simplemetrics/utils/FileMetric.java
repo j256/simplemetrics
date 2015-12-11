@@ -74,14 +74,14 @@ public class FileMetric {
 				}
 				metric = new ControlledMetricValue(metricComponent, metricModule, metricName, description, unit);
 				break;
-			case COLUMN_ACCUM :
+			case ACCUM :
 				if (column < 0) {
 					throw new IllegalArgumentException("metric " + this.getClass() + " name " + metricName
 							+ " did not specify column value");
 				}
 				metric = new ControlledMetricAccum(metricComponent, metricModule, metricName, description, unit);
 				break;
-			case COLUMN_VALUE :
+			case VALUE :
 				if (column < 0) {
 					throw new IllegalArgumentException("metric " + this.getClass() + " name " + metricName
 							+ " did not specify column value");
@@ -102,8 +102,8 @@ public class FileMetric {
 			case DIR :
 				metric.adjustValue(metricFile.list().length);
 				break;
-			case COLUMN_ACCUM :
-			case COLUMN_VALUE :
+			case ACCUM :
+			case VALUE :
 				metric.adjustValue(extractNumberFromFile());
 				break;
 			default :
@@ -213,15 +213,15 @@ public class FileMetric {
 	}
 
 	/**
-	 * King of metric that we are processing here.
+	 * Kind of metrics that we are processing here.
 	 */
 	public enum ProcMetricKind {
-		// could of the number of entries in the directory
+		/** count of the number of entries in the directory */
 		DIR,
-		// number which accumulates
-		COLUMN_ACCUM,
-		// number which is a value
-		COLUMN_VALUE,
+		/** number which accumulates */
+		ACCUM,
+		/** number which is a value */
+		VALUE,
 		// end
 		;
 	}

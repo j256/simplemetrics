@@ -7,7 +7,9 @@ import com.j256.simplemetrics.metric.ControlledMetric;
 
 /**
  * Class which publishes our metrics to disk, a cloud service, or to some other repository. This most likely is going to
- * need to be implemented by the user of the system unless the {@link TextFileMetricsPersister} is all they need.
+ * need to be implemented by you unless the built in persisters (which are basically implementation examples) are really
+ * all you need. This persisters just numbers as opposed to {@link MetricDetailsPersister} which persists more
+ * information.
  * 
  * @author graywatson
  */
