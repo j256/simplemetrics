@@ -129,7 +129,7 @@ public abstract class BaseControlledMetric<V, MV extends MetricValue<V, MV>> imp
 
 	@Override
 	public String getJmxDomainName() {
-		return "anet.core";
+		return "com.j256";
 	}
 
 	@Override
@@ -217,13 +217,7 @@ public abstract class BaseControlledMetric<V, MV extends MetricValue<V, MV>> imp
 
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(component);
-		if (module != null) {
-			sb.append('.').append(module);
-		}
-		sb.append('.').append(name);
-		return sb.toString();
+		return MiscUtils.metricToString(this);
 	}
 
 	private MV getMetricValue(boolean resetNext) {

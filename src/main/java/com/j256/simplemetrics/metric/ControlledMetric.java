@@ -3,6 +3,10 @@ package com.j256.simplemetrics.metric;
 /**
  * Metric which defines some common fields and methods.
  * 
+ * <p>
+ * <b>NOTE:</b> You must override hashcode() and equals() because these are stored as keys in maps.
+ * </p>
+ * 
  * @param <V>
  *            Value type that we use to adjust this metric-value.
  * @param <MV>
