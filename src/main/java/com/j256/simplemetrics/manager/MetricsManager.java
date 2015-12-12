@@ -77,7 +77,7 @@ public class MetricsManager {
 
 	/**
 	 * Persists the configured metrics by calling to the registered updaters, extracting the value-details from the
-	 * metrics, and then calling the registered persisters.
+	 * metrics, and then calling the registered value and details persisters.
 	 */
 	public void persist() throws IOException {
 
@@ -86,35 +86,35 @@ public class MetricsManager {
 
 		// if we aren't persisting details then this is easy
 		if (metricDetailsPersisters.length == 0) {
-			persistValues();
+			persistValuesOnly();
 			return;
 		}
 
-		// first we make a unmodifiable map of metric -> details for the persisters
+		// first we make a map of metric -> details for the persisters
 		long timeCollectedMillis = System.currentTimeMillis();
-		Map<ControlledMetric<?, ?>, MetricValueDetails> metricValueDetails;
+		Map<ControlledMetric<?, ?>, MetricValueDetails> metricValueDetailMap;
 		synchronized (metrics) {
-			metricValueDetails = new HashMap<ControlledMetric<?, ?>, MetricValueDetails>(metrics.size());
+			metricValueDetailMap = new HashMap<ControlledMetric<?, ?>, MetricValueDetails>(metrics.size());
 			for (ControlledMetric<?, ?> metric : metrics) {
-				metricValueDetails.put(metric, metric.getValueDetailsToPersist());
+				metricValueDetailMap.put(metric, metric.getValueDetailsToPersist());
 			}
 		}
 
 		// if we have value persisters then extract the values from the details map
-		Map<ControlledMetric<?, ?>, Number> metricValues = null;
+		Map<ControlledMetric<?, ?>, Number> metricValueMap = null;
 		if (metricValuesPersisters.length > 0) {
-			metricValues = new HashMap<ControlledMetric<?, ?>, Number>(metricValueDetails.size());
-			for (Entry<ControlledMetric<?, ?>, MetricValueDetails> entry : metricValueDetails.entrySet()) {
-				metricValues.put(entry.getKey(), entry.getValue().getValue());
+			metricValueMap = new HashMap<ControlledMetric<?, ?>, Number>(metricValueDetailMap.size());
+			for (Entry<ControlledMetric<?, ?>, MetricValueDetails> entry : metricValueDetailMap.entrySet()) {
+				metricValueMap.put(entry.getKey(), entry.getValue().getValue());
 			}
-			metricValues = Collections.unmodifiableMap(metricValues);
+			metricValueMap = Collections.unmodifiableMap(metricValueMap);
 		}
-		metricValueDetails = Collections.unmodifiableMap(metricValueDetails);
+		metricValueDetailMap = Collections.unmodifiableMap(metricValueDetailMap);
 
 		Exception wasThrown = null;
 		for (MetricValuesPersister persister : metricValuesPersisters) {
 			try {
-				persister.persist(metricValues, timeCollectedMillis);
+				persister.persist(metricValueMap, timeCollectedMillis);
 			} catch (Exception e) {
 				// hold any exceptions thrown by them so we can get through all persisters
 				wasThrown = e;
@@ -122,7 +122,7 @@ public class MetricsManager {
 		}
 		for (MetricDetailsPersister persister : metricDetailsPersisters) {
 			try {
-				persister.persist(metricValueDetails, timeCollectedMillis);
+				persister.persist(metricValueDetailMap, timeCollectedMillis);
 			} catch (Exception e) {
 				// hold any exceptions thrown by them so we can get through all persisters
 				wasThrown = e;
@@ -139,12 +139,14 @@ public class MetricsManager {
 	}
 
 	/**
-	 * Persists the configured metrics by extracting the values from the metrics and then calling the registered
-	 * persisters.
+	 * Persists the configured metrics to the value persisters <i>only</i> by extracting the values from the metrics and
+	 * then calling the registered persisters. Usually you will want to call {@link #persist()} instead.
 	 * 
-	 * NOTE: you should call updateMetrics() before calling persist if necessary.
+	 * <p>
+	 * <b>NOTE:</b> you should call updateMetrics() before calling this method if necessary.
+	 * </p>
 	 */
-	public void persistValues() throws IOException {
+	public void persistValuesOnly() throws IOException {
 
 		// first we make a unmodifiable map of metric -> persisted value for the persisters
 		long timeCollectedMillis = System.currentTimeMillis();
@@ -161,44 +163,6 @@ public class MetricsManager {
 		for (MetricValuesPersister persister : metricValuesPersisters) {
 			try {
 				persister.persist(metricValues, timeCollectedMillis);
-			} catch (Exception e) {
-				// hold any exceptions thrown by them so we can get through all persisters
-				wasThrown = e;
-			}
-		}
-		persistCount++;
-		if (wasThrown != null) {
-			if (wasThrown instanceof IOException) {
-				throw (IOException) wasThrown;
-			} else {
-				throw new IOException(wasThrown);
-			}
-		}
-	}
-
-	/**
-	 * Persists the configured metrics by extracting the values from the metrics and then calling the registered
-	 * persisters.
-	 * 
-	 * NOTE: you should call updateMetrics() before calling persist if necessary.
-	 */
-	public void persistValueDetails() throws IOException {
-
-		// first we make a unmodifiable map of metric -> persisted value for the persisters
-		long timeCollectedMillis = System.currentTimeMillis();
-		Map<ControlledMetric<?, ?>, MetricValueDetails> metricValueDetails;
-		synchronized (metrics) {
-			metricValueDetails = new HashMap<ControlledMetric<?, ?>, MetricValueDetails>(metrics.size());
-			for (ControlledMetric<?, ?> metric : metrics) {
-				metricValueDetails.put(metric, metric.getValueDetailsToPersist());
-			}
-		}
-		metricValueDetails = Collections.unmodifiableMap(metricValueDetails);
-
-		Exception wasThrown = null;
-		for (MetricDetailsPersister persister : metricDetailsPersisters) {
-			try {
-				persister.persist(metricValueDetails, timeCollectedMillis);
 			} catch (Exception e) {
 				// hold any exceptions thrown by them so we can get through all persisters
 				wasThrown = e;
@@ -267,7 +231,7 @@ public class MetricsManager {
 	@JmxOperation(description = "Persist metrics using the registered persisters")
 	public String persistJmx() {
 		try {
-			persistValues();
+			persist();
 			return "metrics published";
 		} catch (IOException e) {
 			return "Threw: " + e.getMessage();
