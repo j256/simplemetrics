@@ -16,8 +16,10 @@ import com.j256.simplemetrics.manager.MetricsUpdater;
  * under Linux. Metrics are configured with the {@link FileMetric} class. A common file metric is the number of open
  * file-descriptors being used by the JVM.
  * 
- * NOTE: If you are using the no-arg constructor (like with Spring) you will need to make sure that
+ * <p>
+ * <b>NOTE:</b> If you are using the no-arg constructor (like with Spring) you will need to make sure that
  * {@link #initialize()} is called.
+ * </p>
  * 
  * @author graywatson
  */
@@ -94,7 +96,7 @@ public class FileMetricsPublisher implements MetricsUpdater {
 	public String[] getMetricsValues() {
 		List<String> results = new ArrayList<String>();
 		for (FileMetric fileMetric : fileMetrics) {
-			results.add(fileMetric.getMetric().toString() + fileMetric.getMetric().getValue());
+			results.add(fileMetric.getMetric().toString() + " = " + fileMetric.getMetric().getValue());
 		}
 		return results.toArray(new String[results.size()]);
 	}
