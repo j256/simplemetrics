@@ -84,7 +84,7 @@ public class MetricsManagerTest implements MetricsUpdater {
 		manager.setMetricValuesPersisters(new MetricValuesPersister[] { persister });
 
 		assertNull(persister.lastValueMap);
-		manager.persistValues();
+		manager.persistValuesOnly();
 		assertNotNull(persister.lastValueMap);
 
 		Number value = persister.lastValueMap.get(metric);
@@ -94,7 +94,7 @@ public class MetricsManagerTest implements MetricsUpdater {
 		long val = 10;
 		metric.add(val);
 
-		manager.persistValues();
+		manager.persistValuesOnly();
 		assertNotNull(persister.lastValueMap);
 		value = persister.lastValueMap.get(metric);
 		assertNotNull(value);

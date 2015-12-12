@@ -24,7 +24,7 @@ public class FileMetricsPublisherTest {
 		String label = "foo";
 		FileMetric metric =
 				new FileMetric(label, "comp", null, "desc", new File(PROC_PREFIX, "meminfo"),
-						ProcMetricKind.VALUE, 1, " +", "Cached:");
+						ProcMetricKind.FILE_VALUE, 1, " +", "Cached:");
 
 		MetricsManager manager = new MetricsManager();
 		new FileMetricsPublisher(manager, Arrays.asList(metric));
@@ -36,5 +36,32 @@ public class FileMetricsPublisherTest {
 		assertNotNull(value);
 		// it's a constant from the file
 		assertEquals(4385684, value.longValue());
+	}
+
+	@Test
+	public void testDir() {
+		String label = "foo";
+		FileMetric metric =
+				new FileMetric(label, "self", null, "fds", new File(PROC_PREFIX, "self/fd"), ProcMetricKind.DIR, 0,
+						null, null);
+
+		MetricsManager manager = new MetricsManager();
+		FileMetricsPublisher publisher = new FileMetricsPublisher();
+		publisher.setMetricsManager(manager);
+		publisher.setFileMetrics(new FileMetric[] { metric });
+		publisher.initialize();
+
+		manager.updateMetrics();
+		Map<ControlledMetric<?, ?>, Number> metricsValueMap = manager.getMetricValuesMap();
+
+		Number value = metricsValueMap.get(metric.getMetric());
+		assertNotNull(value);
+		// it's a constant from the file
+		assertEquals(4, value.longValue());
+		assertEquals(0, publisher.getFailedUpdateCount());
+		String[] values = publisher.getMetricsValues();
+		assertNotNull(values);
+		assertEquals(1, values.length);
+		assertEquals("self.foo = 4.0", values[0]);
 	}
 }

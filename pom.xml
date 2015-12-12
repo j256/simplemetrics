@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.j256.simplemetrics</groupId>
 	<artifactId>simplemetrics</artifactId>
@@ -19,12 +20,6 @@
 		<artifactId>oss-parent</artifactId>
 		<version>5</version>
 	</parent>
-	<properties>
-		<!-- external package versions -->
-		<simplejmx-version>1.12</simplejmx-version>
-		<junit-version>4.8.1</junit-version>
-		<!-- optional dependencies -->
-	</properties>
 	<scm>
 		<url>https://github.com/j256/simplemetrics</url>
 		<connection>scm:git:ssh://git@github.com/j256/simplemetrics.git</connection>
@@ -95,11 +90,11 @@
 					<target>1.6</target>
 				</configuration>
 			</plugin>
-	<plugin>
-		<groupId>org.apache.maven.plugins</groupId>
-		<artifactId>maven-dependency-plugin</artifactId>
-		<version>2.6</version>
-	</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>2.6</version>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
@@ -202,6 +197,15 @@
 			</plugins>
 		</pluginManagement>
 	</build>
+	<properties>
+		<!-- external package versions -->
+		<simplejmx-version>1.12</simplejmx-version>
+		<!-- optional dependencies -->
+		<aws-version>1.10.40</aws-version>
+		<!-- test dependencies -->
+		<junit-version>4.8.1</junit-version>
+		<easymock-version>2.3</easymock-version>
+	</properties>
 	<dependencies>
 		<!-- dependencies -->
 		<dependency>
@@ -210,11 +214,23 @@
 			<version>${simplejmx-version}</version>
 		</dependency>
 		<!-- optional dependencies -->
+		<dependency>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-java-sdk</artifactId>
+			<version>${aws-version}</version>
+			<optional>true</optional>
+		</dependency>
 		<!-- test dependencies -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>${junit-version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.easymock</groupId>
+			<artifactId>easymock</artifactId>
+			<version>${easymock-version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

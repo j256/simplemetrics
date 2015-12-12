@@ -48,7 +48,7 @@ public class BasicExample {
 			}
 		}
 		// persist at the very end in case your computer is faster than mine (or its the future)
-		manager.persistValues();
+		manager.persist();
 
 		// shutdown the persister thread
 		persisterThread.destroy();

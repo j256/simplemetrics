@@ -23,7 +23,7 @@ public class FileMetricTest {
 		metric.setMetricName(label);
 		metric.setMetricComponent("comp");
 		metric.setDescription("desc");
-		metric.setKind(ProcMetricKind.VALUE);
+		metric.setKind(ProcMetricKind.FILE_VALUE);
 		metric.setColumn(1);
 		metric.setMetricFile(PROC_PREFIX + "/meminfo");
 		metric.setPrefix("Cached:");
@@ -42,7 +42,7 @@ public class FileMetricTest {
 		metric.setMetricName(label);
 		metric.setMetricComponent("comp");
 		metric.setDescription("desc");
-		metric.setKind(ProcMetricKind.ACCUM);
+		metric.setKind(ProcMetricKind.FILE_ACCUM);
 		metric.setColumn(1);
 		metric.setMetricFile(PROC_PREFIX + "/meminfo");
 		metric.setPrefix("Cached:");
@@ -61,7 +61,7 @@ public class FileMetricTest {
 		metric.setMetricName(label);
 		metric.setMetricComponent("comp");
 		metric.setDescription("desc");
-		metric.setKind(ProcMetricKind.VALUE);
+		metric.setKind(ProcMetricKind.FILE_VALUE);
 		metric.setColumn(1);
 		metric.setMetricFile(PROC_PREFIX + "/meminfo");
 		metric.setPrefix("Unknown-prefix:");
@@ -80,7 +80,7 @@ public class FileMetricTest {
 		metric.setMetricName(label);
 		metric.setMetricComponent("comp");
 		metric.setDescription("desc");
-		metric.setKind(ProcMetricKind.VALUE);
+		metric.setKind(ProcMetricKind.FILE_VALUE);
 		metric.setColumn(1);
 		metric.setMetricFile(PROC_PREFIX + "/emptyFile");
 		metric.initialize();
@@ -97,7 +97,7 @@ public class FileMetricTest {
 		metric.setMetricName(label);
 		metric.setMetricComponent("comp");
 		metric.setDescription("desc");
-		metric.setKind(ProcMetricKind.VALUE);
+		metric.setKind(ProcMetricKind.FILE_VALUE);
 		metric.setColumn(100);
 		metric.setMetricFile(PROC_PREFIX + "/meminfo");
 		metric.setPrefix("Cached:");
@@ -116,7 +116,7 @@ public class FileMetricTest {
 		metric.setMetricName(label);
 		metric.setMetricComponent("comp");
 		metric.setDescription("desc");
-		metric.setKind(ProcMetricKind.VALUE);
+		metric.setKind(ProcMetricKind.FILE_VALUE);
 		// invalid column "kB"
 		metric.setColumn(2);
 		metric.setMetricFile(PROC_PREFIX + "/meminfo");
@@ -178,7 +178,7 @@ public class FileMetricTest {
 	public void testNoColumn() throws Exception {
 		FileMetric metric = new FileMetric();
 		metric.setMetricFile(PROC_PREFIX + "/meminfo");
-		metric.setKind(ProcMetricKind.VALUE);
+		metric.setKind(ProcMetricKind.FILE_VALUE);
 		metric.initialize();
 	}
 
@@ -186,7 +186,7 @@ public class FileMetricTest {
 	public void testNoColumnAccum() throws Exception {
 		FileMetric metric = new FileMetric();
 		metric.setMetricFile(PROC_PREFIX + "/meminfo");
-		metric.setKind(ProcMetricKind.ACCUM);
+		metric.setKind(ProcMetricKind.FILE_ACCUM);
 		metric.initialize();
 	}
 
@@ -197,7 +197,7 @@ public class FileMetricTest {
 		metric.setMetricName(label);
 		metric.setMetricComponent("comp");
 		metric.setDescription("desc");
-		metric.setKind(ProcMetricKind.VALUE);
+		metric.setKind(ProcMetricKind.FILE_VALUE);
 		metric.setColumn(2);
 		metric.setMetricFile(PROC_PREFIX + "/does-not-exist");
 		metric.initialize();
@@ -211,7 +211,7 @@ public class FileMetricTest {
 		metric.setMetricName(label);
 		metric.setMetricComponent("comp");
 		metric.setDescription("desc");
-		metric.setKind(ProcMetricKind.VALUE);
+		metric.setKind(ProcMetricKind.FILE_VALUE);
 		metric.setColumn(2);
 		metric.setMetricFile(PROC_PREFIX + "/does-not-exist");
 		metric.setRequired(true);

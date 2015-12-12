@@ -19,6 +19,6 @@ public class MetricsPersisterJobTest {
 		Thread.sleep(millis + millis / 10);
 		assertEquals(1, manager.getPersistCount());
 
-		job.destroy();
+		job.join();
 	}
 }
