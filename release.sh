@@ -37,12 +37,6 @@ if [ $? -ne 0 ]; then
 fi
 
 #############################################################
-# run tests
-
-cd $LOCAL_DIR
-mvn test || exit 1
-
-#############################################################
 
 release=`grep version pom.xml | grep SNAPSHOT | head -1 | cut -f2 -d\> | cut -f1 -d\-`
 
@@ -74,6 +68,12 @@ if [ "$release" != "$ver" ]; then
 	/bin/echo -n "Press control-c to quit otherwise return.  [ok] "
 	read cont
 fi
+
+#############################################################
+# run tests
+
+cd $LOCAL_DIR
+mvn test || exit 1
 
 #############################################################
 
