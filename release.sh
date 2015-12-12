@@ -56,6 +56,27 @@ if [ "$rel" != "" ]; then
 	release=$rel
 fi
 
+#############################################################
+# check docs:
+
+cd $LOCAL_DIR
+ver=`head -1 src/main/javadoc/doc-files/changelog.txt | cut -f1 -d:`
+if [ "$release" != "$ver" ]; then
+	echo "Change log top line version seems wrong:"
+	head -1 src/main/javadoc/doc-files/changelog.txt
+	exit 1
+fi
+
+ver=`grep "^@set ${LIBRARY}_version" src/main/doc/$LIBRARY.texi | cut -f3 -d' '`
+if [ "$release" != "$ver" ]; then
+	/bin/echo "$LIBRARY.texi version seems wrong:"
+	grep "^@set ${LIBRARY}_version" src/main/doc/$LIBRARY.texi
+	/bin/echo -n "Press control-c to quit otherwise return.  [ok] "
+	read cont
+fi
+
+#############################################################
+
 /bin/echo ""
 /bin/echo -n "Enter the GPG pass-phrase: "
 read gpgpass
@@ -77,25 +98,6 @@ rm -f $tmp*
 /bin/echo "------------------------------------------------------- "
 /bin/echo "Releasing version '$release'"
 sleep 3
-
-#############################################################
-# check docs:
-
-cd $LOCAL_DIR
-ver=`head -1 src/main/javadoc/doc-files/changelog.txt | cut -f1 -d:`
-if [ "$release" != "$ver" ]; then
-	echo "Change log top line version seems wrong:"
-	head -1 src/main/javadoc/doc-files/changelog.txt
-	exit 1
-fi
-
-ver=`grep "^@set ${LIBRARY}_version" src/main/doc/$LIBRARY.texi | cut -f3 -d' '`
-if [ "$release" != "$ver" ]; then
-	/bin/echo "$LIBRARY.texi version seems wrong:"
-	grep "^@set ${LIBRARY}_version" src/main/doc/$LIBRARY.texi
-	/bin/echo -n "Press control-c to quit otherwise return.  [ok] "
-	read cont
-fi
 
 #############################################################
 # releasing to sonatype
