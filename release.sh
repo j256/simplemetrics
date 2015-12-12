@@ -3,7 +3,8 @@
 # Release script for SimpleJmx
 #
 
-LOCAL_DIR="$HOME/svn/local/simplemetrics"
+LIBRARY="simplemetrics"
+LOCAL_DIR="$HOME/svn/local/$LIBRARY"
 
 #############################################################
 # check ChangeLog
@@ -86,6 +87,14 @@ if [ "$release" != "$ver" ]; then
 	echo "Change log top line version seems wrong:"
 	head -1 src/main/javadoc/doc-files/changelog.txt
 	exit 1
+fi
+
+ver=`grep '^@set $LIBRARY_version' src/main/doc/$LIBRARY.texi | cut -f3 -d' '`
+if [ "$release" != "$ver" ]; then
+	/bin/echo "$LIBRARY.texi version seems wrong:"
+	grep '^@set $LIBRARY_version' src/main/doc/$LIBRARY.texi
+	/bin/echo "Press control-c to quit otherwise return.  [ok] "
+	read cont
 fi
 
 #############################################################
