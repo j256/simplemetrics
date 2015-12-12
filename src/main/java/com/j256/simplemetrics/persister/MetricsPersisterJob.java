@@ -5,7 +5,7 @@ import java.io.IOException;
 import com.j256.simplemetrics.manager.MetricsManager;
 
 /**
- * Metrics persister thread that can be used to call {@link MetricsManager#persistValues()} at a specific frequency.
+ * Metrics persister thread that can be used to call {@link MetricsManager#persistValuesOnly()} at a specific frequency.
  * This is used if you don't have another mechanism to call the persisting on your own. If you are using the no-arg
  * constructor (like with Spring) you will need to make sure that {@link #initialize()} is called.
  * 
@@ -52,6 +52,18 @@ public class MetricsPersisterJob implements Runnable {
 	public void destroy() {
 		this.thread.interrupt();
 		// NOTE: we are not waiting for the thread to finish on purpose
+	}
+
+	/**
+	 * Call when you want to join with the the publisher thread.
+	 */
+	public void join() {
+		destroy();
+		try {
+			this.thread.join();
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+		}
 	}
 
 	@Override

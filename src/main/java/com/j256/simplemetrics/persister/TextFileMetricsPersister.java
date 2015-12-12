@@ -20,7 +20,8 @@ import com.j256.simplemetrics.utils.MiscUtils;
  * 
  * @author graywatson
  */
-@JmxResource(domainName = "com.j256", folderNames = { "metrics" }, description = "Text File Metrics Persister")
+@JmxResource(domainName = "com.j256", beanName = "TextFilePersister", folderNames = { "metrics" },
+		description = "Text File Metrics Persister")
 public class TextFileMetricsPersister implements MetricValuesPersister {
 
 	private static final String NEWLINE = System.getProperty("line.separator");
@@ -33,6 +34,7 @@ public class TextFileMetricsPersister implements MetricValuesPersister {
 	private String logFileNamePrefix;
 	private boolean appendSysTimeMillis = true;
 	private String separatingString = DEFAULT_SEPARATING_STRING;
+	private boolean showDescription = false;
 
 	private final AtomicLong dumpLogCount = new AtomicLong(0);
 	private final AtomicLong cleanupLogCount = new AtomicLong(0);
@@ -55,6 +57,9 @@ public class TextFileMetricsPersister implements MetricValuesPersister {
 			writer = new BufferedWriter(new FileWriter(outputFile));
 			for (Map.Entry<ControlledMetric<?, ?>, Number> entry : metricValues.entrySet()) {
 				ControlledMetric<?, ?> metric = entry.getKey();
+				if (showDescription) {
+					writer.append("# ").append(metric.getDescription()).append(NEWLINE);
+				}
 				writer.append(MiscUtils.metricToString(metric));
 				writer.append(separatingString);
 				writer.append(entry.getValue().toString());
@@ -103,33 +108,10 @@ public class TextFileMetricsPersister implements MetricValuesPersister {
 		return appendSysTimeMillis;
 	}
 
+	// @NotRequired("Default is true")
 	@JmxAttributeMethod(description = "Whether we are appending the sys time millis to the output file")
 	public void setAppendSysTimeMillis(boolean appendSysTimeMillis) {
 		this.appendSysTimeMillis = appendSysTimeMillis;
-	}
-
-	// @NotRequired("Default is " + DEFAULT_SEPARATING_STRING)
-	public void setSeparatingString(String separatingString) {
-		this.separatingString = separatingString;
-	}
-
-	@JmxAttributeMethod(description = "Number of times we've written metrics")
-	public long getDumpLogCount() {
-		return dumpLogCount.get();
-	}
-
-	@JmxAttributeMethod(description = "Number of times we've deleted metrics files")
-	public long getCleanupLogCount() {
-		return cleanupLogCount.get();
-	}
-
-	@JmxAttributeMethod(description = "Last time the metrics were written")
-	public String getLastDumpTimeMillisString() {
-		if (lastDumpTimeMillis == 0) {
-			return "never";
-		} else {
-			return new SimpleDateFormat("yyyy/MM/dd HH:mm:ss z").format(new Date(lastDumpTimeMillis));
-		}
 	}
 
 	@JmxAttributeMethod(description = "Directory where log files are written")
@@ -150,5 +132,40 @@ public class TextFileMetricsPersister implements MetricValuesPersister {
 			throw new IllegalArgumentException("Can not write to OutputDirectory: " + outputDirectory);
 		}
 		this.outputDirectory = outputDirectory;
+	}
+
+	// @NotRequired("Default is " + DEFAULT_SEPARATING_STRING)
+	public void setSeparatingString(String separatingString) {
+		this.separatingString = separatingString;
+	}
+
+	@JmxAttributeMethod(description = "Show the description in the file")
+	public boolean isShowDescription() {
+		return showDescription;
+	}
+
+	// @NotRequired("Default is false")
+	@JmxAttributeMethod(description = "Show the description in the file")
+	public void setShowDescription(boolean showDescription) {
+		this.showDescription = showDescription;
+	}
+
+	@JmxAttributeMethod(description = "Number of times we've written metrics")
+	public long getDumpLogCount() {
+		return dumpLogCount.get();
+	}
+
+	@JmxAttributeMethod(description = "Number of times we've deleted metrics files")
+	public long getCleanupLogCount() {
+		return cleanupLogCount.get();
+	}
+
+	@JmxAttributeMethod(description = "Last time the metrics were written")
+	public String getLastDumpTimeMillisString() {
+		if (lastDumpTimeMillis == 0) {
+			return "never";
+		} else {
+			return new SimpleDateFormat("yyyy/MM/dd HH:mm:ss z").format(new Date(lastDumpTimeMillis));
+		}
 	}
 }
