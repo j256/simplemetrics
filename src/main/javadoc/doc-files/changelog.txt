@@ -1,6 +1,6 @@
-0.6: 12/11/2015
+0.6: 12/12/2015
 	* Bunch of refactoring, improved comments, other tweaks.
 	* Added a CloudWatchMetricsPersister with an optional dependency for aws-java-sdk.
 
-0.5: 12/10/2015
+0.5: 12/11/2015
 	* Initial public release after being used internally at two companies for a while so started at 0.5.

@@ -46,8 +46,8 @@ public class FileMetricsPublisher implements MetricsUpdater {
 	}
 
 	/**
-	 * Should be called if the no-arg construct is being used and after the file metrics have been set. Maybe by Springs
-	 * init mechanism?
+	 * Should be called if the no-arg construct is being used and after the various setters have been called. Maybe by
+	 * Springs init mechanism?
 	 */
 	public void initialize() {
 		for (FileMetric metric : fileMetrics) {
@@ -76,7 +76,7 @@ public class FileMetricsPublisher implements MetricsUpdater {
 	 * Update all of the file metrics.
 	 */
 	@Override
-	@JmxOperation(description = "Poll the metrics files")
+	@JmxOperation(description = "Read in the values of the file metrics")
 	public void updateMetrics() {
 		for (FileMetric fileMetric : fileMetrics) {
 			try {
