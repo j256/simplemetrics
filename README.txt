@@ -40,3 +40,6 @@ Getting Started
 	hitCounter.increment();
 	// or maybe we need to account for a bunch of hits
 	hitCounter.add(23);
+    // ...
+    
+    // the persister will log the value of hitCounter every 60 seconds automatically
