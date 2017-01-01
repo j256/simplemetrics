@@ -84,17 +84,18 @@ To use SimpleMetrics you need to do the following steps.  For more information, 
 MetricsManager metricsManager = new MetricsManager();
 @end example
 
-@item Create a persister such as the @code{LoggingMetricsPersister} which logs the metrics and values to
-@code{java.util.Logger}.
+@item Create a persister such as the @code{LoggingMetricsPersister} which, in this case, logs the metrics and values
+to @code{java.util.Logger}.  You may want to roll your own.
 
 @example
 LoggingMetricsPersister persister =
    new LoggingMetricsPersister();
-metricsManager.registerMetric(hitCounter);
+metricsManager.setMetricValuesPersisters(
+   new MetricValuesPersister[] { persister });
 @end example
 
 @item Create at least one metric which monitors a particular application value, and register it with the 
-@code{LoggingMetricsPersister}.
+@code{MetricsManager}.
 
 @example
 ControlledMetricAccum hitCounter =
@@ -104,7 +105,8 @@ metricsManager.registerMetric(hitCounter);
 @end example
 
 @item Possibly use the @code{MetricsPersisterJob} to start a background thread that calls @code{persist()} on
-the @code{MetricsManager} every so often automatically.  Otherwise you will need to do so using some other mechanism.
+the @code{MetricsManager} every so often.  Otherwise you will need to call @code{persist()} on your own using some
+other mechanism.
 
 @example
 // persist our metrics every minute (60000 millis)
@@ -142,7 +144,7 @@ For somewhat more extensive instructions, @pxref{Using}.
 @cindex where to get new jars
 To get started with SimpleMetrics, you will need to download the jar file.  The @uref{http://256.com/sources/simplemetrics/releases/, SimpleMetrics
 release page} is the default repository but the jars are also available from the @uref{http://repo1.maven.org/maven2/com/j256/simplemetrics/,
-central maven repository}.
+central maven repository}.  If you are using Maven, @pxref{Maven}.
 
 The code works with Java 6 or later.
 
@@ -154,9 +156,10 @@ The code works with Java 6 or later.
 @cindex managing the metrics
 @cindex SimpleJMX
 The @code{MetricsManager} is the class which manages the metrics in the application, updates the values of the metrics
-when necessary, and persisting the metrics to disk or network when requested to do so.  You need to set at least one metrics
-persister on the manager and then register metrics from various places in your application. @code{MetricsManager} also
-supports @code{SimpleJmx} annotations which allow you to publish the metrics and view them via JMX. 
+when necessary, and calls the persisters to save the metrics to disk or network when requested to do so.  You need to set
+at least one metrics persister on the manager and then register metrics from various places in your application.
+The code{MetricsManager} also supports @code{SimpleJmx} annotations which allow you to publish the metrics and view them
+via JMX. 
 
 @example
 MetricsManager metricsManager = new MetricsManager();
@@ -172,7 +175,7 @@ MetricsManager metricsManager = new MetricsManager();
 @cindex cloud service
 @cindex save metrics to disk
 @cindex logging metrics
-Once you have created your @code{MetricsManager} you should set metrics persister classes on it.  Metrics persisters
+Once you have created your @code{MetricsManager} you should set metrics persister(s) on it.  Metrics persisters
 are the classes which are responsible for saving the metrics information to disk, cloud-service, or other archive so
 they can be reported on and stored for later use.
 
@@ -204,7 +207,10 @@ can then be imported into some reporting system.  It is able to cleanup old metr
 
 @end itemize
 
-Persisters are set on the @code{MetricsManager}:
+There is also an implementation for a persister @code{CloudWatchMetricsPersister} that saves the metrics into Amazon's
+AWS CloudWatch service.  It requires the @code{aws-java-sdk} library which is an optional dependency.
+
+Persisters are set on the @code{MetricsManager} as follows:
 
 @example
 // persisters that persist a number per metric
@@ -222,9 +228,8 @@ metricsManager.setMetricDetailsPersisters(
 @cindex creating metrics
 @cindex registering metrics
 @cindex metrics
-Once you have created your @code{MetricsManager} and created your persisters, you are ready to start creating and 
-registering metrics with the manager.  Metrics are the classes which keep track of the name of the metric as well as
-it's associated value(s).  For example, let's say we wanted to count the number of web-requests made to our web-server
+Once you have created your @code{MetricsManager} and a persister, you are ready to start creating and registering metrics
+with the manager.  Metrics are the objects which keep track of the name of the metric as well as it's associated value(s).  For example, let's say we wanted to count the number of web-requests made to our web-server
 so we can graph it over time.  We might create a metric like the following and register it on the @code{MetricsManager}:
 
 @example
@@ -257,20 +262,20 @@ There are a couple of different types of metrics that are built into the library
 @cindex ratio metric
 @itemize @bullet
 
-@item @code{ControlledMetricAccum} - A metric that accumulates in value.  This is used when we are counting some sort
-of event light a web-server request or a thrown exception.  It supports an @code{increment()} method although the adjust
-will add any value to the metric.
+@item @code{ControlledMetricAccum} - A metric that accumulates in value.  This is used when we are counting something
+such as a web-server request or a thrown exception.  It supports @code{increment()} and @code{add()} methods.
 
-@item @code{ControlledMetricValue} - A metric whose value can go up or down.  This is used when we are monitoring how
-much memory the JVM is using or a cache-hit percentage.  We often use a @code{MetricsUpdater} when dealing with values.
-@xref{Using MetricsUpdater}.
+@item @code{ControlledMetricValue} - A metric whose value can go up or down.  This is used, for example, when we are
+monitoring how much memory the JVM is using or a cache-hit percentage.  We often use a @code{MetricsUpdater} when dealing
+with values.  @xref{Using MetricsUpdater}.
 
-@item @code{ControlledMetricTimer} - For metrics that are tracking how long a particular operation takes, this class is
-useful for doing so.  It has a @code{start()} and @code{stop()} method which easily records the elapsed time in
-milliseconds given that it extends @code{ControlledMetricValue}.
+@item @code{ControlledMetricTimer} - This metric is useful for tracking how long a particular operation takes.  It has
+a @code{start()} and @code{stop()} method which easily records the elapsed time in milliseconds given that it extends
+@code{ControlledMetricValue}.
 
 @item @code{ControlledMetricRatio} - This metric separates the numerator from the denominator to keep good precision
-when recording ratios.  You could track cache hit/miss ratios or other information with this.
+when recording ratios.  You could track cache hit/miss ratios or other information with this metric which extends
+@code{ControlledMetricValue}.
 
 @end itemize
 
@@ -288,7 +293,7 @@ interface and probably extend the @code{BaseControlledMetric} class.
 In many situations, you may poll a value from another object and update a metric at that time.  The @code{MetricsManager}
 has support for classes that implement the @code{MetricsUpdater} interface that can be registered on the manager.
 Whenever values are to be persisted, the @code{MetricsManager} will call the configured updaters beforehand so they can
-calculate or poll the values for their metrics.
+calculate or poll the values for their metrics and update the metrics appropriately.
 
 For example, let's say you were tracking how much memory your were using in your system.  You would register your
 memory metric with the @code{MetricsManager} and also register yourself with the @code{MetricsManager} as an updater.
@@ -299,16 +304,16 @@ how much memory your code is using and update the metric with the information.
 @node Built in Utilities, Using SimpleJMX, Using MetricsUpdater, Using
 @section Using the Built-In Utilities
 
-There are a couple of built-in utility classes which are useful for most applications to utilize.
+There are a couple of built-in utility classes which are useful for applications to utilize.
 
 @itemize @bullet
 
 @item @code{SystemMetricsPublisher} - Publishes a number of useful bits of information from the JVM: number of threads,
 total memory used, maximum memory used, free memory, current heap size, number of loaded classes, total process CPU time,
-thread load average percentage, old gen memory presentage, process load average percentage.
+thread load average percentage, old-gen memory percentage, process load average percentage.
 
 @item @code{FileMetricsPublisher} - Reads values from files on the file system that are then published via metrics.
-This is used to read numbers from files in thre @code{/proc} file-system on linux.  A common file metric that you might
+This is used to read numbers from files in the @code{/proc} file-system on Linux.  A common file metric that you might
 want to publish is the number of open file-descriptors being used by the JVM.
 
 @end itemize
@@ -359,7 +364,7 @@ DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING F
 WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE
 USE OR PERFORMANCE OF THIS SOFTWARE.
 
-The author may be contacted via @uref{http://256.com/sources/simplemetrics/}
+The author may be contacted via the @uref{http://256.com/sources/simplemetrics/, SimpleMetrics home page}.
 
 @c ----------------------------------------------------------------
 @node Index of Concepts,, License, Top

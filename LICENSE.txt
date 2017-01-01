@@ -1,6 +1,6 @@
 This document is part of the SimpleMetrics project.
 
-ISC License
+ISC License -- https://opensource.org/licenses/ISC
 
 Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby
 granted, provided that this permission notice appear in all copies.
@@ -11,5 +11,4 @@ DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING F
 WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE
 USE OR PERFORMANCE OF THIS SOFTWARE.
 
-This license is the ISC License: https://opensource.org/licenses/ISC
 The author may be contacted via http://256stuff.com/sources/simplemetrics/

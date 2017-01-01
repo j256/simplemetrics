@@ -14,3 +14,29 @@ Maven packages are published via the central repo:
 
 Enjoy,
 Gray Watson
+
+-----------------------------------------------------------------------------
+Little Sample Program
+http://256stuff.com/sources/simplemetrics/docs/example-simple
+-----------------------------------------------------------------------------
+
+Getting Started
+
+	// create our metrics manager which controls everything
+	MetricsManager metricsManager = new MetricsManager();
+
+	// create and register a persister, you will probably want to write your own for your own logging system
+	LoggingMetricsPersister persister = new LoggingMetricsPersister();
+	metricsManager.setMetricValuesPersisters(new MetricValuesPersister[] { persister });
+
+	// create and register one (or many metrics)
+	ControlledMetricAccum hitCounter = new ControlledMetricAccum("example", null, "hits", "number of hits to the cache", null);
+	metricsManager.registerMetric(hitCounter);
+
+	// optionally start a persister thread to persist the metrics every minute (60000 millis)
+	MetricsPersisterJob persisterThread = new MetricsPersisterJob(manager, 60000, 60000, true);
+
+	// now the metric can be incremented whenever a "hit" occurs
+	hitCounter.increment();
+	// or maybe we need to account for a bunch of hits
+	hitCounter.add(23);
