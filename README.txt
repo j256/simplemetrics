@@ -25,12 +25,13 @@ Getting Started
 	// create our metrics manager which controls everything
 	MetricsManager metricsManager = new MetricsManager();
 
-	// create and register a persister, you will probably want to write your own for your own logging system
+	// create and register a persister, you will probably want to write your own for your own logging
 	LoggingMetricsPersister persister = new LoggingMetricsPersister();
 	metricsManager.setMetricValuesPersisters(new MetricValuesPersister[] { persister });
 
 	// create and register one (or many metrics)
-	ControlledMetricAccum hitCounter = new ControlledMetricAccum("example", null, "hits", "number of hits to the cache", null);
+	ControlledMetricAccum hitCounter =
+		new ControlledMetricAccum("example", null, "hits", "number of hits to the cache", null);
 	metricsManager.registerMetric(hitCounter);
 
 	// optionally start a persister thread to persist the metrics every minute (60000 millis)
@@ -40,6 +41,6 @@ Getting Started
 	hitCounter.increment();
 	// or maybe we need to account for a bunch of hits
 	hitCounter.add(23);
-    // ...
-    
-    // the persister will log the value of hitCounter every 60 seconds automatically
+	// ...
+	
+	// the persister will log the value of hitCounter every 60 seconds automatically
