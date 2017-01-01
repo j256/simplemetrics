@@ -175,7 +175,7 @@ public class FileMetric {
 		return MiscUtils.metricToString(metric);
 	}
 
-	private Double extractNumberFromFile() throws IOException {
+	private double extractNumberFromFile() throws IOException {
 		String line;
 		BufferedReader reader = null;
 		try {

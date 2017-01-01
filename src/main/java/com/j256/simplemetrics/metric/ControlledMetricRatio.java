@@ -16,7 +16,7 @@ public class ControlledMetricRatio extends BaseControlledMetric<NumeratorDenomin
 
 	/**
 	 * @param component
-	 *            Component short name such as "my".
+	 *            Component short name such as "web".
 	 * @param module
 	 *            Module name to identify the part of the component such as "pageview".
 	 * @param name

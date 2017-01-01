@@ -47,7 +47,7 @@ public class BasicExample {
 				missesMetric.increment();
 			}
 		}
-		// persist at the very end in case your computer is faster than mine (or its the future)
+		// persist at the very end in case your computer is faster than mine (or it's the future)
 		manager.persist();
 
 		// shutdown the persister thread
