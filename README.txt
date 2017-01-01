@@ -29,7 +29,7 @@ Getting Started
 	LoggingMetricsPersister persister = new LoggingMetricsPersister();
 	metricsManager.setMetricValuesPersisters(new MetricValuesPersister[] { persister });
 
-	// create and register one (or many metrics)
+	// create and register one (or many) metrics
 	ControlledMetricAccum hitCounter =
 		new ControlledMetricAccum("example", null, "hits", "number of hits to the cache", null);
 	metricsManager.registerMetric(hitCounter);

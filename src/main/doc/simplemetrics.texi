@@ -229,8 +229,9 @@ metricsManager.setMetricDetailsPersisters(
 @cindex registering metrics
 @cindex metrics
 Once you have created your @code{MetricsManager} and a persister, you are ready to start creating and registering metrics
-with the manager.  Metrics are the objects which keep track of the name of the metric as well as it's associated value(s).  For example, let's say we wanted to count the number of web-requests made to our web-server
-so we can graph it over time.  We might create a metric like the following and register it on the @code{MetricsManager}:
+with the manager.  Metrics are the objects which keep track of the name of the metric as well as it's associated value(s).
+For example, let's say we wanted to count the number of web-requests made to our web-server so we can graph it over time.
+We might create a metric like the following and register it on the @code{MetricsManager}:
 
 @example
 ControlledMetricAccum webRequestMetric =
