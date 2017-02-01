@@ -1,3 +1,6 @@
+1.1: 2/1/2017
+	* Fixed a problem with FileMetric if there isn't a prefix specified.
+
 0.7: 2/1/2017
 	* Added line matching using regular-expressions to the FileMetric.
 	* Added handling of multiple possible files to the FileMetric.

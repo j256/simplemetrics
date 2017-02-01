@@ -251,16 +251,21 @@ public class FileMetric {
 				if (line == null) {
 					break;
 				}
-				if (prefix != null && line.startsWith(prefix)) {
+				if (prefix != null) {
+					if (!line.startsWith(prefix)) {
+						continue;
+					}
+				}
+				if (linePattern == null) {
+					// prefix is null or matched
 					break;
 				}
-				if (linePattern != null) {
-					matcher = linePattern.matcher(line);
-					if (matcher.matches()) {
-						break;
-					}
-					matcher = null;
+				// try our line pattern
+				matcher = linePattern.matcher(line);
+				if (matcher.matches()) {
+					break;
 				}
+				matcher = null;
 			}
 		} catch (IOException e) {
 			throw new IOException("Problems reading metric " + metricName + " from file " + metricFile, e);
