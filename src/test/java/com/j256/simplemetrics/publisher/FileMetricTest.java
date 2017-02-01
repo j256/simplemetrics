@@ -161,6 +161,25 @@ public class FileMetricTest {
 		metric.updateValue();
 	}
 
+	@Test
+	public void testRegexPatternMetric() throws Exception {
+		FileMetric metric = new FileMetric();
+		String label = "foo";
+		metric.setMetricName(label);
+		metric.setMetricComponent("comp");
+		metric.setDescription("desc");
+		metric.setKind(ProcMetricKind.FILE_ACCUM);
+		metric.setColumn(1);
+		metric.setMetricFile(PROC_PREFIX + "/meminfo");
+		metric.setLinePattern("Mapped:\\s+(\\d+).*");
+		metric.initialize();
+		assertNotNull(metric.getMetric());
+		assertEquals(label, metric.getMetric().getName());
+		assertTrue(metric.isInitialized());
+		metric.updateValue();
+		assertEquals(106596, metric.getMetric().getValue().longValue());
+	}
+
 	@Test(expected = IllegalArgumentException.class)
 	public void testNoFile() throws Exception {
 		FileMetric metric = new FileMetric();

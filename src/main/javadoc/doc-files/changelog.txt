@@ -1,3 +1,7 @@
+0.7: 2/1/2017
+	* Added line matching using regular-expressions to the FileMetric.
+	* Added handling of multiple possible files to the FileMetric.
+
 0.6: 12/12/2015
 	* Bunch of refactoring, improved comments, other tweaks.
 	* Added a CloudWatchMetricsPersister with an optional dependency for aws-java-sdk.

@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.j256.simplemetrics.metric.ControlledMetric;
 import com.j256.simplemetrics.metric.ControlledMetricAccum;
@@ -27,7 +29,8 @@ public class FileMetric {
 	private ControlledMetric<?, ?> metric;
 	private ProcMetricKind kind;
 	private int column = -1;
-	private String lineSplit = " ";
+	private Pattern splitPattern = Pattern.compile(" ");
+	private Pattern linePattern;
 	private String prefix;
 
 	public FileMetric() {
@@ -44,7 +47,7 @@ public class FileMetric {
 		this.metricFile = metricFile;
 		this.kind = kind;
 		this.column = column;
-		this.lineSplit = lineSplit;
+		this.splitPattern = Pattern.compile(lineSplit);
 		this.prefix = prefix;
 		initialize();
 	}
@@ -54,11 +57,12 @@ public class FileMetric {
 	 */
 	public void initialize() throws IllegalArgumentException {
 		if (metricFile == null) {
-			throw new IllegalArgumentException("metricFile was not specified for " + getClass() + " name " + metricName);
+			throw new IllegalArgumentException(
+					"metricFile was not specified for " + getClass() + " name " + metricName);
 		} else if (!metricFile.exists()) {
 			if (required) {
-				throw new IllegalArgumentException("metricFile " + metricFile + " does not exist for " + getClass()
-						+ " name " + metricName);
+				throw new IllegalArgumentException(
+						"metricFile " + metricFile + " does not exist for " + getClass() + " name " + metricName);
 			} else {
 				return;
 			}
@@ -67,28 +71,28 @@ public class FileMetric {
 			throw new IllegalArgumentException("kind was not specified for " + getClass() + " name " + metricName);
 		}
 		switch (kind) {
-			case DIR :
+			case DIR:
 				if (!metricFile.isDirectory()) {
 					throw new IllegalArgumentException("metricFile " + metricFile + " is not a directory for "
 							+ this.getClass() + " name " + metricName);
 				}
 				metric = new ControlledMetricValue(metricComponent, metricModule, metricName, description, unit);
 				break;
-			case FILE_ACCUM :
+			case FILE_ACCUM:
 				if (column < 0) {
-					throw new IllegalArgumentException("metric " + this.getClass() + " name " + metricName
-							+ " did not specify column value");
+					throw new IllegalArgumentException(
+							"metric " + this.getClass() + " name " + metricName + " did not specify column value");
 				}
 				metric = new ControlledMetricAccum(metricComponent, metricModule, metricName, description, unit);
 				break;
-			case FILE_VALUE :
+			case FILE_VALUE:
 				if (column < 0) {
-					throw new IllegalArgumentException("metric " + this.getClass() + " name " + metricName
-							+ " did not specify column value");
+					throw new IllegalArgumentException(
+							"metric " + this.getClass() + " name " + metricName + " did not specify column value");
 				}
 				metric = new ControlledMetricValue(metricComponent, metricModule, metricName, description, unit);
 				break;
-			default :
+			default:
 				throw new IllegalArgumentException("unknown kind " + kind + " for proc metric with name " + metricName);
 		}
 		initialized = true;
@@ -99,15 +103,16 @@ public class FileMetric {
 	 */
 	public void updateValue() throws IOException {
 		switch (kind) {
-			case DIR :
+			case DIR:
 				metric.adjustValue(metricFile.list().length);
 				break;
-			case FILE_ACCUM :
-			case FILE_VALUE :
+			case FILE_ACCUM:
+			case FILE_VALUE:
 				metric.adjustValue(extractNumberFromFile());
 				break;
-			default :
-				throw new IllegalArgumentException("unknown kind " + kind + " for proc metric with label " + metricName);
+			default:
+				throw new IllegalArgumentException(
+						"unknown kind " + kind + " for proc metric with label " + metricName);
 		}
 	}
 
@@ -119,53 +124,113 @@ public class FileMetric {
 		return initialized;
 	}
 
-	// @Required
+	/**
+	 * The file that we process to find the value. Either this or {@link #setMetricFiles(String[])} must be specified.
+	 */
+	// @NotRequired("Either this or the metric-files is required however")
 	public void setMetricFile(String metricFile) {
 		this.metricFile = new File(metricFile);
 	}
 
+	/**
+	 * An array of files that that will be looked at. The first one that exists will be used. Either this or
+	 * {@link #setMetricFile(String)} must be specified.
+	 */
+	// @NotRequired("Either this or the metric-files is required however")
+	public void setMetricFiles(String[] metricFiles) {
+		for (String fileName : metricFiles) {
+			File metricFile = new File(fileName);
+			if (metricFile.exists()) {
+				this.metricFile = metricFile;
+				break;
+			}
+		}
+	}
+
+	/**
+	 * The name to be associated with the metric. See {@link ControlledMetric#getName()}.
+	 */
 	// @Required
 	public void setMetricName(String metricName) {
 		this.metricName = metricName;
 	}
 
+	/**
+	 * The component to be associated with the metric. See {@link ControlledMetric#getComponent()}.
+	 */
 	// @Required
 	public void setMetricComponent(String metricComponent) {
 		this.metricComponent = metricComponent;
 	}
 
+	/**
+	 * The module to be associated with the metric. See {@link ControlledMetric#getModule()}.
+	 */
 	// @NotRequired("Default is none")
 	public void setMetricModule(String metricModule) {
 		this.metricModule = metricModule;
 	}
 
+	/**
+	 * The description to be associated with the metric. See {@link ControlledMetric#getDescription()}.
+	 */
 	// @Required
 	public void setDescription(String description) {
 		this.description = description;
 	}
 
+	/**
+	 * The unit to be associated with the metric. See {@link ControlledMetric#getUnit()}.
+	 */
 	// @NotRequired("optional")
 	public void setUnit(String unit) {
 		this.unit = unit;
 	}
 
+	/**
+	 * The kind of the metric. See {@link ProcMetricKind}.
+	 */
 	public void setKind(ProcMetricKind kind) {
 		this.kind = kind;
 	}
 
+	/**
+	 * The column from a split perspective (0 to N-1) or the matcher.group(column) if using the line-pattern regex. With
+	 * the regex, the 0th group is the entire matched string and the 1st group is the first () in the pattern.
+	 */
 	// @NotRequired("No column specified is the default")
 	public void setColumn(int column) {
 		this.column = column;
 	}
 
+	/**
+	 * Regex string to use to divide the line up into fields so we can use the column to extract one of the fields.
+	 * Default is a single space.
+	 */
+	// @NotRequired("Can use this or a pattern matcher")
 	public void setLineSplit(String lineSplit) {
-		this.lineSplit = lineSplit;
+		this.splitPattern = Pattern.compile(lineSplit);
 	}
 
+	/**
+	 * Set the regex pattern that should match the line. The column then becomes the group-number from the regex
+	 * matcher.
+	 */
+	public void setLinePattern(String linePattern) {
+		this.linePattern = Pattern.compile(linePattern);
+	}
+
+	/**
+	 * Prefix string to look for in the file. If this is set then the line won't match unless this prefix is seen.
+	 */
 	public void setPrefix(String prefix) {
 		this.prefix = prefix;
 	}
 
+	/**
+	 * Set whether or not this metric is required, default is false. If the file doesn't exist on this system and it is
+	 * required then this will cause an exception to be thrown.
+	 */
 	public void setRequired(boolean required) {
 		this.required = required;
 	}
@@ -178,12 +243,23 @@ public class FileMetric {
 	private double extractNumberFromFile() throws IOException {
 		String line;
 		BufferedReader reader = null;
+		Matcher matcher = null;
 		try {
 			reader = new BufferedReader(new FileReader(metricFile));
 			while (true) {
 				line = reader.readLine();
-				if (line == null || prefix == null || line.startsWith(prefix)) {
+				if (line == null) {
 					break;
+				}
+				if (prefix != null && line.startsWith(prefix)) {
+					break;
+				}
+				if (linePattern != null) {
+					matcher = linePattern.matcher(line);
+					if (matcher.matches()) {
+						break;
+					}
+					matcher = null;
 				}
 			}
 		} catch (IOException e) {
@@ -195,20 +271,35 @@ public class FileMetric {
 			if (prefix == null) {
 				throw new IOException("No line read for metric " + metricName + " from file " + metricFile);
 			} else {
-				throw new IOException("Prefix " + prefix + " not found for metric " + metricName + " from file "
-						+ metricFile);
+				throw new IOException(
+						"Prefix " + prefix + " not found for metric " + metricName + " from file " + metricFile);
 			}
 		}
-		String[] columns = line.split(lineSplit);
-		if (column >= columns.length) {
-			throw new IOException("Column " + column + " more than split size " + columns.length + " in metrics "
-					+ metricName + " in file " + metricFile);
+
+		String value;
+		if (matcher == null) {
+			String[] columns = splitPattern.split(line);
+			if (column >= columns.length) {
+				throw new IOException("Column " + column + " more than split size " + columns.length + " in metrics "
+						+ metricName + " in file " + metricFile);
+			}
+			value = columns[column];
+		} else {
+			if (column > matcher.groupCount()) {
+				throw new IOException("Column " + column + " more than line pattern column-count "
+						+ matcher.groupCount() + " in metrics " + metricName + " in file " + metricFile);
+			}
+			value = matcher.group(column);
+			if (value == null) {
+				throw new IOException(
+						"Column " + column + " did not match line in metrics " + metricName + " in file " + metricFile);
+			}
 		}
 		try {
-			return Double.parseDouble(columns[column]);
+			return Double.parseDouble(value);
 		} catch (NumberFormatException e) {
-			throw new IOException("Invalid number " + columns[column] + " in metrics " + metricName + " in file "
-					+ metricFile + " column " + column);
+			throw new IOException("Invalid number '" + value + "' in metrics " + metricName + " in file " + metricFile
+					+ " column " + column);
 		}
 	}
 
