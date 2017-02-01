@@ -36,6 +36,25 @@ public class FileMetricTest {
 	}
 
 	@Test
+	public void testMultipleFilesSpecified() throws Exception {
+		FileMetric metric = new FileMetric();
+		String label = "foo";
+		metric.setMetricName(label);
+		metric.setMetricComponent("comp");
+		metric.setDescription("desc");
+		metric.setKind(ProcMetricKind.FILE_VALUE);
+		metric.setColumn(1);
+		metric.setMetricFiles(new String[] { "some-file-that-doesnt-exist", PROC_PREFIX + "/meminfo" });
+		metric.setPrefix("Cached:");
+		metric.setLineSplit(" +");
+		metric.initialize();
+		assertNotNull(metric.getMetric());
+		assertEquals(label, metric.getMetric().getName());
+		assertTrue(metric.isInitialized());
+		metric.updateValue();
+	}
+
+	@Test
 	public void testFileMetricAccum() throws Exception {
 		FileMetric metric = new FileMetric();
 		String label = "foo";
