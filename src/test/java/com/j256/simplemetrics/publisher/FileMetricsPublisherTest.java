@@ -22,9 +22,8 @@ public class FileMetricsPublisherTest {
 	@Test
 	public void testStuff() {
 		String label = "foo";
-		FileMetric metric =
-				new FileMetric(label, "comp", null, "desc", new File(PROC_PREFIX, "meminfo"),
-						ProcMetricKind.FILE_VALUE, 1, " +", "Cached:");
+		FileMetric metric = new FileMetric(label, "comp", null, "desc", new File(PROC_PREFIX, "meminfo"),
+				ProcMetricKind.FILE_VALUE, 1, " +", "Cached:");
 
 		MetricsManager manager = new MetricsManager();
 		new FileMetricsPublisher(manager, Arrays.asList(metric));
@@ -41,9 +40,8 @@ public class FileMetricsPublisherTest {
 	@Test
 	public void testDir() {
 		String label = "foo";
-		FileMetric metric =
-				new FileMetric(label, "self", null, "fds", new File(PROC_PREFIX, "self/fd"), ProcMetricKind.DIR, 0,
-						null, null);
+		FileMetric metric = new FileMetric(label, "self", null, "fds", new File(PROC_PREFIX, "self/fd"),
+				ProcMetricKind.DIR, 0, " ", null);
 
 		MetricsManager manager = new MetricsManager();
 		FileMetricsPublisher publisher = new FileMetricsPublisher();
