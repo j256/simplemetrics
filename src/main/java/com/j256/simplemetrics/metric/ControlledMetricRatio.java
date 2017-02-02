@@ -6,7 +6,8 @@ import com.j256.simplemetrics.metric.ControlledMetricRatio.RatioValue;
 
 /**
  * A metric which tracks the relationship between two values. For example, if you want to account for a cache hit ratio
- * or the average number of results per query.
+ * or the average number of results per query. We manage this as a numerator and a denominator to ensure we don't lose
+ * value resolution.
  * 
  * @author graywatson
  */

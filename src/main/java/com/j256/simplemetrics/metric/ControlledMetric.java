@@ -1,14 +1,10 @@
 package com.j256.simplemetrics.metric;
 
 /**
- * Metric which defines some common fields and methods.
- * 
- * <p>
- * <b>NOTE:</b> You must override hashcode() and equals() because these are stored as keys in maps.
- * </p>
+ * Metric which is managed by the system.
  * 
  * @param <V>
- *            Value type that we use to adjust this metric-value.
+ *            Value type that is stored inside of the metric. It can be a decimal, floating point, or custom type.
  * @param <MV>
  *            Metric value which wraps and manages the raw value.
  * 

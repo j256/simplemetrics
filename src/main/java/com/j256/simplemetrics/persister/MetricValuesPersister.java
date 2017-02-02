@@ -20,9 +20,10 @@ public interface MetricValuesPersister {
 	 * 
 	 * @param metricValues
 	 *            The collection of metric and metric-values we are persisting.
-	 * 
 	 * @param timeCollectedMillis
 	 *            The time in millis when the metrics were collected.
+	 * @throws IOException
+	 *             If there was an i/o error while persisting.
 	 */
 	public void persist(Map<ControlledMetric<?, ?>, Number> metricValues, long timeCollectedMillis) throws IOException;
 }

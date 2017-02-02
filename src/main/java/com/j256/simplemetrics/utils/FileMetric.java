@@ -139,10 +139,16 @@ public class FileMetric {
 		}
 	}
 
+	/**
+	 * Get the associated metric whole value is set from the file.
+	 */
 	public ControlledMetric<?, ?> getMetric() {
 		return metric;
 	}
 
+	/**
+	 * If the metric has been initialized with the {@link #initialize()} method.
+	 */
 	public boolean isInitialized() {
 		return initialized;
 	}

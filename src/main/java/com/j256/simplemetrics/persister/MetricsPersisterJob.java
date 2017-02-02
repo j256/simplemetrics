@@ -66,6 +66,9 @@ public class MetricsPersisterJob implements Runnable {
 		}
 	}
 
+	/**
+	 * Run by the thread to persist the metrics.
+	 */
 	@Override
 	public void run() {
 		if (delayTimeMillis >= 0) {

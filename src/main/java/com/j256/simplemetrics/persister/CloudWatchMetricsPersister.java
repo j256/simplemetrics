@@ -157,27 +157,42 @@ public class CloudWatchMetricsPersister implements MetricDetailsPersister {
 		}
 	}
 
-	// @Required
+	/**
+	 * Set the credentials to use when publishing to AWS.
+	 */
+	// @NotRequired("either this or the cloudWatchClient needs to be set")
 	public void setAwsCredentials(AWSCredentials awsCredentials) {
 		this.awsCredentials = awsCredentials;
 	}
 
+	/**
+	 * Set our application name which will be used to identify the namespace for the metric.
+	 */
 	// @Required
 	public void setApplicationName(String applicationName) {
 		this.applicationName = applicationName;
 	}
 
+	/**
+	 * Set to false to not add instance id to help identify the metric. Default is false.
+	 */
 	// @NotRequired("Default is true if running in EC2")
 	public void setAddInstanceData(boolean addInstanceData) {
 		this.addInstanceData = addInstanceData;
 	}
 
+	/**
+	 * Sets the name-space prefix to use for metrics published from here. 
+	 */
 	// @NotRequired("Default is " + DEFAULT_NAME_SPACE_PREFIX)
 	public void setNameSpacePrefix(String nameSpacePrefix) {
 		this.nameSpacePrefix = nameSpacePrefix;
 	}
 
-	// @NotRequired("Default is create one in initialize()")
+	/**
+	 * Set the client to use to publish the metrics. 
+	 */
+	// @NotRequired("Default is create one in initialize() with the credentials")
 	public void setCloudWatchClient(AmazonCloudWatch cloudWatchClient) {
 		this.cloudWatchClient = cloudWatchClient;
 	}
@@ -185,7 +200,8 @@ public class CloudWatchMetricsPersister implements MetricDetailsPersister {
 	/**
 	 * Return a map of metric name to associated data.
 	 */
-	private Map<String, List<MetricDatum>> buildMetricsMap(Map<ControlledMetric<?, ?>, MetricValueDetails> metricValues) {
+	private Map<String, List<MetricDatum>>
+			buildMetricsMap(Map<ControlledMetric<?, ?>, MetricValueDetails> metricValues) {
 
 		Map<String, List<MetricDatum>> metricMap = new HashMap<String, List<MetricDatum>>(metricValues.size());
 		for (Map.Entry<ControlledMetric<?, ?>, MetricValueDetails> entry : metricValues.entrySet()) {

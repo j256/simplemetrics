@@ -93,32 +93,50 @@ public class TextFileMetricsPersister implements MetricValuesPersister {
 		}
 	}
 
+	/**
+	 * Get the log file name prefix that we are writing.
+	 */
 	@JmxAttributeMethod(description = "File prefix we are writing")
 	public String getLogFileNamePrefix() {
 		return logFileNamePrefix;
 	}
 
+	/**
+	 * Set the log file name prefix.
+	 */
 	// @Required
 	public void setLogFileNamePrefix(String logFileNamePrefix) {
 		this.logFileNamePrefix = logFileNamePrefix;
 	}
 
+	/**
+	 * Are we appending the system time millis value to the name of the output file.
+	 */
 	@JmxAttributeMethod(description = "Whether we are appending the sys time millis to the output file")
 	public boolean isAppendSysTimeMillis() {
 		return appendSysTimeMillis;
 	}
 
+	/**
+	 * Set to true to append the system time millis value to the name of the output file.
+	 */
 	// @NotRequired("Default is true")
 	@JmxAttributeMethod(description = "Whether we are appending the sys time millis to the output file")
 	public void setAppendSysTimeMillis(boolean appendSysTimeMillis) {
 		this.appendSysTimeMillis = appendSysTimeMillis;
 	}
 
+	/**
+	 * Directory where the output files will be written.
+	 */
 	@JmxAttributeMethod(description = "Directory where log files are written")
 	public File getOutputDirectory() {
 		return outputDirectory;
 	}
 
+	/**
+	 * Set the directory where the output files will be written.
+	 */
 	// @Required
 	public void setOutputDirectory(File outputDirectory) {
 		outputDirectory.mkdirs();
@@ -134,32 +152,50 @@ public class TextFileMetricsPersister implements MetricValuesPersister {
 		this.outputDirectory = outputDirectory;
 	}
 
+	/**
+	 * Set the separating string between the metric name and value. Default is "=".
+	 */
 	// @NotRequired("Default is " + DEFAULT_SEPARATING_STRING)
 	public void setSeparatingString(String separatingString) {
 		this.separatingString = separatingString;
 	}
 
+	/**
+	 * Are we showing the description in the file on the previous line with a "# " prefix.
+	 */
 	@JmxAttributeMethod(description = "Show the description in the file")
 	public boolean isShowDescription() {
 		return showDescription;
 	}
 
+	/**
+	 * Set to true to show the description in the file on the previous line with a "# " prefix.
+	 */
 	// @NotRequired("Default is false")
 	@JmxAttributeMethod(description = "Show the description in the file")
 	public void setShowDescription(boolean showDescription) {
 		this.showDescription = showDescription;
 	}
 
+	/**
+	 * Number of times the logs have been dumped to disk. 
+	 */
 	@JmxAttributeMethod(description = "Number of times we've written metrics")
 	public long getDumpLogCount() {
 		return dumpLogCount.get();
 	}
 
+	/**
+	 * Number of times we have cleaned up old logs.
+	 */
 	@JmxAttributeMethod(description = "Number of times we've deleted metrics files")
 	public long getCleanupLogCount() {
 		return cleanupLogCount.get();
 	}
 
+	/**
+	 * Get the last time we have dumped the metrics to disk.
+	 */
 	@JmxAttributeMethod(description = "Last time the metrics were written")
 	public String getLastDumpTimeMillisString() {
 		if (lastDumpTimeMillis == 0) {

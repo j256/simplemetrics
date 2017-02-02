@@ -56,11 +56,17 @@ public class FileMetricsPublisher implements MetricsUpdater {
 		this.metricsManager.registerUpdater(this);
 	}
 
+	/**
+	 * Metrics manager that we add our metrics to. 
+	 */
 	// @Required
 	public void setMetricsManager(MetricsManager metricsManager) {
 		this.metricsManager = metricsManager;
 	}
 
+	/**
+	 * Sets the file metrics that we are publishing. 
+	 */
 	// @Required
 	public void setFileMetrics(FileMetric[] fileMetrics) {
 		this.fileMetrics = new ArrayList<FileMetric>(fileMetrics.length);
@@ -72,9 +78,6 @@ public class FileMetricsPublisher implements MetricsUpdater {
 		}
 	}
 
-	/**
-	 * Update all of the file metrics.
-	 */
 	@Override
 	@JmxOperation(description = "Read in the values of the file metrics")
 	public void updateMetrics() {
@@ -87,11 +90,17 @@ public class FileMetricsPublisher implements MetricsUpdater {
 		}
 	}
 
+	/**
+	 * Number of times we were unable to update a metric because of some i/o or parse problem. 
+	 */
 	@JmxAttributeMethod(description = "Number of failed updates")
 	public long getFailedUpdateCount() {
 		return failedUpdateCount.get();
 	}
 
+	/**
+	 * Get the values for all of the metric managed by this class. 
+	 */
 	@JmxAttributeMethod(description = "Values of configured file metrics")
 	public String[] getMetricsValues() {
 		List<String> results = new ArrayList<String>();

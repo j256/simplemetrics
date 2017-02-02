@@ -154,12 +154,15 @@ public class SystemMetricsPublisher implements MetricsUpdater {
 		processLoadAveragePercentage.adjustValue(extractProcessLoadAveragePercentage());
 	}
 
+	/**
+	 * Required metrics manager that manages the metrics we create here. 
+	 */
 	// @Required
 	public void setMetricsManager(MetricsManager metricsManager) {
 		this.metricsManager = metricsManager;
 	}
 
-	public long getTotalCpuTimeMillis() {
+	private long getTotalCpuTimeMillis() {
 		long total = 0;
 		for (long id : threadMxBean.getAllThreadIds()) {
 			long cpuTime = threadMxBean.getThreadCpuTime(id);

@@ -247,16 +247,25 @@ public class MetricsManager {
 		}
 	}
 
+	/**
+	 * Set the optional jmx-server that can be used to publish metrics to JMX. 
+	 */
 	// @NotRequired("Default is none")
 	public void setJmxServer(JmxServer jmxServer) {
 		this.jmxServer = jmxServer;
 	}
 
+	/**
+	 * Set the persisters for the metric values.
+	 */
 	// @NotRequired("Default is a value or value-details persister")
 	public void setMetricValuesPersisters(MetricValuesPersister[] metricValuesPersisters) {
 		this.metricValuesPersisters = metricValuesPersisters;
 	}
 
+	/**
+	 * Set the persisters for the metric details.
+	 */
 	// @NotRequired("Default is a value or value-details persister")
 	public void setMetricDetailsPersisters(MetricDetailsPersister[] metricDetailsPersisters) {
 		this.metricDetailsPersisters = metricDetailsPersisters;
