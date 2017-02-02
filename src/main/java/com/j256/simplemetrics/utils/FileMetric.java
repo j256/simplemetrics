@@ -12,7 +12,16 @@ import com.j256.simplemetrics.metric.ControlledMetricAccum;
 import com.j256.simplemetrics.metric.ControlledMetricValue;
 
 /**
- * Metric read from a file on the file-system. Often used to read from the /proc file-system under Linux.
+ * Metric read from a file on the file-system. Often used to read from the /proc file-system under Linux. You can use
+ * regular-expression to locate the line that you are extracting from or use a line prefix string to find the line you
+ * want. In terms of extracting the value from fields, you can use a regular-expression to split the line into columns
+ * and then set the column that you want. If you are matching the line with a regular-expression, the column number will
+ * correspond to a () group-number.
+ * 
+ * <p>
+ * Sometimes the value corresponds to 512 byte sectors when you really want the metric to reflect just bytes. You can
+ * use the adjustment-operation and associated adjustment-value to, for example, multiple the extract value by 512.
+ * </p>
  * 
  * @author graywatson
  */
@@ -27,18 +36,21 @@ public class FileMetric {
 	private String description;
 	private String unit;
 	private ControlledMetric<?, ?> metric;
-	private ProcMetricKind kind;
+	private FileMetricKind kind;
 	private int column = -1;
 	private Pattern splitPattern = Pattern.compile(" ");
 	private Pattern linePattern;
 	private String prefix;
+	private double adjustmentValue;
+	private FileMetricOperation adjustmentOperation;
+	private int lineNumber;
 
 	public FileMetric() {
 		// for spring
 	}
 
 	public FileMetric(String metricName, String metricComponent, String metricModule, String description,
-			File metricFile, ProcMetricKind kind, int column, String lineSplit, String prefix)
+			File metricFile, FileMetricKind kind, int column, String lineSplit, String prefix)
 			throws IllegalArgumentException {
 		this.metricName = metricName;
 		this.metricComponent = metricComponent;
@@ -93,7 +105,7 @@ public class FileMetric {
 				metric = new ControlledMetricValue(metricComponent, metricModule, metricName, description, unit);
 				break;
 			default:
-				throw new IllegalArgumentException("unknown kind " + kind + " for proc metric with name " + metricName);
+				throw new IllegalArgumentException("unknown kind " + kind + " for file metric with name " + metricName);
 		}
 		initialized = true;
 	}
@@ -104,15 +116,25 @@ public class FileMetric {
 	public void updateValue() throws IOException {
 		switch (kind) {
 			case DIR:
-				metric.adjustValue(metricFile.list().length);
+				long longValue = metricFile.list().length;
+				if (adjustmentOperation == null) {
+					metric.adjustValue(longValue);
+				} else {
+					metric.adjustValue(adjustValue(longValue));
+				}
 				break;
 			case FILE_ACCUM:
 			case FILE_VALUE:
-				metric.adjustValue(extractNumberFromFile());
+				double doubleValue = extractNumberFromFile();
+				if (adjustmentOperation == null) {
+					metric.adjustValue(doubleValue);
+				} else {
+					metric.adjustValue(adjustValue(doubleValue));
+				}
 				break;
 			default:
 				throw new IllegalArgumentException(
-						"unknown kind " + kind + " for proc metric with label " + metricName);
+						"unknown kind " + kind + " for file metric with label " + metricName);
 		}
 	}
 
@@ -188,9 +210,9 @@ public class FileMetric {
 	}
 
 	/**
-	 * The kind of the metric. See {@link ProcMetricKind}.
+	 * The kind of the metric. See {@link FileMetricKind}.
 	 */
-	public void setKind(ProcMetricKind kind) {
+	public void setKind(FileMetricKind kind) {
 		this.kind = kind;
 	}
 
@@ -235,6 +257,29 @@ public class FileMetric {
 		this.required = required;
 	}
 
+	/**
+	 * If you need to adjust the extracted value at all, you can use this adjustment combined with the
+	 * {@link #setAdjustmentOperation(FileMetricOperation)} method to set the operation.
+	 */
+	public void setAdjustmentValue(double adjustmentValue) {
+		this.adjustmentValue = adjustmentValue;
+	}
+
+	/**
+	 * If you need to adjust the extracted value, this sets the operation that will be applied with the
+	 * {@link #setAdjustmentValue(double)}.
+	 */
+	public void setAdjustmentOperation(FileMetricOperation adjustmentOperation) {
+		this.adjustmentOperation = adjustmentOperation;
+	}
+
+	/**
+	 * Number of the line in the file to process. The first line in the file is #1 not 0.
+	 */
+	public void setLineNumber(int lineNumber) {
+		this.lineNumber = lineNumber;
+	}
+
 	@Override
 	public String toString() {
 		return MiscUtils.metricToString(metric);
@@ -246,10 +291,20 @@ public class FileMetric {
 		Matcher matcher = null;
 		try {
 			reader = new BufferedReader(new FileReader(metricFile));
+			int lineCount = 0;
 			while (true) {
 				line = reader.readLine();
 				if (line == null) {
 					break;
+				}
+				lineCount++;
+				// check our line number
+				if (lineNumber > 0) {
+					if (lineCount == lineNumber) {
+						break;
+					} else {
+						continue;
+					}
 				}
 				if (prefix != null) {
 					if (!line.startsWith(prefix)) {
@@ -257,7 +312,7 @@ public class FileMetric {
 					}
 				}
 				if (linePattern == null) {
-					// prefix is null or matched
+					// prefix is null or this line starts with it
 					break;
 				}
 				// try our line pattern
@@ -308,16 +363,70 @@ public class FileMetric {
 		}
 	}
 
+	private Number adjustValue(long value) {
+		switch (adjustmentOperation) {
+			case ADD:
+				return value + adjustmentValue;
+			case SUBTRACT:
+				return value - adjustmentValue;
+			case MULTIPLY:
+				return value * adjustmentValue;
+			case DIVIDE:
+				if (adjustmentValue == 0.0D) {
+					return Double.MAX_VALUE;
+				} else {
+					return value / adjustmentValue;
+				}
+			default:
+				return value;
+		}
+	}
+
+	private double adjustValue(double value) {
+		switch (adjustmentOperation) {
+			case ADD:
+				return value + adjustmentValue;
+			case SUBTRACT:
+				return value - adjustmentValue;
+			case MULTIPLY:
+				return value * adjustmentValue;
+			case DIVIDE:
+				if (adjustmentValue == 0.0D) {
+					return Double.MAX_VALUE;
+				} else {
+					return value / adjustmentValue;
+				}
+			default:
+				return value;
+		}
+	}
+
 	/**
 	 * Kind of metrics that we are processing here.
 	 */
-	public enum ProcMetricKind {
+	public enum FileMetricKind {
 		/** count of the number of entries in the directory */
 		DIR,
 		/** number which accumulates */
 		FILE_ACCUM,
 		/** number which is a value */
 		FILE_VALUE,
+		// end
+		;
+	}
+
+	/**
+	 * Kind of metrics that we are processing here.
+	 */
+	public enum FileMetricOperation {
+		/** value added by adjustment */
+		ADD,
+		/** value subtracted by adjustment */
+		SUBTRACT,
+		/** value multiplied by adjustment */
+		MULTIPLY,
+		/** value divided by adjustment */
+		DIVIDE,
 		// end
 		;
 	}

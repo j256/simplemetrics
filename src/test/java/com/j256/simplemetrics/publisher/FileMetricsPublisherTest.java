@@ -12,7 +12,7 @@ import org.junit.Test;
 import com.j256.simplemetrics.manager.MetricsManager;
 import com.j256.simplemetrics.metric.ControlledMetric;
 import com.j256.simplemetrics.utils.FileMetric;
-import com.j256.simplemetrics.utils.FileMetric.ProcMetricKind;
+import com.j256.simplemetrics.utils.FileMetric.FileMetricKind;
 import com.j256.simplemetrics.utils.FileMetricsPublisher;
 
 public class FileMetricsPublisherTest {
@@ -23,7 +23,7 @@ public class FileMetricsPublisherTest {
 	public void testStuff() {
 		String label = "foo";
 		FileMetric metric = new FileMetric(label, "comp", null, "desc", new File(PROC_PREFIX, "meminfo"),
-				ProcMetricKind.FILE_VALUE, 1, " +", "Cached:");
+				FileMetricKind.FILE_VALUE, 1, " +", "Cached:");
 
 		MetricsManager manager = new MetricsManager();
 		new FileMetricsPublisher(manager, Arrays.asList(metric));
@@ -41,7 +41,7 @@ public class FileMetricsPublisherTest {
 	public void testDir() {
 		String label = "foo";
 		FileMetric metric = new FileMetric(label, "self", null, "fds", new File(PROC_PREFIX, "self/fd"),
-				ProcMetricKind.DIR, 0, " ", null);
+				FileMetricKind.DIR, 0, " ", null);
 
 		MetricsManager manager = new MetricsManager();
 		FileMetricsPublisher publisher = new FileMetricsPublisher();

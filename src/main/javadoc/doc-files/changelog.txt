@@ -1,3 +1,7 @@
+1.2: 2/2/2017
+	* Added FileMetric value adjustments if you adjust the extracted value somehow. 
+	* Added line-number setting to FileMetric to process a particular line in a file.
+
 1.1: 2/1/2017
 	* Fixed a problem with FileMetric if there isn't a prefix specified.
 
