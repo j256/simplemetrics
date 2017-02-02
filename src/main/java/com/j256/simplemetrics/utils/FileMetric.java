@@ -13,14 +13,15 @@ import com.j256.simplemetrics.metric.ControlledMetricValue;
 
 /**
  * Metric read from a file on the file-system. Often used to read from the /proc file-system under Linux. You can use
- * regular-expression to locate the line that you are extracting from or use a line prefix string to find the line you
- * want. In terms of extracting the value from fields, you can use a regular-expression to split the line into columns
- * and then set the column that you want. If you are matching the line with a regular-expression, the column number will
+ * regular-expression, line prefix string, or line-number to specify which line from the file that you want to process.
+ * In terms of extracting the value from fields, you can use a regular-expression to split the line into columns and
+ * then set the column that you want. If you are matching the line with a regular-expression, the column number will
  * correspond to a () group-number.
  * 
  * <p>
- * Sometimes the value corresponds to 512 byte sectors when you really want the metric to reflect just bytes. You can
- * use the adjustment-operation and associated adjustment-value to, for example, multiple the extract value by 512.
+ * You can also adjust the extracted value using an adjustment operation and value. For example, the value in the file
+ * might be the number of 512 byte sectors when you really want the metric to reflect bytes. You could then use the
+ * {@link FileMetricOperation#MULTIPLY} adjustment-operation and an adjustment-value of 512.
  * </p>
  * 
  * @author graywatson
@@ -416,10 +417,11 @@ public class FileMetric {
 	}
 
 	/**
-	 * Kind of metrics that we are processing here.
+	 * Adjustment operations that can be used to adjust the extracted value by using
+	 * {@link FileMetric#setAdjustmentOperation(FileMetricOperation)}.
 	 */
 	public enum FileMetricOperation {
-		/** value added by adjustment */
+		/** value added to adjustment */
 		ADD,
 		/** value subtracted by adjustment */
 		SUBTRACT,
