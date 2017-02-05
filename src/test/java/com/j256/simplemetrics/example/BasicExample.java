@@ -5,6 +5,7 @@ import java.util.Random;
 
 import com.j256.simplemetrics.manager.MetricsManager;
 import com.j256.simplemetrics.metric.ControlledMetricAccum;
+import com.j256.simplemetrics.metric.ControlledMetricRatio;
 import com.j256.simplemetrics.persister.MetricValuesPersister;
 import com.j256.simplemetrics.persister.MetricsPersisterJob;
 import com.j256.simplemetrics.persister.SystemOutMetricsPersister;
@@ -28,13 +29,18 @@ public class BasicExample {
 				new ControlledMetricAccum("example", null, "hits", "number of hits to the cache", null);
 		ControlledMetricAccum missesMetric =
 				new ControlledMetricAccum("example", null, "misses", "number of misses to the cache", null);
+		ControlledMetricRatio ratioMetric =
+				new ControlledMetricRatio("example", null, "ratio", "ratio of hits to misses", null);
 
 		// register them with the manager
 		manager.registerMetric(hitsMetric);
 		manager.registerMetric(missesMetric);
+		manager.registerMetric(ratioMetric);
 
-		// start up the persisting thread to persist the metrics every so often
-		// this is persisting every 1 second but you'll probably want to do a minute (60000) or something
+		/*
+		 * Start up the persisting thread to persist the metrics every so often. This is persisting every 1 second but
+		 * you'll probably want to do a minute (60000) or something.
+		 */
 		MetricsPersisterJob persisterThread = new MetricsPersisterJob(manager, 1000, 1000, true);
 
 		// now we run our application which is just doing some random counting
@@ -43,8 +49,10 @@ public class BasicExample {
 			// ok, we don't have a cache so we'll simulate using random
 			if (random.nextBoolean()) {
 				hitsMetric.increment();
+				ratioMetric.adjustValue(1, 1);
 			} else {
 				missesMetric.increment();
+				ratioMetric.adjustValue(0, 1);
 			}
 		}
 		// persist at the very end in case your computer is faster than mine (or it's the future)
