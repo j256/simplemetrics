@@ -70,8 +70,12 @@ public class FileMetric {
 	 */
 	public void initialize() throws IllegalArgumentException {
 		if (metricFile == null) {
-			throw new IllegalArgumentException(
-					"metricFile was not specified for " + getClass() + " name " + metricName);
+			if (required) {
+				throw new IllegalArgumentException(
+						"metricFile was not specified for " + getClass() + " name " + metricName);
+			} else {
+				return;
+			}
 		} else if (!metricFile.exists()) {
 			if (required) {
 				throw new IllegalArgumentException(
