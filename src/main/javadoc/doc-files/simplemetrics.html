@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
 <html>
-<!-- Created on December 12, 2015 by texi2html 1.82
+<!-- Created on February 8, 2017 by texi2html 1.82
 texi2html was written by: 
             Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
@@ -51,7 +51,7 @@ ul.toc {list-style: none}
 <a name="SimpleMetrics"></a>
 <h1 class="settitle">SimpleMetrics</h1>
 
-<p>Version 0.6 &ndash; December 2015
+<p>Version 1.3 &ndash; February 2017
 </p>
 <a name="index-introduction"></a>
 <a name="index-author"></a>
@@ -111,16 +111,17 @@ See section <a href="#Downloading">Downloading Jar</a>.
 <table><tr><td>&nbsp;</td><td><pre class="example">MetricsManager metricsManager = new MetricsManager();
 </pre></td></tr></table>
 
-</li><li> Create a persister such as the <code>LoggingMetricsPersister</code> which logs the metrics and values to
-<code>java.util.Logger</code>.
+</li><li> Create a persister such as the <code>LoggingMetricsPersister</code> which, in this case, logs the metrics and values
+to <code>java.util.Logger</code>.  You may want to roll your own.
 
 <table><tr><td>&nbsp;</td><td><pre class="example">LoggingMetricsPersister persister =
    new LoggingMetricsPersister();
-metricsManager.registerMetric(hitCounter);
+metricsManager.setMetricValuesPersisters(
+   new MetricValuesPersister[] { persister });
 </pre></td></tr></table>
 
 </li><li> Create at least one metric which monitors a particular application value, and register it with the 
-<code>LoggingMetricsPersister</code>.
+<code>MetricsManager</code>.
 
 <table><tr><td>&nbsp;</td><td><pre class="example">ControlledMetricAccum hitCounter =
    new ControlledMetricAccum(&quot;example&quot;, null, &quot;hits&quot;,
@@ -129,7 +130,8 @@ metricsManager.registerMetric(hitCounter);
 </pre></td></tr></table>
 
 </li><li> Possibly use the <code>MetricsPersisterJob</code> to start a background thread that calls <code>persist()</code> on
-the <code>MetricsManager</code> every so often automatically.  Otherwise you will need to do so using some other mechanism.
+the <code>MetricsManager</code> every so often.  Otherwise you will need to call <code>persist()</code> on your own using some
+other mechanism.
 
 <table><tr><td>&nbsp;</td><td><pre class="example">// persist our metrics every minute (60000 millis)
 MetricsPersisterJob persisterThread =
@@ -206,7 +208,7 @@ MetricsPersisterJob persisterThread =
 <a name="index-how-to-download-the-jars"></a>
 <a name="index-downloading-the-jars"></a>
 <a name="index-where-to-get-new-jars"></a>
-<p>To get started with SimpleMetrics, you will need to download the jar file.  The <a href="http://256.com/sources/simplemetrics/releases/">SimpleMetrics release page</a> is the default repository but the jars are also available from the <a href="http://repo1.maven.org/maven2/com/j256/simplemetrics/">central maven repository</a>.
+<p>To get started with SimpleMetrics, you will need to download the jar file.  The <a href="http://256.com/sources/simplemetrics/releases/">SimpleMetrics release page</a> is the default repository but the jars are also available from the <a href="http://repo1.maven.org/maven2/com/j256/simplemetrics/">central maven repository</a>.  If you are using Maven, see section <a href="#Maven">Using With Maven</a>.
 </p>
 <p>The code works with Java 6 or later.
 </p>
@@ -235,9 +237,10 @@ MetricsPersisterJob persisterThread =
 <a name="index-managing-the-metrics"></a>
 <a name="index-SimpleJMX"></a>
 <p>The <code>MetricsManager</code> is the class which manages the metrics in the application, updates the values of the metrics
-when necessary, and persisting the metrics to disk or network when requested to do so.  You need to set at least one metrics
-persister on the manager and then register metrics from various places in your application. <code>MetricsManager</code> also
-supports <code>SimpleJmx</code> annotations which allow you to publish the metrics and view them via JMX. 
+when necessary, and calls the persisters to save the metrics to disk or network when requested to do so.  You need to set
+at least one metrics persister on the manager and then register metrics from various places in your application.
+The <code>MetricsManager</code> also supports <code>SimpleJmx</code> annotations which allow you to publish the metrics and view them
+via JMX. 
 </p>
 <table><tr><td>&nbsp;</td><td><pre class="example">MetricsManager metricsManager = new MetricsManager();
 </pre></td></tr></table>
@@ -269,7 +272,7 @@ supports <code>SimpleJmx</code> annotations which allow you to publish the metri
 <a name="index-cloud-service"></a>
 <a name="index-save-metrics-to-disk"></a>
 <a name="index-logging-metrics"></a>
-<p>Once you have created your <code>MetricsManager</code> you should set metrics persister classes on it.  Metrics persisters
+<p>Once you have created your <code>MetricsManager</code> you should set metrics persister(s) on it.  Metrics persisters
 are the classes which are responsible for saving the metrics information to disk, cloud-service, or other archive so
 they can be reported on and stored for later use.
 </p>
@@ -300,7 +303,10 @@ can then be imported into some reporting system.  It is able to cleanup old metr
 
 </li></ul>
 
-<p>Persisters are set on the <code>MetricsManager</code>:
+<p>There is also an implementation for a persister <code>CloudWatchMetricsPersister</code> that saves the metrics into Amazon&rsquo;s
+AWS CloudWatch service.  It requires the <code>aws-java-sdk</code> library which is an optional dependency.
+</p>
+<p>Persisters are set on the <code>MetricsManager</code> as follows:
 </p>
 <table><tr><td>&nbsp;</td><td><pre class="example">// persisters that persist a number per metric
 metricsManager.setMetricValuesPersisters(
@@ -334,10 +340,10 @@ metricsManager.setMetricDetailsPersisters(
 <a name="index-creating-metrics"></a>
 <a name="index-registering-metrics"></a>
 <a name="index-metrics"></a>
-<p>Once you have created your <code>MetricsManager</code> and created your persisters, you are ready to start creating and 
-registering metrics with the manager.  Metrics are the classes which keep track of the name of the metric as well as
-it&rsquo;s associated value(s).  For example, let&rsquo;s say we wanted to count the number of web-requests made to our web-server
-so we can graph it over time.  We might create a metric like the following and register it on the <code>MetricsManager</code>:
+<p>Once you have created your <code>MetricsManager</code> and a persister, you are ready to start creating and registering metrics
+with the manager.  Metrics are the objects which keep track of the name of the metric as well as it&rsquo;s associated value(s).
+For example, let&rsquo;s say we wanted to count the number of web-requests made to our web-server so we can graph it over time.
+We might create a metric like the following and register it on the <code>MetricsManager</code>:
 </p>
 <table><tr><td>&nbsp;</td><td><pre class="example">ControlledMetricAccum webRequestMetric =
    new ControlledMetricAccum(&quot;web&quot;, &quot;server&quot;, &quot;requests&quot;,
@@ -366,20 +372,20 @@ is persisted so the counts per minute (or whatever your persist frequency is) wi
 <a name="index-ControlledMetricRatio"></a>
 <a name="index-ratio-metric"></a>
 <ul>
-<li> <code>ControlledMetricAccum</code> - A metric that accumulates in value.  This is used when we are counting some sort
-of event light a web-server request or a thrown exception.  It supports an <code>increment()</code> method although the adjust
-will add any value to the metric.
+<li> <code>ControlledMetricAccum</code> - A metric that accumulates in value.  This is used when we are counting something
+such as a web-server request or a thrown exception.  It supports <code>increment()</code> and <code>add()</code> methods.
 
-</li><li> <code>ControlledMetricValue</code> - A metric whose value can go up or down.  This is used when we are monitoring how
-much memory the JVM is using or a cache-hit percentage.  We often use a <code>MetricsUpdater</code> when dealing with values.
-See section <a href="#Using-MetricsUpdater">Updating Metric Values</a>.
+</li><li> <code>ControlledMetricValue</code> - A metric whose value can go up or down.  This is used, for example, when we are
+monitoring how much memory the JVM is using or a cache-hit percentage.  We often use a <code>MetricsUpdater</code> when dealing
+with values.  See section <a href="#Using-MetricsUpdater">Updating Metric Values</a>.
 
-</li><li> <code>ControlledMetricTimer</code> - For metrics that are tracking how long a particular operation takes, this class is
-useful for doing so.  It has a <code>start()</code> and <code>stop()</code> method which easily records the elapsed time in
-milliseconds given that it extends <code>ControlledMetricValue</code>.
+</li><li> <code>ControlledMetricTimer</code> - This metric is useful for tracking how long a particular operation takes.  It has
+a <code>start()</code> and <code>stop()</code> method which easily records the elapsed time in milliseconds given that it extends
+<code>ControlledMetricValue</code>.
 
 </li><li> <code>ControlledMetricRatio</code> - This metric separates the numerator from the denominator to keep good precision
-when recording ratios.  You could track cache hit/miss ratios or other information with this.
+when recording ratios.  You could track cache hit/miss ratios or other information with this metric which extends
+<code>ControlledMetricValue</code>.
 
 </li></ul>
 
@@ -414,7 +420,7 @@ interface and probably extend the <code>BaseControlledMetric</code> class.
 <p>In many situations, you may poll a value from another object and update a metric at that time.  The <code>MetricsManager</code>
 has support for classes that implement the <code>MetricsUpdater</code> interface that can be registered on the manager.
 Whenever values are to be persisted, the <code>MetricsManager</code> will call the configured updaters beforehand so they can
-calculate or poll the values for their metrics.
+calculate or poll the values for their metrics and update the metrics appropriately.
 </p>
 <p>For example, let&rsquo;s say you were tracking how much memory your were using in your system.  You would register your
 memory metric with the <code>MetricsManager</code> and also register yourself with the <code>MetricsManager</code> as an updater.
@@ -442,15 +448,15 @@ how much memory your code is using and update the metric with the information.
 <a name="Using-the-Built_002dIn-Utilities"></a>
 <h2 class="section">2.6 Using the Built-In Utilities</h2>
 
-<p>There are a couple of built-in utility classes which are useful for most applications to utilize.
+<p>There are a couple of built-in utility classes which are useful for applications to utilize.
 </p>
 <ul>
 <li> <code>SystemMetricsPublisher</code> - Publishes a number of useful bits of information from the JVM: number of threads,
 total memory used, maximum memory used, free memory, current heap size, number of loaded classes, total process CPU time,
-thread load average percentage, old gen memory presentage, process load average percentage.
+thread load average percentage, old-gen memory percentage, process load average percentage.
 
 </li><li> <code>FileMetricsPublisher</code> - Reads values from files on the file system that are then published via metrics.
-This is used to read numbers from files in thre <code>/proc</code> file-system on linux.  A common file metric that you might
+This is used to read numbers from files in the <code>/proc</code> file-system on Linux.  A common file metric that you might
 want to publish is the number of open file-descriptors being used by the JVM.
 
 </li></ul>
@@ -512,7 +518,7 @@ to do so but you can set the <code>JmxServer</code> on the <code>MetricsManager<
 <table><tr><td>&nbsp;</td><td><pre class="example">&lt;dependency&gt;
 	&lt;groupId&gt;com.j256.simplemetrics&lt;/groupId&gt;
 	&lt;artifactId&gt;simplemetrics&lt;/artifactId&gt;
-	&lt;version&gt;0.6&lt;/version&gt;
+	&lt;version&gt;1.3&lt;/version&gt;
 &lt;/dependency&gt;
 </pre></td></tr></table>
 
@@ -551,7 +557,7 @@ DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING F
 WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE
 USE OR PERFORMANCE OF THIS SOFTWARE.
 </p>
-<p>The author may be contacted via <a href="http://256.com/sources/simplemetrics/">http://256.com/sources/simplemetrics/</a>
+<p>The author may be contacted via the <a href="http://256.com/sources/simplemetrics/">SimpleMetrics home page</a>.
 </p>
 <hr size="6">
 <a name="Index-of-Concepts"></a>
@@ -792,7 +798,7 @@ USE OR PERFORMANCE OF THIS SOFTWARE.
 </tr></table>
 <h1>About This Document</h1>
 <p>
-  This document was generated by <em>Gray Watson</em> on <em>December 12, 2015</em> using <a href="http://www.nongnu.org/texi2html/"><em>texi2html 1.82</em></a>.
+  This document was generated by <em>Gray Watson</em> on <em>February 8, 2017</em> using <a href="http://www.nongnu.org/texi2html/"><em>texi2html 1.82</em></a>.
 </p>
 <p>
   The buttons in the navigation panels have the following meaning:
@@ -894,7 +900,7 @@ USE OR PERFORMANCE OF THIS SOFTWARE.
 <hr size="1">
 <p>
  <font size="-1">
-  This document was generated by <em>Gray Watson</em> on <em>December 12, 2015</em> using <a href="http://www.nongnu.org/texi2html/"><em>texi2html 1.82</em></a>.
+  This document was generated by <em>Gray Watson</em> on <em>February 8, 2017</em> using <a href="http://www.nongnu.org/texi2html/"><em>texi2html 1.82</em></a>.
  </font>
  <br>
 

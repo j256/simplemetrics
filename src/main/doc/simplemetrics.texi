@@ -6,9 +6,9 @@
 @c %**end of header
 
 @c ----------------------------------------------------------------
-@set simplemetrics_version 1.2
+@set simplemetrics_version 1.3
 @set simplemetrics_year 2017
-@set simplemetrics_date January @value{simplemetrics_year}
+@set simplemetrics_date February @value{simplemetrics_year}
 @set package SimpleMetrics
 @c ----------------------------------------------------------------
 
@@ -91,7 +91,7 @@ to @code{java.util.Logger}.  You may want to roll your own.
 LoggingMetricsPersister persister =
    new LoggingMetricsPersister();
 metricsManager.setMetricValuesPersisters(
-   new MetricValuesPersister[] { persister });
+   new MetricValuesPersister[] @{ persister @});
 @end example
 
 @item Create at least one metric which monitors a particular application value, and register it with the 
@@ -158,7 +158,7 @@ The code works with Java 6 or later.
 The @code{MetricsManager} is the class which manages the metrics in the application, updates the values of the metrics
 when necessary, and calls the persisters to save the metrics to disk or network when requested to do so.  You need to set
 at least one metrics persister on the manager and then register metrics from various places in your application.
-The code{MetricsManager} also supports @code{SimpleJmx} annotations which allow you to publish the metrics and view them
+The @code{MetricsManager} also supports @code{SimpleJmx} annotations which allow you to publish the metrics and view them
 via JMX. 
 
 @example
