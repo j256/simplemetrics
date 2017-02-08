@@ -339,6 +339,7 @@ public class FileMetricTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void testNoFile() throws Exception {
 		FileMetric metric = new FileMetric();
+		metric.setRequired(true);
 		metric.initialize();
 	}
 
