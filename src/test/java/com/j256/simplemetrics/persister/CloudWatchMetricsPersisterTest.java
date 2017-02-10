@@ -30,6 +30,7 @@ public class CloudWatchMetricsPersisterTest {
 		AmazonCloudWatch cloudWatchClient = createMock(AmazonCloudWatch.class);
 		persister.setCloudWatchClient(cloudWatchClient);
 		persister.setAddInstanceData(true);
+		persister.initialize();
 		manager.setMetricDetailsPersisters(new MetricDetailsPersister[] { persister });
 		String comp = "test";
 		String mod = "stuff";

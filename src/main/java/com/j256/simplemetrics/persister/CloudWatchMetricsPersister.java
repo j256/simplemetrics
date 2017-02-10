@@ -109,7 +109,7 @@ public class CloudWatchMetricsPersister implements MetricDetailsPersister {
 	 * init mechanism?
 	 */
 	public void initialize() {
-		if (cloudWatchClient != null) {
+		if (cloudWatchClient == null) {
 			cloudWatchClient = new AmazonCloudWatchClient(awsCredentials);
 		}
 		if (addInstanceData) {
