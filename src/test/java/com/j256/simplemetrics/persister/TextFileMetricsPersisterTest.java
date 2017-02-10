@@ -1,11 +1,15 @@
 package com.j256.simplemetrics.persister;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,7 +23,7 @@ import com.j256.simplemetrics.metric.ControlledMetricValue;
 
 public class TextFileMetricsPersisterTest {
 
-	private final static String TEMP_DIR = "target/metricsManagerTest";
+	private final String TEMP_DIR = "target/" + getClass().getSimpleName();
 
 	@Before
 	@After
@@ -48,7 +52,7 @@ public class TextFileMetricsPersisterTest {
 		assertEquals(1, persister.getDumpLogCount());
 		long after = System.currentTimeMillis();
 
-		assertTrue(findEntry(prefix, component + "." + model + "." + label, before, after) != -1L);
+		assertTrue(findEntry(prefix, true, component + "." + model + "." + label, before, after) != -1L);
 	}
 
 	@Test
@@ -80,7 +84,55 @@ public class TextFileMetricsPersisterTest {
 	}
 
 	@Test
-	public void testRotatePeriods() throws Exception {
+	public void testSetApplendSysTimeMillis() throws IOException {
+		TextFileMetricsPersister persister = new TextFileMetricsPersister();
+		File tmpDir = new File(TEMP_DIR);
+		tmpDir.mkdirs();
+		persister.setOutputDirectory(tmpDir);
+		String prefix = "log";
+		persister.setLogFileNamePrefix(prefix);
+		assertTrue(persister.isAppendSysTimeMillis());
+		persister.setAppendSysTimeMillis(false);
+		assertFalse(persister.isAppendSysTimeMillis());
+		persister.persist(Collections.<ControlledMetric<?, ?>, Number> emptyMap(), System.currentTimeMillis());
+		boolean found = false;
+		for (File file : tmpDir.listFiles()) {
+			if (file.getName().equals(prefix)) {
+				found = true;
+			}
+		}
+		assertTrue("did not find out log file", found);
+	}
+
+	@Test
+	public void testSetShowDescription() throws IOException {
+		TextFileMetricsPersister persister = new TextFileMetricsPersister();
+		File tmpDir = new File(TEMP_DIR);
+		tmpDir.mkdirs();
+		persister.setOutputDirectory(tmpDir);
+		String prefix = "log";
+		persister.setLogFileNamePrefix(prefix);
+		assertFalse(persister.isShowDescription());
+		persister.setShowDescription(true);
+		assertTrue(persister.isShowDescription());
+		persister.setAppendSysTimeMillis(false);
+		String description = "fopeijpwefewpojfpwefjpoewfwef jopew fewjf wejf powe";
+		ControlledMetricValue metric = new ControlledMetricValue("comp", "model", "label", description, "unit");
+		persister.persist(metricValueMap(metric), System.currentTimeMillis());
+		boolean found = false;
+		for (File file : tmpDir.listFiles()) {
+			if (file.getName().equals(prefix)) {
+				String contents = readInFile(file);
+				assertTrue("Should have found description in file", contents.contains(description));
+				found = true;
+				break;
+			}
+		}
+		assertTrue("did not find out log file", found);
+	}
+
+	@Test
+	public void testRotatePeriods() throws IOException {
 		TextFileMetricsPersister persister = new TextFileMetricsPersister();
 		File tmpDir = new File(TEMP_DIR);
 		tmpDir.mkdirs();
@@ -98,11 +150,11 @@ public class TextFileMetricsPersisterTest {
 		long before = System.currentTimeMillis();
 		persister.persist(metricValueMap(metric), System.currentTimeMillis());
 		long after = System.currentTimeMillis();
-		assertEquals(-1L, findEntry(prefix, label + ext, before, after));
+		assertEquals(-1L, findEntry(prefix, true, label + ext, before, after));
 	}
 
 	@Test
-	public void testSetRotatePeriodsMetricAccum() throws Exception {
+	public void testSetRotatePeriodsMetricAccum() throws IOException {
 		TextFileMetricsPersister persister = new TextFileMetricsPersister();
 		File tmpDir = new File(TEMP_DIR);
 		tmpDir.mkdirs();
@@ -120,7 +172,7 @@ public class TextFileMetricsPersisterTest {
 		long before = System.currentTimeMillis();
 		persister.persist(metricValueMap(metric), System.currentTimeMillis());
 		long after = System.currentTimeMillis();
-		assertEquals(-1L, findEntry(prefix, label + ext, before, after));
+		assertEquals(-1L, findEntry(prefix, true, label + ext, before, after));
 	}
 
 	@Test
@@ -147,7 +199,7 @@ public class TextFileMetricsPersisterTest {
 		long before = System.currentTimeMillis();
 		persister.persist(metricValueMap(metric), System.currentTimeMillis());
 		long after = System.currentTimeMillis();
-		assertTrue(findEntry(prefix, component + "." + model + "." + label + "." + ext, before, after) != value);
+		assertTrue(findEntry(prefix, true, component + "." + model + "." + label + "." + ext, before, after) != value);
 	}
 
 	@Test
@@ -173,7 +225,7 @@ public class TextFileMetricsPersisterTest {
 		long after = System.currentTimeMillis();
 		assertEquals(1, persister.getDumpLogCount());
 
-		assertEquals(value, findEntry(prefix, component + "." + model + "." + label, before, after));
+		assertEquals(value, findEntry(prefix, true, component + "." + model + "." + label, before, after));
 
 		assertEquals(0, persister.getCleanupLogCount());
 		persister.cleanMetricFilesOlderThanMillis(5000);
@@ -183,12 +235,34 @@ public class TextFileMetricsPersisterTest {
 		persister.cleanMetricFilesOlderThanMillis(100);
 		assertEquals(1, persister.getCleanupLogCount());
 
-		assertEquals(-1, findEntry(prefix, component + "." + model + "." + label, before, after));
+		assertEquals(-1, findEntry(prefix, true, component + "." + model + "." + label, before, after));
 	}
 
-	private long findEntry(String prefix, String label, long fromTime, long toTime) throws Exception {
+	private String readInFile(File file) throws IOException {
+		StringWriter writer = new StringWriter();
+		FileReader reader = new FileReader(file);
+		try {
+			char[] chars = new char[1024];
+			while (true) {
+				int num = reader.read(chars);
+				if (num < 0) {
+					return writer.toString();
+				}
+				writer.write(chars, 0, num);
+			}
+		} finally {
+			reader.close();
+		}
+	}
+
+	private long findEntry(String prefix, boolean appendSysTimeMillis, String label, long fromTime, long toTime)
+			throws IOException {
 		for (long time = fromTime; time <= toTime; time++) {
-			File logFile = new File(new File(TEMP_DIR), prefix + Long.toString(time));
+			String fileName = prefix;
+			if (appendSysTimeMillis) {
+				fileName += time;
+			}
+			File logFile = new File(new File(TEMP_DIR), fileName);
 			if (logFile.exists()) {
 				BufferedReader reader = new BufferedReader(new FileReader(logFile));
 				try {
