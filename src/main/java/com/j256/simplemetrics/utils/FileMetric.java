@@ -42,9 +42,12 @@ public class FileMetric {
 	private Pattern splitPattern = Pattern.compile(" ");
 	private Pattern linePattern;
 	private String prefix;
-	private double adjustmentValue;
+	private double adjustmentValueDouble;
+	private long adjustmentValueLong;
 	private FileMetricOperation adjustmentOperation;
 	private int lineNumber;
+	private boolean decimalNumber;
+	private Number lastValue;
 
 	public FileMetric() {
 		// for spring
@@ -96,6 +99,7 @@ public class FileMetric {
 				metric = new ControlledMetricValue(metricComponent, metricModule, metricName, description, unit);
 				break;
 			case FILE_ACCUM:
+			case FILE_ACCUM_DIFF:
 				if (column < 0) {
 					throw new IllegalArgumentException(
 							"metric " + this.getClass() + " name " + metricName + " did not specify column value");
@@ -103,6 +107,7 @@ public class FileMetric {
 				metric = new ControlledMetricAccum(metricComponent, metricModule, metricName, description, unit);
 				break;
 			case FILE_VALUE:
+			case FILE_VALUE_DIFF:
 				if (column < 0) {
 					throw new IllegalArgumentException(
 							"metric " + this.getClass() + " name " + metricName + " did not specify column value");
@@ -119,28 +124,34 @@ public class FileMetric {
 	 * Update the value in the metric.
 	 */
 	public void updateValue() throws IOException {
-		switch (kind) {
-			case DIR:
-				long longValue = metricFile.list().length;
-				if (adjustmentOperation == null) {
-					metric.adjustValue(longValue);
-				} else {
-					metric.adjustValue(adjustValue(longValue));
-				}
-				break;
-			case FILE_ACCUM:
-			case FILE_VALUE:
-				double doubleValue = extractNumberFromFile();
-				if (adjustmentOperation == null) {
-					metric.adjustValue(doubleValue);
-				} else {
-					metric.adjustValue(adjustValue(doubleValue));
-				}
-				break;
-			default:
-				throw new IllegalArgumentException(
-						"unknown kind " + kind + " for file metric with label " + metricName);
+		if (kind == FileMetricKind.DIR) {
+			long longValue = metricFile.list().length;
+			if (adjustmentOperation == null) {
+				metric.adjustValue(longValue);
+			} else {
+				metric.adjustValue(adjustValue(longValue));
+			}
+			return;
 		}
+		Number value = extractNumberFromFile();
+		if (adjustmentOperation != null) {
+			value = adjustValue(value);
+		}
+
+		// if we are dealing with a value-diff then we store the last value
+		if (kind != FileMetricKind.FILE_ACCUM_DIFF && kind != FileMetricKind.FILE_VALUE_DIFF) {
+			// no need to take the diff
+			metric.adjustValue(value);
+		} else if (lastValue == null) {
+			// nothing to do because we can't calculate a diff
+		} else if (decimalNumber) {
+			long diff = value.longValue() - lastValue.longValue();
+			metric.adjustValue(diff);
+		} else {
+			double diff = value.doubleValue() - lastValue.doubleValue();
+			metric.adjustValue(diff);
+		}
+		lastValue = value;
 	}
 
 	/**
@@ -225,6 +236,9 @@ public class FileMetric {
 	 */
 	public void setKind(FileMetricKind kind) {
 		this.kind = kind;
+		if (this.kind == FileMetricKind.DIR) {
+			this.decimalNumber = true;
+		}
 	}
 
 	/**
@@ -269,11 +283,25 @@ public class FileMetric {
 	}
 
 	/**
-	 * If you need to adjust the extracted value at all, you can use this adjustment combined with the
-	 * {@link #setAdjustmentOperation(FileMetricOperation)} method to set the operation.
+	 * Set the adjustment value as a long integer. If you need to adjust the extracted value at all, you can use this
+	 * adjustment combined with the {@link #setAdjustmentOperation(FileMetricOperation)} method to change the value
+	 * after it is extracted from the file. You can also specify it as a string by calling
+	 * {@link #setAdjustmentValue(String)}.
 	 */
-	public void setAdjustmentValue(double adjustmentValue) {
-		this.adjustmentValue = adjustmentValue;
+	public void setAdjustmentValue(long adjustmentValueLong) {
+		this.adjustmentValueLong = adjustmentValueLong;
+		this.adjustmentValueDouble = ((Long) adjustmentValueLong).doubleValue();
+	}
+
+	/**
+	 * Set the adjustment value as a floating point value. If you need to adjust the extracted value at all, you can use
+	 * this adjustment combined with the {@link #setAdjustmentOperation(FileMetricOperation)} method to change the value
+	 * after it is extracted from the file. You can also specify it as a string by calling
+	 * {@link #setAdjustmentValue(String)}.
+	 */
+	public void setAdjustmentValue(double adjustmentValueDouble) {
+		this.adjustmentValueDouble = adjustmentValueDouble;
+		this.adjustmentValueLong = ((Double) adjustmentValueDouble).longValue();
 	}
 
 	/**
@@ -291,12 +319,20 @@ public class FileMetric {
 		this.lineNumber = lineNumber;
 	}
 
+	/**
+	 * Set to true to make this value be represented internally as a long decimal number. Default is false which will
+	 * represent it as a double floating point.
+	 */
+	public void setDecimalNumber(boolean decimalNumber) {
+		this.decimalNumber = decimalNumber;
+	}
+
 	@Override
 	public String toString() {
 		return MiscUtils.metricToString(metric);
 	}
 
-	private double extractNumberFromFile() throws IOException {
+	private Number extractNumberFromFile() throws IOException {
 		String line;
 		BufferedReader reader = null;
 		Matcher matcher = null;
@@ -367,45 +403,50 @@ public class FileMetric {
 			}
 		}
 		try {
-			return Double.parseDouble(value);
+			if (decimalNumber) {
+				return Long.parseLong(value);
+			} else {
+				return Double.parseDouble(value);
+			}
 		} catch (NumberFormatException e) {
 			throw new IOException("Invalid number '" + value + "' in metrics " + metricName + " in file " + metricFile
 					+ " column " + column);
 		}
 	}
 
-	private Number adjustValue(long value) {
+	private Number adjustValue(Number value) {
 		switch (adjustmentOperation) {
 			case ADD:
-				return value + adjustmentValue;
-			case SUBTRACT:
-				return value - adjustmentValue;
-			case MULTIPLY:
-				return value * adjustmentValue;
-			case DIVIDE:
-				if (adjustmentValue == 0.0D) {
-					return Double.MAX_VALUE;
+				if (decimalNumber) {
+					return value.longValue() + adjustmentValueLong;
 				} else {
-					return value / adjustmentValue;
+					return value.doubleValue() + adjustmentValueDouble;
 				}
-			default:
-				return value;
-		}
-	}
-
-	private double adjustValue(double value) {
-		switch (adjustmentOperation) {
-			case ADD:
-				return value + adjustmentValue;
 			case SUBTRACT:
-				return value - adjustmentValue;
-			case MULTIPLY:
-				return value * adjustmentValue;
-			case DIVIDE:
-				if (adjustmentValue == 0.0D) {
-					return Double.MAX_VALUE;
+				if (decimalNumber) {
+					return value.longValue() - adjustmentValueLong;
 				} else {
-					return value / adjustmentValue;
+					return value.doubleValue() - adjustmentValueDouble;
+				}
+			case MULTIPLY:
+				if (decimalNumber) {
+					return value.longValue() * adjustmentValueLong;
+				} else {
+					return value.doubleValue() * adjustmentValueDouble;
+				}
+			case DIVIDE:
+				if (decimalNumber) {
+					if (adjustmentValueLong == 0.0D) {
+						return 0L;
+					} else {
+						return value.longValue() / adjustmentValueLong;
+					}
+				} else {
+					if (adjustmentValueDouble == 0.0D) {
+						return 0D;
+					} else {
+						return value.doubleValue() / adjustmentValueDouble;
+					}
 				}
 			default:
 				return value;
@@ -420,8 +461,12 @@ public class FileMetric {
 		DIR,
 		/** number which accumulates */
 		FILE_ACCUM,
+		/** number which accumulates, which is the difference between the new-value and the previous-value */
+		FILE_ACCUM_DIFF,
 		/** number which is a value */
 		FILE_VALUE,
+		/** number which is a value, which is the difference between the new-value and the previous-value */
+		FILE_VALUE_DIFF,
 		// end
 		;
 	}
