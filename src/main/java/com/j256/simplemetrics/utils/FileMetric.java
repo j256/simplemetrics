@@ -285,8 +285,8 @@ public class FileMetric {
 	/**
 	 * Set the adjustment value as a long integer. If you need to adjust the extracted value at all, you can use this
 	 * adjustment combined with the {@link #setAdjustmentOperation(FileMetricOperation)} method to change the value
-	 * after it is extracted from the file. You can also specify it as a string by calling
-	 * {@link #setAdjustmentValue(String)}.
+	 * after it is extracted from the file. You can also specify it as a double by calling
+	 * {@link #setAdjustmentValue(double))}.
 	 */
 	public void setAdjustmentValue(long adjustmentValueLong) {
 		this.adjustmentValueLong = adjustmentValueLong;
@@ -296,8 +296,8 @@ public class FileMetric {
 	/**
 	 * Set the adjustment value as a floating point value. If you need to adjust the extracted value at all, you can use
 	 * this adjustment combined with the {@link #setAdjustmentOperation(FileMetricOperation)} method to change the value
-	 * after it is extracted from the file. You can also specify it as a string by calling
-	 * {@link #setAdjustmentValue(String)}.
+	 * after it is extracted from the file. You can also specify it as a long by calling
+	 * {@link #setAdjustmentValue(long)}.
 	 */
 	public void setAdjustmentValue(double adjustmentValueDouble) {
 		this.adjustmentValueDouble = adjustmentValueDouble;
