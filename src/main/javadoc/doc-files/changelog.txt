@@ -1,3 +1,6 @@
+1.5: 3/21/2017
+	* For some reason 1.4 didn't make it to maven so I'm re-releasing.
+
 1.4: 2/10/2017
 	* Added support for "difference" types of file metrics for calculating change in total counts as a rate.
 	* Added more coverage tests and fixed a couple of config problems.
