@@ -1,26 +1,23 @@
 This package provides some Java classes to help with the providing application metrics.
 
-For more information, visit the home page:
-	http://256stuff.com/sources/simplemetrics/
+For more information, visit the [SimpleMetrics home page](http://256stuff.com/sources/simplemetrics/).	
 
-Online documentation can be found off the home page.  Here are the Javadocs:
-	http://256stuff.com/sources/simplemetrics/javadoc/simplemetrics/
+Online documentation can be found off the home page.  Here are the [code Javadocs](http://256stuff.com/sources/simplemetrics/javadoc/simplemetrics/).
 
-The git repository is:
-	https://github.com/j256/simplemetrics
+Browse the code on the [git repository](https://github.com/j256/simplemetrics).	
 
-Maven packages are published via the central repo:
-	http://repo1.maven.org/maven2/com/j256/simplemetrics/simplemetrics/
+Maven packages are published via the [maven central repo](http://repo1.maven.org/maven2/com/j256/simplemetrics/simplemetrics/).	
 
 Enjoy,
 Gray Watson
 
------------------------------------------------------------------------------
-Little Sample Program
-http://256stuff.com/sources/simplemetrics/docs/example-simple
------------------------------------------------------------------------------
+## Little Sample Program
 
-Getting Started
+I've checked in a [little example program](http://256stuff.com/sources/simplemetrics/docs/example-simple).
+
+## Getting Started
+
+Here's a quick code sample showing how to get started.
 
 	// create our metrics manager which controls everything
 	MetricsManager metricsManager = new MetricsManager();
