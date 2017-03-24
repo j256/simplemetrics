@@ -1,3 +1,6 @@
+Simple Java Metrics
+===================
+
 This package provides some Java classes to help with the providing application metrics.
 
 For more information, visit the [SimpleMetrics home page](http://256stuff.com/sources/simplemetrics/).	
