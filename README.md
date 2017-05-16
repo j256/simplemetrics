@@ -40,3 +40,7 @@ Here's a quick code sample showing how to get started.
 	// ...
 	
 	// the persister will log the value of hitCounter every 60 seconds automatically
+
+# ChangeLog Release Notes
+
+See the [ChangeLog.txt file](src/main/javadoc/doc-files/changelog.txt).
