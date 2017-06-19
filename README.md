@@ -6,7 +6,7 @@ This package provides some Java classes to help with the providing application m
 * For more information, visit the [SimpleMetrics home page](http://256stuff.com/sources/simplemetrics/).	
 * Online documentation can be found off the home page.  Here are the [code Javadocs](http://256stuff.com/sources/simplemetrics/javadoc/simplemetrics/).
 * Browse the code on the [git repository](https://github.com/j256/simplemetrics).  [![CircleCI](https://circleci.com/gh/j256/simplemetrics.svg?style=svg)](https://circleci.com/gh/j256/simplemetrics)
-* Maven packages are published via the [maven central repo](http://repo1.maven.org/maven2/com/j256/simplemetrics/simplemetrics/).	
+* Maven packages are published via [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.j256.simplemetrics/simplemetrics/badge.svg?style=flat-square)](https://maven-badges.herokuapp.com/maven-central/com.j256.simplemetrics/simplemetrics/)
 
 Enjoy, Gray Watson
 
