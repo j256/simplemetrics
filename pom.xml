@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.j256.simplemetrics</groupId>
 	<artifactId>simplemetrics</artifactId>
 	<version>1.6-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>Simple Metrics</name>
-	<url>http://256.com/sources/simplemetrics/</url>
+	<url>http://256stuff.com/sources/simplemetrics/</url>
 	<description>Simple Metrics</description>
 	<licenses>
 		<license>
@@ -117,7 +118,7 @@
 						</goals>
 						<configuration>
 							<showPackage>false</showPackage>
-							<additionalparam>-tag inheritDoc:X</additionalparam>
+							<additionalparam>-tag inheritDoc:X -Xdoclint:none</additionalparam>
 						</configuration>
 					</execution>
 				</executions>
@@ -128,7 +129,7 @@
 						&lt;a
 						href="http://creativecommons.org/licenses/by-sa/3.0/" &gt;Creative Commons Attribution-Share Alike 3.0 License.
 						&lt;/a&gt; </bottom>
-					<additionalparam>-tag inheritDoc:X</additionalparam>
+					<additionalparam>-tag inheritDoc:X -Xdoclint:none</additionalparam>
 					<excludePackageNames>
 					</excludePackageNames>
 				</configuration>
@@ -162,8 +163,20 @@
 					</execution>
 				</executions>
 				<configuration>
-					<!-- j256 Releases (Code releases for j256.com) <j256@256.com> -->
+					<!-- j256 Releases (Code releases for j256.com) <j256@256stuff.com> -->
 					<keyname>D3412AC1</keyname>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>cobertura-maven-plugin</artifactId>
+				<version>2.7</version>
+				<configuration>
+					<formats>
+						<format>html</format>
+						<format>xml</format>
+					</formats>
+					<check />
 				</configuration>
 			</plugin>
 		</plugins>
@@ -201,9 +214,10 @@
 		<simplejmx-version>1.12</simplejmx-version>
 		<!-- optional dependencies -->
 		<aws-version>1.10.40</aws-version>
+		<gson-version>2.2.2</gson-version>
 		<!-- test dependencies -->
 		<junit-version>4.8.1</junit-version>
-		<easymock-version>2.3</easymock-version>
+		<easymock-version>3.4</easymock-version>
 	</properties>
 	<dependencies>
 		<!-- dependencies -->
@@ -217,6 +231,12 @@
 			<groupId>com.amazonaws</groupId>
 			<artifactId>aws-java-sdk</artifactId>
 			<version>${aws-version}</version>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>${gson-version}</version>
 			<optional>true</optional>
 		</dependency>
 		<!-- test dependencies -->
