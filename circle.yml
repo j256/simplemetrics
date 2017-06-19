@@ -2,6 +2,10 @@
 machine:
   java:
     version: openjdk7
+
+script: "mvn cobertura:cobertura"
+
 test:
   post:
+    - mvn cobertura:cobertura
     - bash <(curl -s https://codecov.io/bash)
