@@ -3,8 +3,6 @@ machine:
   java:
     version: openjdk7
 
-script: "mvn cobertura:cobertura"
-
 test:
   post:
     - mvn cobertura:cobertura
