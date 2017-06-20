@@ -182,7 +182,7 @@ public class CloudWatchMetricsPersister implements MetricDetailsPersister {
 	}
 
 	/**
-	 * Sets the name-space prefix to use for metrics published from here. 
+	 * Sets the name-space prefix to use for metrics published from here.
 	 */
 	// @NotRequired("Default is " + DEFAULT_NAME_SPACE_PREFIX)
 	public void setNameSpacePrefix(String nameSpacePrefix) {
@@ -190,7 +190,7 @@ public class CloudWatchMetricsPersister implements MetricDetailsPersister {
 	}
 
 	/**
-	 * Set the client to use to publish the metrics. 
+	 * Set the client to use to publish the metrics.
 	 */
 	// @NotRequired("Default is create one in initialize() with the credentials")
 	public void setCloudWatchClient(AmazonCloudWatch cloudWatchClient) {
@@ -223,9 +223,10 @@ public class CloudWatchMetricsPersister implements MetricDetailsPersister {
 			// we do something special if it is an accumulator
 			if (metric.getAggregationType() == AggregationType.SUM) {
 				/*
-				 * Looking at the ELB stats, if there were 100 requests in a minute then the value for each of them is a
-				 * 1 and the number of samples for the minute was 100. Since our accumulator metrics report the value as
-				 * the count, we need to flip the value and number-samples in the metric details that we are posting.
+				 * Looking at the ELB stats to see how AWS does it, if there were 100 requests in a minute then the
+				 * value for each of them is a 1 and the number of samples for the minute was 100. Since our accumulator
+				 * metrics report the value as the count, we need to flip the value and number-samples in the metric
+				 * details that we are posting.
 				 */
 				long tmpValue = details.getValue().longValue();
 				// unlikely but let's be careful out there
@@ -254,8 +255,10 @@ public class CloudWatchMetricsPersister implements MetricDetailsPersister {
 			} else {
 				double sampleCount = numSamples;
 				if (numSamples == 0) {
-					// special case here, AWS does not allow a 0 sample count so we have to set it to be slightly more
-					// see: http://stackoverflow.com/q/19696140
+					/*
+					 * Special case here, AWS does not allow a 0 sample count so we have to set it to be slightly more.
+					 * See: http://stackoverflow.com/q/19696140
+					 */
 					sampleCount = ZERO_NUM_SAMPLES_REPLACEMENT;
 				}
 				// we do the multiplication here because CloudWatch wants a sum
