@@ -398,6 +398,7 @@ public class FileMetric {
 			}
 			value = matcher.group(column);
 			if (value == null) {
+				// may not happen but let's be careful out there
 				throw new IOException(
 						"Column " + column + " did not match line in metrics " + metricName + " in file " + metricFile);
 			}
@@ -436,7 +437,7 @@ public class FileMetric {
 				}
 			case DIVIDE:
 				if (decimalNumber) {
-					if (adjustmentValueLong == 0.0D) {
+					if (adjustmentValueLong == 0L) {
 						return 0L;
 					} else {
 						return value.longValue() / adjustmentValueLong;

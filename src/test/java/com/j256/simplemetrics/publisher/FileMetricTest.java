@@ -191,6 +191,31 @@ public class FileMetricTest {
 		assertEquals(diff, metric.getMetric().getValue().longValue());
 	}
 
+	@Test
+	public void testAccumDiffMetricFloat() throws Exception {
+		File tmpDir = new File(TEMP_DIR);
+		tmpDir.mkdirs();
+		File file = new File(tmpDir, "metricFile");
+		FileMetric metric = new FileMetric();
+		long value1 = 13413123123L;
+		writeToFile(file, value1 + "\n");
+		metric.setMetricName("foo");
+		metric.setMetricComponent("comp");
+		metric.setDescription("desc");
+		metric.setKind(FileMetricKind.FILE_ACCUM_DIFF);
+		metric.setColumn(0);
+		metric.setMetricFile(file.getCanonicalPath());
+		metric.initialize();
+		assertTrue(metric.isInitialized());
+		metric.updateValue();
+		assertEquals(0, metric.getMetric().getValue().longValue());
+		long diff = 10;
+		long value2 = value1 + diff;
+		writeToFile(file, value2 + "\n");
+		metric.updateValue();
+		assertEquals(diff, metric.getMetric().getValue().longValue());
+	}
+
 	@Test(expected = IOException.class)
 	public void testFileMetricMissingPrefix() throws Exception {
 		FileMetric metric = new FileMetric();
@@ -485,6 +510,26 @@ public class FileMetricTest {
 	}
 
 	@Test
+	public void testAdjustmentDivideFloat() throws Exception {
+		FileMetric metric = new FileMetric();
+		String label = "foo";
+		metric.setMetricName(label);
+		metric.setMetricComponent("comp");
+		metric.setKind(FileMetricKind.FILE_ACCUM);
+		metric.setColumn(1);
+		metric.setMetricFile(PROC_PREFIX + "/meminfo");
+		metric.setLinePattern("Mapped:\\s+(\\d+).*");
+		metric.setAdjustmentValue(2.2);
+		metric.setAdjustmentOperation(FileMetricOperation.DIVIDE);
+		metric.initialize();
+		assertNotNull(metric.getMetric());
+		assertEquals(label, metric.getMetric().getName());
+		assertTrue(metric.isInitialized());
+		metric.updateValue();
+		assertEquals(48452, metric.getMetric().getValue().longValue());
+	}
+
+	@Test
 	public void testAdjustmentDivideDecimal() throws Exception {
 		FileMetric metric = new FileMetric();
 		String label = "foo";
@@ -516,6 +561,26 @@ public class FileMetricTest {
 		metric.setMetricFile(PROC_PREFIX + "/meminfo");
 		metric.setLinePattern("Mapped:\\s+(\\d+).*");
 		metric.setAdjustmentOperation(FileMetricOperation.DIVIDE);
+		metric.initialize();
+		assertNotNull(metric.getMetric());
+		assertEquals(label, metric.getMetric().getName());
+		assertTrue(metric.isInitialized());
+		metric.updateValue();
+		assertEquals(0, metric.getMetric().getValue().longValue());
+	}
+
+	@Test
+	public void testAdjustmentDivideZeroLong() throws Exception {
+		FileMetric metric = new FileMetric();
+		String label = "foo";
+		metric.setMetricName(label);
+		metric.setMetricComponent("comp");
+		metric.setKind(FileMetricKind.FILE_ACCUM);
+		metric.setColumn(1);
+		metric.setMetricFile(PROC_PREFIX + "/meminfo");
+		metric.setLinePattern("Mapped:\\s+(\\d+).*");
+		metric.setAdjustmentOperation(FileMetricOperation.DIVIDE);
+		metric.setDecimalNumber(true);
 		metric.initialize();
 		assertNotNull(metric.getMetric());
 		assertEquals(label, metric.getMetric().getName());
@@ -601,6 +666,51 @@ public class FileMetricTest {
 		metric.initialize();
 		assertEquals(label, metric.getMetric().getName());
 		assertFalse(metric.isInitialized());
+	}
+
+	@Test
+	public void testModule() throws Exception {
+		FileMetric metric = new FileMetric();
+		String label = "foo";
+		metric.setMetricName(label);
+		String component = "comp";
+		metric.setMetricComponent(component);
+		metric.setKind(FileMetricKind.FILE_VALUE);
+		metric.setColumn(1);
+		metric.setMetricFile(PROC_PREFIX + "/meminfo");
+		String module = "mod";
+		metric.setMetricModule(module);
+		metric.initialize();
+		assertEquals(component + "." + module + "." + label, metric.toString());
+	}
+
+	@Test
+	public void testUnit() throws Exception {
+		FileMetric metric = new FileMetric();
+		String label = "foo";
+		metric.setMetricName(label);
+		metric.setMetricComponent("comp");
+		metric.setKind(FileMetricKind.FILE_VALUE);
+		metric.setColumn(1);
+		metric.setMetricFile(PROC_PREFIX + "/meminfo");
+		String unit = "unit";
+		metric.setUnit(unit);
+		metric.initialize();
+		assertEquals(unit, metric.getMetric().getUnit());
+	}
+
+	@Test
+	public void testNoFiles() throws Exception {
+		FileMetric metric = new FileMetric();
+		String label = "foo";
+		metric.setMetricName(label);
+		metric.setMetricComponent("comp");
+		metric.setKind(FileMetricKind.FILE_VALUE);
+		metric.setColumn(1);
+		metric.setMetricFiles(new String[0]);
+		String unit = "unit";
+		metric.setUnit(unit);
+		metric.initialize();
 	}
 
 	private void writeToFile(File file, String contents) throws IOException {
