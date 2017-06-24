@@ -1,3 +1,6 @@
+1.6: ?/?/2017
+	* Better handling of AWS credentials provider.
+
 1.5: 3/21/2017
 	* For some reason 1.4 didn't make it to maven so I'm re-releasing.
 

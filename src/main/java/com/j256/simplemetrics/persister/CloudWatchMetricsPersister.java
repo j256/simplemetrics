@@ -16,6 +16,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.AWSCredentialsProvider;
+import com.amazonaws.internal.StaticCredentialsProvider;
 import com.amazonaws.services.cloudwatch.AmazonCloudWatch;
 import com.amazonaws.services.cloudwatch.AmazonCloudWatchClient;
 import com.amazonaws.services.cloudwatch.model.Dimension;
@@ -48,9 +50,9 @@ public class CloudWatchMetricsPersister implements MetricDetailsPersister {
 	private static final String INSTANCE_ID_DIMENSION = "InstanceId";
 	private static final String COMPONENT_DIMENSION = "Component";
 	private static final String MODULE_DIMENSION = "Module";
-	private static final int MAX_NUM_DATUM_ALLOWED_PER_POST = 20;
+	static final int MAX_NUM_DATUM_ALLOWED_PER_POST = 20;
 	private static final StandardUnit DEFAULT_AWS_UNIT = StandardUnit.Count;
-	private static final double ZERO_NUM_SAMPLES_REPLACEMENT = 0.000000001D;
+	static final double ZERO_NUM_SAMPLES_REPLACEMENT = 0.000000001D;
 
 	private static final String AWS_INSTANCE_INFO_IP = "169.254.169.254";
 	private static final String INSTANCE_ID_FETCH_PATH = "/latest/meta-data/instance-id";
@@ -62,7 +64,7 @@ public class CloudWatchMetricsPersister implements MetricDetailsPersister {
 
 	private String applicationName = "unknown";
 	private String nameSpacePrefix = DEFAULT_NAME_SPACE_PREFIX;
-	private AWSCredentials awsCredentials;
+	private AWSCredentialsProvider awsCredentialsProvider;
 	private boolean addInstanceData = true;
 
 	private AmazonCloudWatch cloudWatchClient;
@@ -98,7 +100,12 @@ public class CloudWatchMetricsPersister implements MetricDetailsPersister {
 	}
 
 	public CloudWatchMetricsPersister(AWSCredentials awsCredentials, String applicationName, boolean addInstanceData) {
-		this.awsCredentials = awsCredentials;
+		this(new StaticCredentialsProvider(awsCredentials), applicationName, addInstanceData);
+	}
+
+	public CloudWatchMetricsPersister(AWSCredentialsProvider awsCredentialsProvider, String applicationName,
+			boolean addInstanceData) {
+		this.awsCredentialsProvider = awsCredentialsProvider;
 		this.applicationName = applicationName;
 		this.addInstanceData = addInstanceData;
 		initialize();
@@ -110,7 +117,7 @@ public class CloudWatchMetricsPersister implements MetricDetailsPersister {
 	 */
 	public void initialize() {
 		if (cloudWatchClient == null) {
-			cloudWatchClient = new AmazonCloudWatchClient(awsCredentials);
+			cloudWatchClient = new AmazonCloudWatchClient(awsCredentialsProvider);
 		}
 		if (addInstanceData) {
 			instanceId = downloadInstanceId(AWS_CONNECT_TIMEOUT_MILLIS);
@@ -162,7 +169,14 @@ public class CloudWatchMetricsPersister implements MetricDetailsPersister {
 	 */
 	// @NotRequired("either this or the cloudWatchClient needs to be set")
 	public void setAwsCredentials(AWSCredentials awsCredentials) {
-		this.awsCredentials = awsCredentials;
+		this.awsCredentialsProvider = new StaticCredentialsProvider(awsCredentials);
+	}
+
+	/**
+	 * Set the credentials provider.
+	 */
+	public void setAwsCredentialsProvider(AWSCredentialsProvider awsCredentialsProvider) {
+		this.awsCredentialsProvider = awsCredentialsProvider;
 	}
 
 	/**
