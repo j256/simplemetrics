@@ -80,7 +80,8 @@ public class MetricsPersisterJob implements Runnable {
 			}
 		}
 
-		while (!Thread.currentThread().isInterrupted()) {
+		// we do a sleep here so no need to test for Thread.isInterrupted()
+		while (true) {
 			long lastStartMillis = System.currentTimeMillis();
 			try {
 				metricsManager.persist();

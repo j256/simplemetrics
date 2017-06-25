@@ -14,11 +14,68 @@ public class MetricsPersisterJobTest {
 		assertEquals(0, manager.getPersistCount());
 
 		long millis = 100;
-		MetricsPersisterJob job = new MetricsPersisterJob(manager, millis, millis, true);
+		MetricsPersisterJob job = new MetricsPersisterJob();
+		job.setMetricsManager(manager);
+		job.setPeriodTimeMillis(millis);
+		job.setDaemonThread(true);
+		job.initialize();
 
 		Thread.sleep(millis + millis / 10);
 		assertEquals(1, manager.getPersistCount());
 
 		job.join();
+	}
+
+	@Test
+	public void testTwice() throws Exception {
+		MetricsManager manager = new MetricsManager();
+		assertEquals(0, manager.getPersistCount());
+
+		long millis = 100;
+		MetricsPersisterJob job = new MetricsPersisterJob();
+		job.setMetricsManager(manager);
+		// coverage
+		job.setDelayTimeMillis(0);
+		job.setPeriodTimeMillis(millis);
+		job.setDaemonThread(true);
+		job.initialize();
+
+		Thread.sleep(millis * 2 + millis / 10);
+		assertEquals(3, manager.getPersistCount());
+
+		job.join();
+	}
+
+	@Test
+	public void testCoverage() throws Exception {
+		MetricsManager manager = new MetricsManager();
+		assertEquals(0, manager.getPersistCount());
+
+		long millis = 100;
+		MetricsPersisterJob job = new MetricsPersisterJob();
+		job.setMetricsManager(manager);
+		job.setPeriodTimeMillis(millis);
+		job.setDelayTimeMillis(-1);
+		job.setDaemonThread(true);
+		job.initialize();
+
+		Thread.sleep(millis * 2 + millis / 10);
+		assertEquals(3, manager.getPersistCount());
+
+		job.join();
+	}
+
+	@Test
+	public void testInterruptDelay() throws Exception {
+		MetricsManager manager = new MetricsManager();
+		assertEquals(0, manager.getPersistCount());
+
+		long millis = 100;
+		MetricsPersisterJob job = new MetricsPersisterJob(manager, millis * 2, millis, true);
+
+		Thread.sleep(millis + millis / 10);
+
+		job.join();
+		assertEquals(0, manager.getPersistCount());
 	}
 }

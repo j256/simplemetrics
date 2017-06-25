@@ -75,7 +75,7 @@ public class MetricsManagerTest implements MetricsUpdater {
 	}
 
 	@Test
-	public void testPersister() throws Exception {
+	public void testValuesPersister() throws Exception {
 		MetricsManager manager = new MetricsManager();
 		ControlledMetricAccum metric = new ControlledMetricAccum("comp", "mod", "label", "desc", null);
 		manager.registerMetric(metric);
@@ -99,6 +99,50 @@ public class MetricsManagerTest implements MetricsUpdater {
 		value = persister.lastValueMap.get(metric);
 		assertNotNull(value);
 		assertEquals(val, value.longValue());
+	}
+
+	@Test
+	public void testValuesAndDetailsPersister() throws Exception {
+		MetricsManager manager = new MetricsManager();
+		ControlledMetricAccum metric = new ControlledMetricAccum("comp", "mod", "label", "desc", null);
+		manager.registerMetric(metric);
+
+		TestValuesPersister valuesPersister = new TestValuesPersister();
+		manager.setMetricValuesPersisters(new MetricValuesPersister[] { valuesPersister });
+
+		TestDetailsPersister detailsPersister = new TestDetailsPersister();
+		manager.setMetricDetailsPersisters(new MetricDetailsPersister[] { detailsPersister });
+
+		assertNull(valuesPersister.lastValueMap);
+		assertNull(detailsPersister.lastValueMap);
+
+		double doubleVal = 1.0;
+		metric.adjustValue(doubleVal);
+
+		manager.persist();
+
+		assertNotNull(valuesPersister.lastValueMap);
+		assertNotNull(detailsPersister.lastValueMap);
+		Number value = detailsPersister.lastValueMap.get(metric).getValue();
+		assertNotNull(value);
+
+		value = detailsPersister.lastValueMap.get(metric).getValue();
+		assertNotNull(value);
+		assertEquals((long) doubleVal, value);
+
+		value = valuesPersister.lastValueMap.get(metric);
+		assertNotNull(value);
+		assertEquals(1, value.longValue());
+
+		long val = 10;
+		metric.add(val);
+
+		manager.persist();
+		assertNotNull(valuesPersister.lastValueMap);
+		value = valuesPersister.lastValueMap.get(metric);
+		assertNotNull(value);
+		assertEquals(val, value.longValue());
+
 	}
 
 	@Test
@@ -183,7 +227,8 @@ public class MetricsManagerTest implements MetricsUpdater {
 		Map<ControlledMetric<?, ?>, MetricValueDetails> lastValueMap;
 
 		@Override
-		public void persist(Map<ControlledMetric<?, ?>, MetricValueDetails> metricValueDetails, long timeCollectedMillis) {
+		public void persist(Map<ControlledMetric<?, ?>, MetricValueDetails> metricValueDetails,
+				long timeCollectedMillis) {
 			lastValueMap = metricValueDetails;
 		}
 	}

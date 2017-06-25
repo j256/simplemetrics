@@ -48,11 +48,13 @@ public class TextFileMetricsPersisterTest {
 		metric.adjustValue(value);
 		long before = System.currentTimeMillis();
 		assertEquals(0, persister.getDumpLogCount());
+		assertTrue(persister.getLastDumpTimeMillisString().equals("never"));
 		persister.persist(metricValueMap(metric), System.currentTimeMillis());
 		assertEquals(1, persister.getDumpLogCount());
+		assertFalse(persister.getLastDumpTimeMillisString().equals("never"));
 		long after = System.currentTimeMillis();
 
-		assertTrue(findEntry(prefix, true, component + "." + model + "." + label, before, after) != -1L);
+		assertTrue(findEntry(prefix, true, component + "." + model + "." + label, before, after, "=") != -1L);
 	}
 
 	@Test
@@ -150,12 +152,14 @@ public class TextFileMetricsPersisterTest {
 		long before = System.currentTimeMillis();
 		persister.persist(metricValueMap(metric), System.currentTimeMillis());
 		long after = System.currentTimeMillis();
-		assertEquals(-1L, findEntry(prefix, true, label + ext, before, after));
+		assertEquals(-1L, findEntry(prefix, true, label + ext, before, after, "="));
 	}
 
 	@Test
 	public void testSetRotatePeriodsMetricAccum() throws IOException {
 		TextFileMetricsPersister persister = new TextFileMetricsPersister();
+		String sepStr = "==";
+		persister.setSeparatingString(sepStr);
 		File tmpDir = new File(TEMP_DIR);
 		tmpDir.mkdirs();
 		persister.setOutputDirectory(tmpDir);
@@ -172,7 +176,7 @@ public class TextFileMetricsPersisterTest {
 		long before = System.currentTimeMillis();
 		persister.persist(metricValueMap(metric), System.currentTimeMillis());
 		long after = System.currentTimeMillis();
-		assertEquals(-1L, findEntry(prefix, true, label + ext, before, after));
+		assertEquals(-1L, findEntry(prefix, true, label + ext, before, after, sepStr));
 	}
 
 	@Test
@@ -199,7 +203,8 @@ public class TextFileMetricsPersisterTest {
 		long before = System.currentTimeMillis();
 		persister.persist(metricValueMap(metric), System.currentTimeMillis());
 		long after = System.currentTimeMillis();
-		assertTrue(findEntry(prefix, true, component + "." + model + "." + label + "." + ext, before, after) != value);
+		assertTrue(findEntry(prefix, true, component + "." + model + "." + label + "." + ext, before, after,
+				"=") != value);
 	}
 
 	@Test
@@ -207,6 +212,7 @@ public class TextFileMetricsPersisterTest {
 		TextFileMetricsPersister persister = new TextFileMetricsPersister();
 		File tmpDir = new File(TEMP_DIR);
 		tmpDir.mkdirs();
+		new File(tmpDir, "someotherfile").createNewFile();
 		persister.setOutputDirectory(tmpDir);
 		String prefix = "log.";
 		persister.setLogFileNamePrefix(prefix);
@@ -225,7 +231,7 @@ public class TextFileMetricsPersisterTest {
 		long after = System.currentTimeMillis();
 		assertEquals(1, persister.getDumpLogCount());
 
-		assertEquals(value, findEntry(prefix, true, component + "." + model + "." + label, before, after));
+		assertEquals(value, findEntry(prefix, true, component + "." + model + "." + label, before, after, "="));
 
 		assertEquals(0, persister.getCleanupLogCount());
 		persister.cleanMetricFilesOlderThanMillis(5000);
@@ -235,7 +241,19 @@ public class TextFileMetricsPersisterTest {
 		persister.cleanMetricFilesOlderThanMillis(100);
 		assertEquals(1, persister.getCleanupLogCount());
 
-		assertEquals(-1, findEntry(prefix, true, component + "." + model + "." + label, before, after));
+		assertEquals(-1, findEntry(prefix, true, component + "." + model + "." + label, before, after, "="));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testMissingOutDir() {
+		TextFileMetricsPersister persister = new TextFileMetricsPersister();
+		persister.setOutputDirectory(new File("/doesntexist"));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testOutDirCantWrite() {
+		TextFileMetricsPersister persister = new TextFileMetricsPersister();
+		persister.setOutputDirectory(new File("/"));
 	}
 
 	private String readInFile(File file) throws IOException {
@@ -255,8 +273,8 @@ public class TextFileMetricsPersisterTest {
 		}
 	}
 
-	private long findEntry(String prefix, boolean appendSysTimeMillis, String label, long fromTime, long toTime)
-			throws IOException {
+	private long findEntry(String prefix, boolean appendSysTimeMillis, String label, long fromTime, long toTime,
+			String separatingString) throws IOException {
 		for (long time = fromTime; time <= toTime; time++) {
 			String fileName = prefix;
 			if (appendSysTimeMillis) {
@@ -272,7 +290,7 @@ public class TextFileMetricsPersisterTest {
 							break;
 						}
 						if (line.contains(label)) {
-							String[] fields = line.split("=", 2);
+							String[] fields = line.split(separatingString, 2);
 							if (fields[0].equals(label)) {
 								return Long.parseLong(fields[1]);
 							}
