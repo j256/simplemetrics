@@ -1,7 +1,12 @@
 package com.j256.simplemetrics.metric;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import org.junit.Test;
 
@@ -25,7 +30,8 @@ public class ControlledMetricAccumTest {
 
 	@Test
 	public void testControlledMetricStringStringStringLong() {
-		ControlledMetricAccum metric = new ControlledMetricAccum("c", "m", "n", "d", null);;
+		ControlledMetricAccum metric = new ControlledMetricAccum("c", "m", "n", "d", null);
+		;
 		assertEquals(0L, metric.getValue());
 		long value = 10021;
 		metric.add(value);
@@ -34,7 +40,8 @@ public class ControlledMetricAccumTest {
 
 	@Test
 	public void testDoublePersist() {
-		ControlledMetricAccum metric = new ControlledMetricAccum("c", "m", "n", "d", null);;
+		ControlledMetricAccum metric = new ControlledMetricAccum("c", "m", "n", "d", null);
+		;
 		long num = 100;
 		metric.adjustValue(num);
 		Number details = metric.getValueToPersist();
@@ -65,6 +72,40 @@ public class ControlledMetricAccumTest {
 		assertEquals(delta, details.getMin());
 		assertEquals(delta, details.getMax());
 		assertEquals(delta, details.getValue());
+	}
+
+	@Test
+	public void testCoverage() {
+		String comp = "c";
+		String mod = "m";
+		String name = "n";
+		ControlledMetricAccum metric = new ControlledMetricAccum(comp, mod, name, "d", null);
+		assertEquals(comp, metric.getComponent());
+		assertEquals(mod, metric.getModule());
+		assertEquals(name, metric.getName());
+		assertEquals("SUM", metric.getAggregationTypeName());
+		assertEquals(0, metric.compareTo(metric));
+		ControlledMetricAccum metric2 = new ControlledMetricAccum("d", mod, name, "d", null);
+		assertEquals(-1, metric.compareTo(metric2));
+		ControlledMetricAccum metric3 = new ControlledMetricAccum(comp, "n", name, "d", null);
+		assertEquals(-1, metric.compareTo(metric3));
+		ControlledMetricAccum metric4 = new ControlledMetricAccum(comp, null, name, "d", null);
+		assertEquals(1, metric.compareTo(metric4));
+		assertEquals(0, metric4.compareTo(metric));
+
+		Set<ControlledMetricAccum> metrics = new HashSet<ControlledMetricAccum>();
+		metrics.add(metric);
+		assertTrue(metrics.contains(new ControlledMetricAccum(comp, mod, name, "d", null)));
+		metrics.add(metric4);
+		assertTrue(metrics.contains(metric4));
+		
+		assertFalse(metric.equals(null));
+		assertFalse(metric.equals(this));
+		assertFalse(metric.equals(metric2));
+		assertFalse(metric.equals(metric3));
+		assertFalse(metric.equals(metric4));
+		assertFalse(metric4.equals(metric));
+		assertTrue(metric4.equals(metric4));
 	}
 
 	@Test(expected = NullPointerException.class)

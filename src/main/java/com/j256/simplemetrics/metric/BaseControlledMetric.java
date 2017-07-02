@@ -179,6 +179,9 @@ public abstract class BaseControlledMetric<V, MV extends MetricValue<V, MV>> imp
 			return compare;
 		}
 		if (module != null) {
+			if (metric.module == null) {
+				return 1;
+			}
 			compare = module.compareTo(metric.module);
 			if (compare != 0) {
 				return compare;
