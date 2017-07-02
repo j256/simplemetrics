@@ -44,7 +44,8 @@ public class MetricsManager {
 	 */
 	public void registerMetric(ControlledMetric<?, ?> metric) {
 		synchronized (metrics) {
-			if (metrics.add(metric) && jmxServer != null) {
+			metrics.add(metric);
+			if (jmxServer != null) {
 				// register it with JMX if injected
 				try {
 					jmxServer.register(metric);
