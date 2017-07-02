@@ -78,7 +78,8 @@ public class SystemMetricsPublisher implements MetricsUpdater {
 		List<MemoryPoolMXBean> beans = ManagementFactory.getMemoryPoolMXBeans();
 		for (MemoryPoolMXBean bean : beans) {
 			// we are interested in the "old gen" (java 6) or "tenured gen" (java 5) pool
-			if (bean.getName().equalsIgnoreCase("PS Old Gen") || bean.getName().equalsIgnoreCase("Tenured Gen")) {
+			if (bean.getName().equalsIgnoreCase("CMS Old Gen") || bean.getName().equalsIgnoreCase("PS Old Gen")
+					|| bean.getName().equalsIgnoreCase("Tenured Gen")) {
 				oldGenMxBean = bean;
 				break;
 			}
@@ -86,36 +87,26 @@ public class SystemMetricsPublisher implements MetricsUpdater {
 		threadMxBean = ManagementFactory.getThreadMXBean();
 
 		// create our metrics
-		numberThreads =
-				new ControlledMetricValue(METRIC_COMPONENT_NAME, "threads", "numThreads", "Number of running threads",
-						"count");
-		totalMemory =
-				new ControlledMetricValue(METRIC_COMPONENT_NAME, "mem", "totalMemory",
-						"Total memory in use by the jvm", "bytes");
-		maxMemory =
-				new ControlledMetricValue(METRIC_COMPONENT_NAME, "mem", "maxMemory",
-						"Max memory the jvm will attempt to use", "bytes");
-		freeMemory =
-				new ControlledMetricValue(METRIC_COMPONENT_NAME, "mem", "freeMemory",
-						"Amount of free memory in the jvm", "bytes");
-		currentHeap =
-				new ControlledMetricValue(METRIC_COMPONENT_NAME, "mem", "currentHeap",
-						"Amount of memory currently used by the jvm", "bytes");
-		loadedClasses =
-				new ControlledMetricValue(METRIC_COMPONENT_NAME, "mem", "loadedClasses",
-						"Number of classes loaded by the jvm", "count");
-		totalCpuTime =
-				new ControlledMetricValue(METRIC_COMPONENT_NAME, "cpu", "totalCpuTime",
-						"Total cpu time from the threads in milliseconds", "milliseconds");
-		threadLoadAveragePercentage =
-				new ControlledMetricValue(METRIC_COMPONENT_NAME, "cpu", "threadLoadAvgPerc",
-						"Load average percentage from the thread list", "percent");
-		oldGenMemoryPercentageUsed =
-				new ControlledMetricValue(METRIC_COMPONENT_NAME, "mem", "oldGenMemUsedPerc",
-						"Old Gen GC pool percentage of used memory", "percent");
-		processLoadAveragePercentage =
-				new ControlledMetricValue(METRIC_COMPONENT_NAME, "cpu", "processCpuTime",
-						"Process cpu time percentage", "percentage");
+		numberThreads = new ControlledMetricValue(METRIC_COMPONENT_NAME, "threads", "numThreads",
+				"Number of running threads", "count");
+		totalMemory = new ControlledMetricValue(METRIC_COMPONENT_NAME, "mem", "totalMemory",
+				"Total memory in use by the jvm", "bytes");
+		maxMemory = new ControlledMetricValue(METRIC_COMPONENT_NAME, "mem", "maxMemory",
+				"Max memory the jvm will attempt to use", "bytes");
+		freeMemory = new ControlledMetricValue(METRIC_COMPONENT_NAME, "mem", "freeMemory",
+				"Amount of free memory in the jvm", "bytes");
+		currentHeap = new ControlledMetricValue(METRIC_COMPONENT_NAME, "mem", "currentHeap",
+				"Amount of memory currently used by the jvm", "bytes");
+		loadedClasses = new ControlledMetricValue(METRIC_COMPONENT_NAME, "mem", "loadedClasses",
+				"Number of classes loaded by the jvm", "count");
+		totalCpuTime = new ControlledMetricValue(METRIC_COMPONENT_NAME, "cpu", "totalCpuTime",
+				"Total cpu time from the threads in milliseconds", "milliseconds");
+		threadLoadAveragePercentage = new ControlledMetricValue(METRIC_COMPONENT_NAME, "cpu", "threadLoadAvgPerc",
+				"Load average percentage from the thread list", "percent");
+		oldGenMemoryPercentageUsed = new ControlledMetricValue(METRIC_COMPONENT_NAME, "mem", "oldGenMemUsedPerc",
+				"Old Gen GC pool percentage of used memory", "percent");
+		processLoadAveragePercentage = new ControlledMetricValue(METRIC_COMPONENT_NAME, "cpu", "processCpuTime",
+				"Process cpu time percentage", "percentage");
 
 		metricsManager.registerMetric(numberThreads);
 		metricsManager.registerMetric(totalMemory);
@@ -155,7 +146,7 @@ public class SystemMetricsPublisher implements MetricsUpdater {
 	}
 
 	/**
-	 * Required metrics manager that manages the metrics we create here. 
+	 * Required metrics manager that manages the metrics we create here.
 	 */
 	// @Required
 	public void setMetricsManager(MetricsManager metricsManager) {
