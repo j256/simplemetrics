@@ -77,9 +77,8 @@ public class SystemMetricsPublisher implements MetricsUpdater {
 		// get the mbeans associated with the GC pools
 		List<MemoryPoolMXBean> beans = ManagementFactory.getMemoryPoolMXBeans();
 		for (MemoryPoolMXBean bean : beans) {
-			// we are interested in the "old gen" (java 6) or "tenured gen" (java 5) pool
-			if (bean.getName().equalsIgnoreCase("CMS Old Gen") || bean.getName().equalsIgnoreCase("PS Old Gen")
-					|| bean.getName().equalsIgnoreCase("Tenured Gen")) {
+			// we are interested in the "old gen" (java 6+) or "tenured gen" (java 5) pool
+			if (bean.getName().endsWith(" Old Gen") || bean.getName().equalsIgnoreCase("Tenured Gen")) {
 				oldGenMxBean = bean;
 				break;
 			}
