@@ -41,6 +41,15 @@
 	</developers>
 	<profiles>
 		<profile>
+			<id>disable-java8-doclint</id>
+			<activation>
+				<jdk>[1.8,)</jdk>
+			</activation>
+			<properties>
+				<disableDoclint>-Xdoclint:none</disableDoclint>
+			</properties>
+		</profile>
+		<profile>
 			<id>st</id>
 			<distributionManagement>
 				<repository>
@@ -118,7 +127,7 @@
 						</goals>
 						<configuration>
 							<showPackage>false</showPackage>
-							<additionalparam>-tag inheritDoc:X</additionalparam>
+							<additionalparam>-tag inheritDoc:X ${disableDoclint}</additionalparam>
 						</configuration>
 					</execution>
 				</executions>
@@ -129,7 +138,7 @@
 						&lt;a
 						href="http://creativecommons.org/licenses/by-sa/3.0/" &gt;Creative Commons Attribution-Share Alike 3.0 License.
 						&lt;/a&gt; </bottom>
-					<additionalparam>-tag inheritDoc:X</additionalparam>
+					<additionalparam>-tag inheritDoc:X ${disableDoclint}</additionalparam>
 					<excludePackageNames>
 					</excludePackageNames>
 				</configuration>
