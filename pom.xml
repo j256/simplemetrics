@@ -19,6 +19,17 @@
 		<artifactId>oss-parent</artifactId>
 		<version>5</version>
 	</parent>
+	<properties>
+		<disableDoclint></disableDoclint>
+		<!-- external package versions -->
+		<simplejmx-version>1.12</simplejmx-version>
+		<!-- optional dependencies -->
+		<aws-version>1.10.40</aws-version>
+		<gson-version>2.2.2</gson-version>
+		<!-- test dependencies -->
+		<junit-version>4.8.1</junit-version>
+		<easymock-version>3.4</easymock-version>
+	</properties>
 	<scm>
 		<url>https://github.com/j256/simplemetrics</url>
 		<connection>scm:git:ssh://git@github.com/j256/simplemetrics.git</connection>
@@ -224,16 +235,6 @@
 			</plugins>
 		</pluginManagement>
 	</build>
-	<properties>
-		<!-- external package versions -->
-		<simplejmx-version>1.12</simplejmx-version>
-		<!-- optional dependencies -->
-		<aws-version>1.10.40</aws-version>
-		<gson-version>2.2.2</gson-version>
-		<!-- test dependencies -->
-		<junit-version>4.8.1</junit-version>
-		<easymock-version>3.4</easymock-version>
-	</properties>
 	<dependencies>
 		<!-- dependencies -->
 		<dependency>
