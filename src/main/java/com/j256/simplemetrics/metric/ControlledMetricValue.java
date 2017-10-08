@@ -90,11 +90,6 @@ public class ControlledMetricValue extends BaseControlledMetric<Double, ValueCou
 		}
 
 		@Override
-		public boolean isResetNext() {
-			return resetNext;
-		}
-
-		@Override
 		public Number getValue() {
 			double doubleValue = value;
 			if (count > 1) {

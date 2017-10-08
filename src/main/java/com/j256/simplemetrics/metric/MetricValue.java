@@ -24,13 +24,6 @@ public interface MetricValue<V, MV extends MetricValue<V, MV>> {
 	public MV makeAdjusted(V value);
 
 	/**
-	 * Returns true if the next adjustment causes a metric reset.
-	 * 
-	 * @see #makeResetNext()
-	 */
-	public boolean isResetNext();
-
-	/**
 	 * Get the number value from this metric value.
 	 */
 	public Number getValue();

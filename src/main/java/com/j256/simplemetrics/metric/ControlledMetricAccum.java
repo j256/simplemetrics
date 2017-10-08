@@ -138,11 +138,6 @@ public class ControlledMetricAccum extends BaseControlledMetric<Long, AccumValue
 		}
 
 		@Override
-		public boolean isResetNext() {
-			return resetNext;
-		}
-
-		@Override
 		public Number getValue() {
 			return Long.valueOf(value);
 		}
