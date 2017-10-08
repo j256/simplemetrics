@@ -31,7 +31,6 @@ public class ControlledMetricAccumTest {
 	@Test
 	public void testControlledMetricStringStringStringLong() {
 		ControlledMetricAccum metric = new ControlledMetricAccum("c", "m", "n", "d", null);
-		;
 		assertEquals(0L, metric.getValue());
 		long value = 10021;
 		metric.add(value);
@@ -41,15 +40,20 @@ public class ControlledMetricAccumTest {
 	@Test
 	public void testDoublePersist() {
 		ControlledMetricAccum metric = new ControlledMetricAccum("c", "m", "n", "d", null);
-		;
 		long num = 100;
 		metric.adjustValue(num);
-		Number details = metric.getValueToPersist();
-		assertEquals(num, details);
 		assertEquals(num, metric.getValue());
-		details = metric.getValueToPersist();
-		assertEquals(0L, details);
-		assertEquals(0L, metric.getValue());
+		assertEquals(num, metric.getValueToPersist());
+		assertEquals(num, metric.getValue());
+		assertEquals(num, metric.getValueToPersist());
+		assertEquals(num, metric.getValue());
+
+		// now that we have persisted, if we get another adjustment, it should reset with no sign of previous
+		num = 50;
+		metric.adjustValue(num);
+		assertEquals(num, metric.getValue());
+		assertEquals(num, metric.getValueToPersist());
+		assertEquals(num, metric.getValue());
 	}
 
 	@Test
@@ -98,7 +102,7 @@ public class ControlledMetricAccumTest {
 		assertTrue(metrics.contains(new ControlledMetricAccum(comp, mod, name, "d", null)));
 		metrics.add(metric4);
 		assertTrue(metrics.contains(metric4));
-		
+
 		assertFalse(metric.equals(null));
 		assertFalse(metric.equals(this));
 		assertFalse(metric.equals(metric2));

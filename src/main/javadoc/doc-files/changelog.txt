@@ -1,6 +1,7 @@
-1.6: ?/?/2017
+1.6: 10/8/2017
 	* Better handling of AWS credentials provider.
 	* Added another name for old-gen memory bean.
+	* Removed special handling with double persisting causing the value to reset to initial state.
 
 1.5: 3/21/2017
 	* For some reason 1.4 didn't make it to maven so I'm re-releasing.

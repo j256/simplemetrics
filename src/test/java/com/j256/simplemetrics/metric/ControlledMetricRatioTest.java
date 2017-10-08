@@ -23,15 +23,24 @@ public class ControlledMetricRatioTest {
 
 	@Test
 	public void testDoublePersist() {
-		ControlledMetricRatio metric = new ControlledMetricRatio("component", "module", "name", "desc", null);;
+		ControlledMetricRatio metric = new ControlledMetricRatio("component", "module", "name", "desc", null);
 		long num = 1;
 		long denom = 2;
 		metric.adjustValue(num, denom);
-		Number value = metric.getValueToPersist();
-		assertEquals((double) num / (double) denom, (Double) value, 0.5);
-		assertEquals((double) num / (double) denom, (Double) metric.getValue(), 0.5);
-		value = metric.getValueToPersist();
-		assertEquals(0L, value);
+		assertEquals((double) num / (double) denom, metric.getValue());
+		assertEquals((double) num / (double) denom, metric.getValueToPersist());
+		// even after the double-persist, the value shouldn't be changed
+		assertEquals((double) num / (double) denom, metric.getValue());
+		assertEquals((double) num / (double) denom, metric.getValueToPersist());
+		assertEquals((double) num / (double) denom, metric.getValue());
+
+		num = 1;
+		denom = 3;
+		// but after we adjust again, it should be reset and the previous value shouldn't have been saved
+		metric.adjustValue(num, denom);
+		assertEquals((double) num / (double) denom, metric.getValue());
+		assertEquals((double) num / (double) denom, metric.getValueToPersist());
+		assertEquals((double) num / (double) denom, metric.getValue());
 	}
 
 	@Test
