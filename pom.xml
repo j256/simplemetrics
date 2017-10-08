@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.j256.simplemetrics</groupId>
 	<artifactId>simplemetrics</artifactId>
-	<version>1.7-SNAPSHOT</version>
+	<version>1.7</version>
 	<packaging>jar</packaging>
 	<name>Simple Metrics</name>
 	<url>http://256stuff.com/sources/simplemetrics/</url>
@@ -20,7 +20,7 @@
 		<version>5</version>
 	</parent>
 	<properties>
-		<disableDoclint></disableDoclint>
+		<disableDoclint />
 		<!-- external package versions -->
 		<simplejmx-version>1.12</simplejmx-version>
 		<!-- optional dependencies -->
