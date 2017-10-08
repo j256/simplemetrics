@@ -4,15 +4,43 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+import com.j256.simplemetrics.metric.ControlledMetric.AggregationType;
+
 public class ControlledMetricRatioTest {
 
 	@Test
 	public void testStuff() {
 		ControlledMetricRatio metric = new ControlledMetricRatio("component", "module", "name", "desc", null);
-		long num = 1;
-		long denom = 2;
-		metric.adjustValue(num, denom);
-		assertEquals((double) num / (double) denom, (Double) metric.getValue(), 0);
+		assertEquals(AggregationType.AVERAGE, metric.getAggregationType());
+		long num1 = 1;
+		long denom1 = 2;
+		metric.adjustValue(num1, denom1);
+		assertEquals((double) num1 / (double) denom1, (Double) metric.getValue(), 0);
+		assertEquals((double) num1 / (double) denom1, (Double) metric.getValueDetails().getMin(), 0);
+		assertEquals((double) num1 / (double) denom1, (Double) metric.getValueDetails().getMax(), 0);
+		assertEquals(1, metric.getValueDetails().getNumSamples());
+		assertEquals(AggregationType.AVERAGE, metric.getAggregationType());
+
+		long num2 = 1;
+		long denom2 = 3;
+		metric.adjustValue(num2, denom2);
+
+		double result2 = (((double) num1 / (double) denom1) + ((double) num2 / (double) denom2)) / 2.0;
+		assertEquals(result2, (Double) metric.getValue(), 0.00001);
+		assertEquals(result2, (Double) metric.getValueDetails().getMin(), 0.0001);
+		assertEquals((double) num1 / (double) denom1, (Double) metric.getValueDetails().getMax(), 0);
+		assertEquals(2, metric.getValueDetails().getNumSamples());
+
+		long num3 = 9;
+		long denom3 = 1;
+		metric.adjustValue(num3, denom3);
+
+		double result3 = (((double) num1 / (double) denom1) + ((double) num2 / (double) denom2)
+				+ ((double) num3 / (double) denom3)) / 3.0;
+		assertEquals(result3, (Double) metric.getValue(), 0.00001);
+		assertEquals(result2, (Double) metric.getValueDetails().getMin(), 0.0001);
+		assertEquals(result3, (Double) metric.getValueDetails().getMax(), 0.0001);
+		assertEquals(3, metric.getValueDetails().getNumSamples());
 	}
 
 	@Test
