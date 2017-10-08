@@ -126,10 +126,11 @@ public class ControlledMetricRatio extends BaseControlledMetric<NumeratorDenomin
 			double newNumerator = this.numerator * value.denominator + value.numerator * this.denominator;
 			// denominator is the current denominator times the incoming one so 1/2 + 1/3 is some number of 6ths
 			double newDenominator = this.denominator * value.denominator;
+			int newCount = count + 1;
 
 			double result = 0;
 			if (newDenominator != 0) {
-				result = newNumerator / newDenominator;
+				result = newNumerator / (newDenominator * newCount);
 			}
 			double min;
 			double max;
@@ -143,12 +144,7 @@ public class ControlledMetricRatio extends BaseControlledMetric<NumeratorDenomin
 				min = this.min;
 				max = this.max;
 			}
-			return new RatioValue(newNumerator, newDenominator, count + 1, min, max, false);
-		}
-
-		@Override
-		public boolean isResetNext() {
-			return resetNext;
+			return new RatioValue(newNumerator, newDenominator, newCount, min, max, false);
 		}
 
 		@Override

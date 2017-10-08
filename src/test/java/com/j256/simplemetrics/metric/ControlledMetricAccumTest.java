@@ -76,6 +76,8 @@ public class ControlledMetricAccumTest {
 		assertEquals(delta, details.getMin());
 		assertEquals(delta, details.getMax());
 		assertEquals(delta, details.getValue());
+		// coverage
+		details.toString();
 	}
 
 	@Test
@@ -96,6 +98,7 @@ public class ControlledMetricAccumTest {
 		ControlledMetricAccum metric4 = new ControlledMetricAccum(comp, null, name, "d", null);
 		assertEquals(1, metric.compareTo(metric4));
 		assertEquals(0, metric4.compareTo(metric));
+		metric.makeValueFromNumber((Number) 1);
 
 		Set<ControlledMetricAccum> metrics = new HashSet<ControlledMetricAccum>();
 		metrics.add(metric);

@@ -1,3 +1,7 @@
+1.7: 10/8/2017
+	* Fixed problem with metric ration min/max.
+	* Improved test coverage.  Removed some unnecessary calls.
+
 1.6: 10/8/2017
 	* Better handling of AWS credentials provider.
 	* Added another name for old-gen memory bean.
