@@ -17,8 +17,8 @@ import com.j256.simplemetrics.utils.MiscUtils;
  * 
  * @author graywatson
  */
-public abstract class BaseControlledMetric<V, MV extends MetricValue<V, MV>> implements ControlledMetric<V, MV>,
-		JmxSelfNaming, Comparable<BaseControlledMetric<V, MV>> {
+public abstract class BaseControlledMetric<V, MV extends MetricValue<V, MV>>
+		implements ControlledMetric<V, MV>, JmxSelfNaming, Comparable<BaseControlledMetric<V, MV>> {
 
 	private final String component;
 	private final String module;
@@ -26,9 +26,7 @@ public abstract class BaseControlledMetric<V, MV extends MetricValue<V, MV>> imp
 	private final String decription;
 	private final String unit;
 
-	private final MV initialValue = createInitialValue();
-
-	private final AtomicReference<MV> metricValue = new AtomicReference<MV>(initialValue);
+	private final AtomicReference<MV> metricValue = new AtomicReference<MV>(createInitialValue());
 
 	protected BaseControlledMetric(String component, String module, String name, String description, String unit) {
 		if (name == null) {
@@ -223,7 +221,7 @@ public abstract class BaseControlledMetric<V, MV extends MetricValue<V, MV>> imp
 		return MiscUtils.metricToString(this);
 	}
 
-	private MV getMetricValue(boolean resetNext) {
+	protected MV getMetricValue(boolean resetNext) {
 		if (!resetNext) {
 			// if we are not persisting, then just get the current value
 			return metricValue.get();
@@ -233,17 +231,12 @@ public abstract class BaseControlledMetric<V, MV extends MetricValue<V, MV>> imp
 		MV currentMetricValue;
 		do {
 			currentMetricValue = metricValue.get();
-			if (currentMetricValue.isResetNext()) {
-				// this means that we have not adjusted the value since the last time we persisted
-				newMetricValue = initialValue;
-			} else {
-				/*
-				 * Next time we adjust the value, it will reset to 0. We do this so the metric itself retains its value
-				 * until the next time it is set or persisted so it doesn't immediately drop to 0 or something after
-				 * each persist which shows up in JMX or other direct monitoring.
-				 */
-				newMetricValue = currentMetricValue.makeResetNext();
-			}
+			/*
+			 * Next time we adjust the value, it will reset to 0. We do this so the metric itself retains its value
+			 * until the next time it is set or persisted so it doesn't immediately drop to 0 or something after each
+			 * persist which shows up in JMX or other direct monitoring.
+			 */
+			newMetricValue = currentMetricValue.makeResetNext();
 		} while (!metricValue.compareAndSet(currentMetricValue, newMetricValue));
 
 		return newMetricValue;

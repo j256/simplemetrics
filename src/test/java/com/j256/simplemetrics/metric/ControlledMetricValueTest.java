@@ -29,20 +29,27 @@ public class ControlledMetricValueTest {
 
 	@Test
 	public void testDoublePersist() {
-		ControlledMetricValue metric = new ControlledMetricValue("c", "m", "n", "d", "u");;
+		ControlledMetricValue metric = new ControlledMetricValue("c", "m", "n", "d", "u");
 		long val = 10;
 		metric.adjustValue(val);
-		Number details = metric.getValueToPersist();
-		assertEquals(val, details);
 		assertEquals(Double.valueOf(val), metric.getValue());
-		details = metric.getValueToPersist();
-		assertEquals(0L, details);
-		assertEquals(0.0, metric.getValue());
+		assertEquals(val, metric.getValueToPersist());
+		assertEquals(Double.valueOf(val), metric.getValue());
+		assertEquals(val, metric.getValueToPersist());
+		assertEquals(Double.valueOf(val), metric.getValue());
+
+		// after we persist again we make sure that there is no sign of previous value
+		val = 5;
+		metric.adjustValue(val);
+		assertEquals(Double.valueOf(val), metric.getValue());
+		assertEquals(val, metric.getValueToPersist());
+		assertEquals(Double.valueOf(val), metric.getValue());
 	}
 
 	@Test
 	public void testControlledMetricStringStringStringLong() {
-		ControlledMetricValue metric = new ControlledMetricValue("c", "m", "n", "d", "u");;
+		ControlledMetricValue metric = new ControlledMetricValue("c", "m", "n", "d", "u");
+		;
 		assertEquals(0.0, metric.getValue());
 		long val = 10021;
 		metric.adjustValue(val);
