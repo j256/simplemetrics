@@ -81,7 +81,7 @@ public abstract class BaseControlledMetric<V, MV extends MetricValue<V, MV>>
 
 	/**
 	 * Return the value details of the metric. This is a transient value good for JMX or other direct monitoring of the
-	 * metric. Use {@link #getValueDeToPersist()} if you want to save the value to disk.
+	 * metric. Use {@link #getValueDetailsToPersist()} if you want to save the value to disk.
 	 */
 	@Override
 	public MetricValueDetails getValueDetails() {
