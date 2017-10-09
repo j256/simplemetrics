@@ -249,7 +249,7 @@ public class MetricsManager {
 	}
 
 	/**
-	 * Set the optional jmx-server that can be used to publish metrics to JMX. 
+	 * Set the optional jmx-server that can be used to publish metrics to JMX.
 	 */
 	// @NotRequired("Default is none")
 	public void setJmxServer(JmxServer jmxServer) {

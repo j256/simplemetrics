@@ -70,8 +70,8 @@ public abstract class BaseControlledMetric<V, MV extends MetricValue<V, MV>>
 	}
 
 	/**
-	 * Return the number of the metric. This is a transient value and {@link #getValueToPersist()} should be used if you
-	 * want to save the value to disk. The transient one is good for JMX or other direct monitoring of the metric.
+	 * Return the number of the metric. This is a transient value good for JMX or other direct monitoring of the metric.
+	 * Use {@link #getValueToPersist()} if you want to save the value to disk.
 	 */
 	@Override
 	@JmxAttributeMethod(description = "Current value of metric.")
@@ -80,9 +80,8 @@ public abstract class BaseControlledMetric<V, MV extends MetricValue<V, MV>>
 	}
 
 	/**
-	 * Return the value details of the metric. This is a transient value details and {@link #getValueDetailsToPersist()}
-	 * should be used if you want to save the value details to disk. The transient one is good for JMX or other direct
-	 * monitoring of the metric.
+	 * Return the value details of the metric. This is a transient value good for JMX or other direct monitoring of the
+	 * metric. Use {@link #getValueDeToPersist()} if you want to save the value to disk.
 	 */
 	@Override
 	public MetricValueDetails getValueDetails() {
