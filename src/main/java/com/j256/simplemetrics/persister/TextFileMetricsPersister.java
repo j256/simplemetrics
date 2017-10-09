@@ -178,7 +178,7 @@ public class TextFileMetricsPersister implements MetricValuesPersister {
 	}
 
 	/**
-	 * Number of times the logs have been dumped to disk. 
+	 * Number of times the logs have been dumped to disk.
 	 */
 	@JmxAttributeMethod(description = "Number of times we've written metrics")
 	public long getDumpLogCount() {

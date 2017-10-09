@@ -33,7 +33,7 @@ public class ControlledMetricRatio extends BaseControlledMetric<NumeratorDenomin
 
 	@Override
 	public RatioValue createInitialValue() {
-		return new RatioValue(0.0, 0.0, 0, 0.0, 0.0, true);
+		return RatioValue.createInitialValue();
 	}
 
 	@Override
@@ -97,8 +97,16 @@ public class ControlledMetricRatio extends BaseControlledMetric<NumeratorDenomin
 			this.resetNext = resetNext;
 		}
 
+		public static RatioValue createInitialValue() {
+			return new RatioValue(0.0, 0.0, 0, 0.0, 0.0, true);
+		}
+
 		@Override
-		public RatioValue makeResetNext() {
+		public RatioValue makePersisted() {
+			/*
+			 * NOTE: this doesn't change the value because we don't want this to drop to 0 just because there wasn't an
+			 * adjustment event. This is different from the accumulator metrics.
+			 */
 			return new RatioValue(numerator, denominator, count, min, max, true);
 		}
 
@@ -114,14 +122,19 @@ public class ControlledMetricRatio extends BaseControlledMetric<NumeratorDenomin
 			}
 
 			/*
-			 * This is a bit tricky. When adjusting the value, we must multiple the values together and not just add
-			 * them. If we add them then the last adjustment would get the most weight if it is a straight average.
+			 * This is a bit tricky. We store the numerator and denominator because we want to keep maximum precision
+			 * until the ratio value is persisted. Because we only have a numerator, denominator, and the count, when we
+			 * adjust the value, we can't just add in the new numerator and denominator values because later adjustments
+			 * would have more weight then previous ones if we are taking the straight average. 1/2 (1). 1/2 + 1/3 = 2/5
+			 * (2). 2/5 + 1/4 = 3/9 (3). 3/9 + 1/2 = 4/11 (4) = 0.3636363636 which isn't right.
 			 * 
-			 * So we basically do the cross product addition mechanism each time we adjust by another value and we will
-			 * divide by the count at the very end when the value is retrieved.
+			 * The right thing to do is to add them using LCD but that is too expensive. So instead we do cross product
+			 * addition. Each time we adjust by another value and we will divide by the count at the very end when the
+			 * value is retrieved for maximum precision.
 			 * 
-			 * So if we are adding 1/2 + 1/3, we should get 5/6. 5/6 + 1/4 = 26/24. 26/24 + 1/2 = 76/48. Then the final
-			 * result is 76/(48*4) = 0.395833333.
+			 * So if we are adding 1/2 we store 1/2 (1). 1/2 + 1/3 -> 3/6 + 2/6 = 5/6 (2). 5/6 + 1/4 should get 20/24 +
+			 * 6/24 = 26/24 (3). 26/24 + 1/2 -> 52/48 + 24/48 = 76/48 (4). Then the final result is 76/(48*4) =
+			 * 0.395833333.
 			 */
 			double newNumerator = this.numerator * value.denominator + value.numerator * this.denominator;
 			// denominator is the current denominator times the incoming one so 1/2 + 1/3 is some number of 6ths

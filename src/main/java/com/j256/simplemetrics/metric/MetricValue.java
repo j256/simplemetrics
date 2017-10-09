@@ -6,17 +6,17 @@ package com.j256.simplemetrics.metric;
  * @param <V>
  *            Value type that we use to adjust this metric-value.
  * @param <MV>
- *            MetricValue type that holds the metric-value information. We need this because of
- *            {@link #makeAdjusted(Object)} which needs to be the same type.
+ *            MetricValue type that holds the metric-value information. We need this because of {@link #makePersisted()}
+ *            and {@link #makeAdjusted(Object)} must be of the same type.
  */
 public interface MetricValue<V, MV extends MetricValue<V, MV>> {
 
 	/**
-	 * Make an entry that will be reset next time around. We do this so the metric retains its value and doesn't
-	 * immediately drop to 0 or something immediately after a persist event. The next time we adjust the value or we
-	 * persist it again, the value will be reset beforehand.
+	 * Make an entry that is suitable for persisting. We do this so the metric retains its value and doesn't immediately
+	 * drop to 0 or something immediately after a persist event. The next time we adjust the value or we persist it
+	 * again, the value will be reset beforehand.
 	 */
-	public MV makeResetNext();
+	public MV makePersisted();
 
 	/**
 	 * Make a new entry adjusted by the value parameter.
@@ -24,7 +24,8 @@ public interface MetricValue<V, MV extends MetricValue<V, MV>> {
 	public MV makeAdjusted(V value);
 
 	/**
-	 * Get the number value from this metric value.
+	 * Get the number value from this metric value. This is a transient value good for JMX or other direct monitoring of
+	 * the metric. Use {@link #makePersisted()} if you want to save the value to disk.
 	 */
 	public Number getValue();
 

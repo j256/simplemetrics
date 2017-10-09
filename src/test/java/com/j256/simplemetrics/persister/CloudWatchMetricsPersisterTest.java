@@ -57,7 +57,7 @@ public class CloudWatchMetricsPersisterTest {
 		ControlledMetricAccum accumMetric = new ControlledMetricAccum(comp, null, "accum1", null, "unknown");
 		manager.registerMetric(accumMetric);
 		// no add to this metric
-		
+
 		ControlledMetricAccum accumMetric2 = new ControlledMetricAccum(comp, null, "accum2", null, null);
 		manager.registerMetric(accumMetric2);
 		accumMetric2.add(Integer.MAX_VALUE + 1L);
@@ -82,10 +82,8 @@ public class CloudWatchMetricsPersisterTest {
 				if (metric.getValue().longValue() == 0) {
 					sampleCount = CloudWatchMetricsPersister.ZERO_NUM_SAMPLES_REPLACEMENT;
 				}
-				datum.withStatisticValues(new StatisticSet().withSampleCount(sampleCount)
-						.withMinimum(1.0)
-						.withMaximum(1.0)
-						.withSum(sum));
+				datum.withStatisticValues(
+						new StatisticSet().withSampleCount(sampleCount).withMinimum(1.0).withMaximum(1.0).withSum(sum));
 			} else {
 				datum.setValue(Double.valueOf(value));
 			}
