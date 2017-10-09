@@ -32,7 +32,7 @@ public class ControlledMetricValue extends BaseControlledMetric<Double, ValueCou
 
 	@Override
 	public ValueCount createInitialValue() {
-		return new ValueCount(0.0, 0, 0.0, 0.0, true);
+		return ValueCount.createInitialValue();
 	}
 
 	@Override
@@ -68,8 +68,12 @@ public class ControlledMetricValue extends BaseControlledMetric<Double, ValueCou
 			this.resetNext = resetNext;
 		}
 
+		public static ValueCount createInitialValue() {
+			return new ValueCount(0.0, 0, 0.0, 0.0, true);
+		}
+
 		@Override
-		public ValueCount makeResetNext() {
+		public ValueCount makePersisted() {
 			return new ValueCount(value, count, min, max, true);
 		}
 

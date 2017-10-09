@@ -12,11 +12,11 @@ package com.j256.simplemetrics.metric;
 public interface MetricValue<V, MV extends MetricValue<V, MV>> {
 
 	/**
-	 * Make an entry that will be reset next time around. We do this so the metric retains its value and doesn't
-	 * immediately drop to 0 or something immediately after a persist event. The next time we adjust the value or we
-	 * persist it again, the value will be reset beforehand.
+	 * Make an entry that is suitable for persisting. We do this so the metric retains its value and doesn't immediately
+	 * drop to 0 or something immediately after a persist event. The next time we adjust the value or we persist it
+	 * again, the value will be reset beforehand.
 	 */
-	public MV makeResetNext();
+	public MV makePersisted();
 
 	/**
 	 * Make a new entry adjusted by the value parameter.
@@ -24,7 +24,9 @@ public interface MetricValue<V, MV extends MetricValue<V, MV>> {
 	public MV makeAdjusted(V value);
 
 	/**
-	 * Get the number value from this metric value.
+	 * Get the number value from this metric value. This is a transient value and {@link #makePersisted()} should be
+	 * used if you want to save the value to disk. The transient one is good for JMX or other direct monitoring of the
+	 * metric.
 	 */
 	public Number getValue();
 

@@ -70,7 +70,8 @@ public abstract class BaseControlledMetric<V, MV extends MetricValue<V, MV>>
 	}
 
 	/**
-	 * Return the number of the metric.
+	 * Return the number of the metric. This is a transient value and {@link #getValueToPersist()} should be used if you
+	 * want to save the value to disk. The transient one is good for JMX or other direct monitoring of the metric.
 	 */
 	@Override
 	@JmxAttributeMethod(description = "Current value of metric.")
@@ -79,7 +80,9 @@ public abstract class BaseControlledMetric<V, MV extends MetricValue<V, MV>>
 	}
 
 	/**
-	 * Return the value details of the metric.
+	 * Return the value details of the metric. This is a transient value details and {@link #getValueDetailsToPersist()}
+	 * should be used if you want to save the value details to disk. The transient one is good for JMX or other direct
+	 * monitoring of the metric.
 	 */
 	@Override
 	public MetricValueDetails getValueDetails() {
@@ -221,8 +224,8 @@ public abstract class BaseControlledMetric<V, MV extends MetricValue<V, MV>>
 		return MiscUtils.metricToString(this);
 	}
 
-	protected MV getMetricValue(boolean resetNext) {
-		if (!resetNext) {
+	protected MV getMetricValue(boolean persisting) {
+		if (!persisting) {
 			// if we are not persisting, then just get the current value
 			return metricValue.get();
 		}
@@ -236,7 +239,7 @@ public abstract class BaseControlledMetric<V, MV extends MetricValue<V, MV>>
 			 * until the next time it is set or persisted so it doesn't immediately drop to 0 or something after each
 			 * persist which shows up in JMX or other direct monitoring.
 			 */
-			newMetricValue = currentMetricValue.makeResetNext();
+			newMetricValue = currentMetricValue.makePersisted();
 		} while (!metricValue.compareAndSet(currentMetricValue, newMetricValue));
 
 		return newMetricValue;
