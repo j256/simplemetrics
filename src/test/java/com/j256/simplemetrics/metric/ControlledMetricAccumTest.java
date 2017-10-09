@@ -45,8 +45,8 @@ public class ControlledMetricAccumTest {
 		assertEquals(num, metric.getValue());
 		assertEquals(num, metric.getValueToPersist());
 		assertEquals(num, metric.getValue());
-		assertEquals(num, metric.getValueToPersist());
-		assertEquals(num, metric.getValue());
+		assertEquals(0L, metric.getValueToPersist());
+		assertEquals(0L, metric.getValue());
 
 		// now that we have persisted, if we get another adjustment, it should reset with no sign of previous
 		num = 50;

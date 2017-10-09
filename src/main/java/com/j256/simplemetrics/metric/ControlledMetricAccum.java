@@ -35,7 +35,7 @@ public class ControlledMetricAccum extends BaseControlledMetric<Long, AccumValue
 
 	@Override
 	public AccumValue createInitialValue() {
-		return new AccumValue(0, true);
+		return AccumValue.createInitialValue();
 	}
 
 	@Override
@@ -116,21 +116,33 @@ public class ControlledMetricAccum extends BaseControlledMetric<Long, AccumValue
 	 */
 	public static class AccumValue implements MetricValue<Long, AccumValue> {
 		private final long value;
-		private final boolean resetNext;
+		private final boolean persisted;
 
-		AccumValue(long value, boolean resetNext) {
+		private AccumValue(long value, boolean persisting) {
 			this.value = value;
-			this.resetNext = resetNext;
+			this.persisted = persisting;
+		}
+
+		public static AccumValue createInitialValue() {
+			return new AccumValue(0, true);
 		}
 
 		@Override
-		public AccumValue makeResetNext() {
-			return new AccumValue(value, true);
+		public AccumValue makePersisted() {
+			if (persisted) {
+				/*
+				 * If we have already persisted this value then reset it immediately because this is an accumulator and
+				 * we don't want the persisted value to look like there were another value number of accumulator events.
+				 */
+				return new AccumValue(0, true);
+			} else {
+				return new AccumValue(value, true);
+			}
 		}
 
 		@Override
 		public AccumValue makeAdjusted(Long newValue) {
-			if (resetNext) {
+			if (persisted) {
 				return new AccumValue(newValue, false);
 			} else {
 				return new AccumValue(this.value + newValue, false);
@@ -144,7 +156,7 @@ public class ControlledMetricAccum extends BaseControlledMetric<Long, AccumValue
 
 		@Override
 		public int getNumSamples() {
-			// not 100% sure this is right but the count is the number of samples.
+			// when we are doing accumulations, then the value is the number of samples that we were accumulated
 			if (value >= Integer.MAX_VALUE) {
 				return Integer.MAX_VALUE;
 			} else {
