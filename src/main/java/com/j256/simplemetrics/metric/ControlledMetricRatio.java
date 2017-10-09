@@ -103,6 +103,10 @@ public class ControlledMetricRatio extends BaseControlledMetric<NumeratorDenomin
 
 		@Override
 		public RatioValue makePersisted() {
+			/*
+			 * NOTE: this doesn't change the value because we don't want this to drop to 0 just because there wasn't an
+			 * adjustment event. This is different from the accumulator metrics.
+			 */
 			return new RatioValue(numerator, denominator, count, min, max, true);
 		}
 
