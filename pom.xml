@@ -7,7 +7,7 @@
 	<packaging>jar</packaging>
 	<name>Simple Metrics</name>
 	<url>http://256stuff.com/sources/simplemetrics/</url>
-	<description>Simple Metrics</description>
+	<description>Simple Metrics for Java for handling and publishing application metrics.</description>
 	<licenses>
 		<license>
 			<name>ISC License</name>
