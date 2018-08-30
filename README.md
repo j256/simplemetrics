@@ -6,6 +6,7 @@ This package provides some Java classes to help with the providing application m
 * For more information, visit the [SimpleMetrics home page](http://256stuff.com/sources/simplemetrics/).	
 * Online documentation can be found off the home page.  Here are the [code Javadocs](http://256stuff.com/sources/simplemetrics/javadoc/simplemetrics/).
 * Browse the code on the [git repository](https://github.com/j256/simplemetrics).  [![CircleCI](https://circleci.com/gh/j256/simplemetrics.svg?style=svg)](https://circleci.com/gh/j256/simplemetrics) [![CodeCov](https://img.shields.io/codecov/c/github/j256/simplemetrics.svg)](https://codecov.io/github/j256/simplemetrics/)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fj256%2Fsimplemetrics.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fj256%2Fsimplemetrics?ref=badge_shield)
 * Maven packages are published via [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.j256.simplemetrics/simplemetrics/badge.svg?style=flat-square)](https://maven-badges.herokuapp.com/maven-central/com.j256.simplemetrics/simplemetrics/)
 
 Enjoy, Gray Watson
@@ -44,3 +45,7 @@ Here's a quick code sample showing how to get started.
 # ChangeLog Release Notes
 
 See the [ChangeLog.txt file](src/main/javadoc/doc-files/changelog.txt).
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fj256%2Fsimplemetrics.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fj256%2Fsimplemetrics?ref=badge_large)
