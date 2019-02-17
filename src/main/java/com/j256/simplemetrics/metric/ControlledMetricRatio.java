@@ -1,6 +1,5 @@
 package com.j256.simplemetrics.metric;
 
-import com.j256.simplejmx.common.JmxResource;
 import com.j256.simplemetrics.metric.ControlledMetricRatio.NumeratorDenominator;
 import com.j256.simplemetrics.metric.ControlledMetricRatio.RatioValue;
 
@@ -11,8 +10,6 @@ import com.j256.simplemetrics.metric.ControlledMetricRatio.RatioValue;
  * 
  * @author graywatson
  */
-@JmxResource(domainName = "com.j256", folderNames = { "metrics" },
-		description = "Controlled metric ratio between two values")
 public class ControlledMetricRatio extends BaseControlledMetric<NumeratorDenominator, RatioValue> {
 
 	/**

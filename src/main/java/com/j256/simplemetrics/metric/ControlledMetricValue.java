@@ -1,6 +1,5 @@
 package com.j256.simplemetrics.metric;
 
-import com.j256.simplejmx.common.JmxResource;
 import com.j256.simplemetrics.manager.MetricsUpdater;
 import com.j256.simplemetrics.metric.ControlledMetricValue.ValueCount;
 
@@ -11,7 +10,6 @@ import com.j256.simplemetrics.metric.ControlledMetricValue.ValueCount;
  * 
  * @author graywatson
  */
-@JmxResource(domainName = "com.j256", folderNames = { "metrics" }, description = "Controlled Value")
 public class ControlledMetricValue extends BaseControlledMetric<Double, ValueCount> {
 
 	/**

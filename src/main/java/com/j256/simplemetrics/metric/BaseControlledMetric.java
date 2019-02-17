@@ -2,9 +2,6 @@ package com.j256.simplemetrics.metric;
 
 import java.util.concurrent.atomic.AtomicReference;
 
-import com.j256.simplejmx.common.JmxAttributeMethod;
-import com.j256.simplejmx.common.JmxFolderName;
-import com.j256.simplejmx.common.JmxSelfNaming;
 import com.j256.simplemetrics.utils.MiscUtils;
 
 /**
@@ -18,7 +15,7 @@ import com.j256.simplemetrics.utils.MiscUtils;
  * @author graywatson
  */
 public abstract class BaseControlledMetric<V, MV extends MetricValue<V, MV>>
-		implements ControlledMetric<V, MV>, JmxSelfNaming, Comparable<BaseControlledMetric<V, MV>> {
+		implements ControlledMetric<V, MV>, Comparable<BaseControlledMetric<V, MV>> {
 
 	private final String component;
 	private final String module;
@@ -74,7 +71,6 @@ public abstract class BaseControlledMetric<V, MV extends MetricValue<V, MV>>
 	 * Use {@link #getValueToPersist()} if you want to save the value to disk.
 	 */
 	@Override
-	@JmxAttributeMethod(description = "Current value of metric.")
 	public Number getValue() {
 		return getMetricValue(false).getValue();
 	}
@@ -112,7 +108,6 @@ public abstract class BaseControlledMetric<V, MV extends MetricValue<V, MV>>
 	}
 
 	@Override
-	@JmxAttributeMethod(description = "Aggregation type for dealing with multiple entries")
 	public String getAggregationTypeName() {
 		return getAggregationType().name();
 	}
@@ -128,46 +123,26 @@ public abstract class BaseControlledMetric<V, MV extends MetricValue<V, MV>>
 	}
 
 	@Override
-	public String getJmxDomainName() {
-		return "com.j256";
-	}
-
-	@Override
-	public String getJmxBeanName() {
-		return name;
-	}
-
-	@Override
-	public JmxFolderName[] getJmxFolderNames() {
-		return new JmxFolderName[] { new JmxFolderName("metrics"), new JmxFolderName(component) };
-	}
-
-	@Override
-	@JmxAttributeMethod(description = "Metric component")
 	public String getComponent() {
 		return component;
 	}
 
 	@Override
-	@JmxAttributeMethod(description = "Metric module")
 	public String getModule() {
 		return module;
 	}
 
 	@Override
-	@JmxAttributeMethod(description = "Metric name")
 	public String getName() {
 		return name;
 	}
 
 	@Override
-	@JmxAttributeMethod(description = "Metric description")
 	public String getDescription() {
 		return decription;
 	}
 
 	@Override
-	@JmxAttributeMethod(description = "Metric unit [optional].")
 	public String getUnit() {
 		return unit;
 	}

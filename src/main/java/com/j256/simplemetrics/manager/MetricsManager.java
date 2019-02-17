@@ -9,12 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.management.JMException;
-
-import com.j256.simplejmx.common.JmxAttributeMethod;
-import com.j256.simplejmx.common.JmxOperation;
-import com.j256.simplejmx.common.JmxResource;
-import com.j256.simplejmx.server.JmxServer;
 import com.j256.simplemetrics.metric.ControlledMetric;
 import com.j256.simplemetrics.metric.MetricValueDetails;
 import com.j256.simplemetrics.persister.MetricDetailsPersister;
@@ -28,15 +22,14 @@ import com.j256.simplemetrics.utils.MiscUtils;
  * 
  * @author graywatson
  */
-@JmxResource(domainName = "com.j256", folderNames = { "metrics" }, description = "Metrics Manager")
 public class MetricsManager {
 
-	private JmxServer jmxServer;
 	private MetricValuesPersister[] metricValuesPersisters = new MetricValuesPersister[0];
 	private MetricDetailsPersister[] metricDetailsPersisters = new MetricDetailsPersister[0];
 
 	private final List<ControlledMetric<?, ?>> metrics = new ArrayList<ControlledMetric<?, ?>>();
 	private final List<MetricsUpdater> metricsUpdaters = new ArrayList<MetricsUpdater>();
+	private final List<MetricsRegisterListener> registerListeners = new ArrayList<MetricsRegisterListener>();
 	private int persistCount;
 
 	/**
@@ -45,14 +38,9 @@ public class MetricsManager {
 	public void registerMetric(ControlledMetric<?, ?> metric) {
 		synchronized (metrics) {
 			metrics.add(metric);
-			if (jmxServer != null) {
-				// register it with JMX if injected
-				try {
-					jmxServer.register(metric);
-				} catch (JMException e) {
-					// ignore it
-				}
-			}
+		}
+		for (MetricsRegisterListener registerListener : registerListeners) {
+			registerListener.metricRegistered(metric);
 		}
 	}
 
@@ -60,9 +48,13 @@ public class MetricsManager {
 	 * Unregister a metric with the manager.
 	 */
 	public void unregisterMetric(ControlledMetric<?, ?> metric) {
+		boolean removed;
 		synchronized (metrics) {
-			if (metrics.remove(metric) && jmxServer != null) {
-				jmxServer.unregister(metric);
+			removed = metrics.remove(metric);
+		}
+		if (removed) {
+			for (MetricsRegisterListener registerListener : registerListeners) {
+				registerListener.metricUnregistered(metric);
 			}
 		}
 	}
@@ -73,6 +65,15 @@ public class MetricsManager {
 	public void registerUpdater(MetricsUpdater metricsUpdater) {
 		synchronized (metricsUpdaters) {
 			metricsUpdaters.add(metricsUpdater);
+		}
+	}
+
+	/**
+	 * Register a listener for metrics registered and unregistered.
+	 */
+	public void registerRegisterListener(MetricsRegisterListener registerListener) {
+		synchronized (registerListener) {
+			registerListeners.add(registerListener);
 		}
 	}
 
@@ -219,23 +220,12 @@ public class MetricsManager {
 	/**
 	 * Update the various classes' metrics.
 	 */
-	@JmxOperation(description = "Update the various metrics")
 	public void updateMetrics() {
 		synchronized (metricsUpdaters) {
 			// call our classes to update their stats
 			for (MetricsUpdater metricsUpdater : metricsUpdaters) {
 				metricsUpdater.updateMetrics();
 			}
-		}
-	}
-
-	@JmxOperation(description = "Persist metrics using the registered persisters")
-	public String persistJmx() {
-		try {
-			persist();
-			return "metrics published";
-		} catch (IOException e) {
-			return "Threw: " + e.getMessage();
 		}
 	}
 
@@ -246,14 +236,6 @@ public class MetricsManager {
 		synchronized (metrics) {
 			return Collections.unmodifiableList(metrics);
 		}
-	}
-
-	/**
-	 * Set the optional jmx-server that can be used to publish metrics to JMX.
-	 */
-	// @NotRequired("Default is none")
-	public void setJmxServer(JmxServer jmxServer) {
-		this.jmxServer = jmxServer;
 	}
 
 	/**
@@ -271,8 +253,9 @@ public class MetricsManager {
 	public void setMetricDetailsPersisters(MetricDetailsPersister[] metricDetailsPersisters) {
 		this.metricDetailsPersisters = metricDetailsPersisters;
 	}
+	
 
-	@JmxAttributeMethod(description = "Metric values we are managing")
+	
 	public String[] getMetricValues() {
 		// update the metrics
 		updateMetrics();
@@ -286,7 +269,6 @@ public class MetricsManager {
 		return values.toArray(new String[values.size()]);
 	}
 
-	@JmxAttributeMethod(description = "Number of times we have persisted the metrics")
 	public int getPersistCount() {
 		return persistCount;
 	}

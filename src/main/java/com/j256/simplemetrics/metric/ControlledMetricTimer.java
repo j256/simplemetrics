@@ -1,7 +1,5 @@
 package com.j256.simplemetrics.metric;
 
-import com.j256.simplejmx.common.JmxResource;
-
 /**
  * Convenience to allow tracking of the elapsed time of events as a metric. Basically you do a:
  * 
@@ -17,7 +15,6 @@ import com.j256.simplejmx.common.JmxResource;
  * 
  * @author graywatson
  */
-@JmxResource(domainName = "com.j256", folderNames = { "metrics" }, description = "Controlled Timer Value")
 public class ControlledMetricTimer extends ControlledMetricValue {
 
 	/**

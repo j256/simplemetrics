@@ -5,9 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
-import com.j256.simplejmx.common.JmxAttributeMethod;
-import com.j256.simplejmx.common.JmxOperation;
-import com.j256.simplejmx.common.JmxResource;
 import com.j256.simplemetrics.manager.MetricsManager;
 import com.j256.simplemetrics.manager.MetricsUpdater;
 
@@ -23,8 +20,6 @@ import com.j256.simplemetrics.manager.MetricsUpdater;
  * 
  * @author graywatson
  */
-@JmxResource(domainName = "com.j256", folderNames = { "metrics" },
-		description = "Publisher that reads the file system to publish metrics")
 public class FileMetricsPublisher implements MetricsUpdater {
 
 	private MetricsManager metricsManager;
@@ -79,7 +74,6 @@ public class FileMetricsPublisher implements MetricsUpdater {
 	}
 
 	@Override
-	@JmxOperation(description = "Read in the values of the file metrics")
 	public void updateMetrics() {
 		for (FileMetric fileMetric : fileMetrics) {
 			try {
@@ -93,7 +87,6 @@ public class FileMetricsPublisher implements MetricsUpdater {
 	/**
 	 * Number of times we were unable to update a metric because of some i/o or parse problem.
 	 */
-	@JmxAttributeMethod(description = "Number of failed updates")
 	public long getFailedUpdateCount() {
 		return failedUpdateCount.get();
 	}
@@ -101,7 +94,6 @@ public class FileMetricsPublisher implements MetricsUpdater {
 	/**
 	 * Get the values for all of the metric managed by this class.
 	 */
-	@JmxAttributeMethod(description = "Values of configured file metrics")
 	public String[] getMetricsValues() {
 		List<String> results = new ArrayList<String>();
 		for (FileMetric fileMetric : fileMetrics) {

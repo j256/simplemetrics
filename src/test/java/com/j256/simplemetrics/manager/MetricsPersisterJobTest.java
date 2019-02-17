@@ -55,7 +55,7 @@ public class MetricsPersisterJobTest {
 		MetricsPersisterJob job = new MetricsPersisterJob();
 		job.setMetricsManager(manager);
 		job.setPeriodTimeMillis(millis);
-		job.setDelayTimeMillis(-1);
+		job.setDelayTimeMillis(0);
 		job.setDaemonThread(true);
 		job.initialize();
 

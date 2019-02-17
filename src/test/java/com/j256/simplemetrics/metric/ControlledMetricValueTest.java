@@ -21,9 +21,6 @@ public class ControlledMetricValueTest {
 		assertEquals(module, metric.getModule());
 		assertEquals(name, metric.getName());
 		assertEquals(unit, metric.getUnit());
-		assertEquals(name, metric.getJmxBeanName());
-		assertEquals(2, metric.getJmxFolderNames().length);
-		assertEquals(component, metric.getJmxFolderNames()[1].getValue());
 		assertEquals(description, metric.getDescription());
 	}
 

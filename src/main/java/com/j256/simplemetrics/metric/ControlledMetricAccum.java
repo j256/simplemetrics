@@ -2,7 +2,6 @@ package com.j256.simplemetrics.metric;
 
 import java.util.concurrent.atomic.AtomicLong;
 
-import com.j256.simplejmx.common.JmxResource;
 import com.j256.simplemetrics.metric.ControlledMetricAccum.AccumValue;
 
 /**
@@ -11,7 +10,6 @@ import com.j256.simplemetrics.metric.ControlledMetricAccum.AccumValue;
  * 
  * @author graywatson
  */
-@JmxResource(domainName = "com.j256", description = "Controlled Accumulator")
 public class ControlledMetricAccum extends BaseControlledMetric<Long, AccumValue> {
 
 	// We have this intermediate counter because we want to not have every increment cause another metric value object

@@ -8,16 +8,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.util.Map;
 
-import javax.management.JMException;
-
 import org.easymock.EasyMock;
 import org.junit.Test;
 
-import com.j256.simplejmx.server.JmxServer;
 import com.j256.simplemetrics.metric.ControlledMetric;
 import com.j256.simplemetrics.metric.ControlledMetricAccum;
 import com.j256.simplemetrics.metric.ControlledMetricValue;
@@ -162,29 +160,8 @@ public class MetricsManagerTest {
 	}
 
 	@Test
-	public void testCoverage() throws JMException {
-		MetricsManager manager = new MetricsManager();
-		JmxServer jmxServer = new JmxServer(9157);
-		try {
-			jmxServer.start();
-			ControlledMetricAccum metric = new ControlledMetricAccum("comp", "mod", "label", "desc", null);
-			manager.registerMetric(metric);
-			manager.unregisterMetric(metric);
-			manager.setJmxServer(jmxServer);
-			manager.registerMetric(metric);
-			manager.getMetricValues();
-			manager.persistJmx();
-			manager.unregisterMetric(metric);
-			manager.unregisterMetric(metric);
-		} finally {
-			jmxServer.stop();
-		}
-	}
-
-	@Test
 	public void testLongVersusDouble() throws IOException {
 		MetricsManager manager = new MetricsManager();
-		manager.setJmxServer(new JmxServer());
 		ControlledMetricValue metric = new ControlledMetricValue("comp", "mod", "label", "desc", null);
 		manager.registerMetric(metric);
 		TestValuesPersister persister = new TestValuesPersister();
@@ -211,7 +188,6 @@ public class MetricsManagerTest {
 	@Test
 	public void testLongVersusDoubleDetails() throws IOException {
 		MetricsManager manager = new MetricsManager();
-		manager.setJmxServer(new JmxServer());
 		ControlledMetricValue metric = new ControlledMetricValue("comp", "mod", "label", "desc", null);
 		manager.registerMetric(metric);
 		TestDetailsPersister persister = new TestDetailsPersister();
@@ -286,7 +262,12 @@ public class MetricsManagerTest {
 		manager.setMetricDetailsPersisters(new MetricDetailsPersister[] { detailsPersister });
 		manager.setMetricValuesPersisters(new MetricValuesPersister[] { valuesPersister });
 		assertEquals(0, manager.getPersistCount());
-		assertTrue(manager.persistJmx().contains("Threw: "));
+		try {
+			manager.persist();
+			fail("Should have thrown");
+		} catch (IOException ioe) {
+			// expected
+		}
 		assertEquals(1, manager.getPersistCount());
 		manager.persist();
 		verify(detailsPersister, valuesPersister);

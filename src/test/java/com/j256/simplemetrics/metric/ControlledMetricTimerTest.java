@@ -4,7 +4,6 @@ import java.util.Random;
 
 import org.junit.Test;
 
-import com.j256.simplejmx.server.JmxServer;
 import com.j256.simplemetrics.manager.MetricsManager;
 
 public class ControlledMetricTimerTest {
@@ -39,8 +38,6 @@ public class ControlledMetricTimerTest {
 	@Test
 	public void testControlledMetricTimerRegister() {
 		MetricsManager manager = new MetricsManager();
-		JmxServer jmxServer = new JmxServer();
-		manager.setJmxServer(jmxServer);
 		ControlledMetricTimer timer = new ControlledMetricTimer(this.getClass().getName(), null, "test", "desc");
 		manager.registerMetric(timer);
 	}

@@ -10,8 +10,6 @@ import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
-import com.j256.simplejmx.common.JmxAttributeMethod;
-import com.j256.simplejmx.common.JmxResource;
 import com.j256.simplemetrics.metric.ControlledMetric;
 import com.j256.simplemetrics.utils.MiscUtils;
 
@@ -20,8 +18,6 @@ import com.j256.simplemetrics.utils.MiscUtils;
  * 
  * @author graywatson
  */
-@JmxResource(domainName = "com.j256", beanName = "TextFilePersister", folderNames = { "metrics" },
-		description = "Text File Metrics Persister")
 public class TextFileMetricsPersister implements MetricValuesPersister {
 
 	private static final String NEWLINE = System.getProperty("line.separator");
@@ -29,6 +25,7 @@ public class TextFileMetricsPersister implements MetricValuesPersister {
 	 * Default string that separates a metric from its value. This is exposed so the parser can use it.
 	 */
 	public static final String DEFAULT_SEPARATING_STRING = "=";
+	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss z");
 
 	private File outputDirectory;
 	private String logFileNamePrefix;
@@ -96,7 +93,6 @@ public class TextFileMetricsPersister implements MetricValuesPersister {
 	/**
 	 * Get the log file name prefix that we are writing.
 	 */
-	@JmxAttributeMethod(description = "File prefix we are writing")
 	public String getLogFileNamePrefix() {
 		return logFileNamePrefix;
 	}
@@ -112,7 +108,6 @@ public class TextFileMetricsPersister implements MetricValuesPersister {
 	/**
 	 * Are we appending the system time millis value to the name of the output file.
 	 */
-	@JmxAttributeMethod(description = "Whether we are appending the sys time millis to the output file")
 	public boolean isAppendSysTimeMillis() {
 		return appendSysTimeMillis;
 	}
@@ -121,7 +116,6 @@ public class TextFileMetricsPersister implements MetricValuesPersister {
 	 * Set to true to append the system time millis value to the name of the output file.
 	 */
 	// @NotRequired("Default is true")
-	@JmxAttributeMethod(description = "Whether we are appending the sys time millis to the output file")
 	public void setAppendSysTimeMillis(boolean appendSysTimeMillis) {
 		this.appendSysTimeMillis = appendSysTimeMillis;
 	}
@@ -129,7 +123,6 @@ public class TextFileMetricsPersister implements MetricValuesPersister {
 	/**
 	 * Directory where the output files will be written.
 	 */
-	@JmxAttributeMethod(description = "Directory where log files are written")
 	public File getOutputDirectory() {
 		return outputDirectory;
 	}
@@ -163,7 +156,6 @@ public class TextFileMetricsPersister implements MetricValuesPersister {
 	/**
 	 * Are we showing the description in the file on the previous line with a "# " prefix.
 	 */
-	@JmxAttributeMethod(description = "Show the description in the file")
 	public boolean isShowDescription() {
 		return showDescription;
 	}
@@ -172,7 +164,6 @@ public class TextFileMetricsPersister implements MetricValuesPersister {
 	 * Set to true to show the description in the file on the previous line with a "# " prefix.
 	 */
 	// @NotRequired("Default is false")
-	@JmxAttributeMethod(description = "Show the description in the file")
 	public void setShowDescription(boolean showDescription) {
 		this.showDescription = showDescription;
 	}
@@ -180,7 +171,6 @@ public class TextFileMetricsPersister implements MetricValuesPersister {
 	/**
 	 * Number of times the logs have been dumped to disk.
 	 */
-	@JmxAttributeMethod(description = "Number of times we've written metrics")
 	public long getDumpLogCount() {
 		return dumpLogCount.get();
 	}
@@ -188,7 +178,6 @@ public class TextFileMetricsPersister implements MetricValuesPersister {
 	/**
 	 * Number of times we have cleaned up old logs.
 	 */
-	@JmxAttributeMethod(description = "Number of times we've deleted metrics files")
 	public long getCleanupLogCount() {
 		return cleanupLogCount.get();
 	}
@@ -196,12 +185,11 @@ public class TextFileMetricsPersister implements MetricValuesPersister {
 	/**
 	 * Get the last time we have dumped the metrics to disk.
 	 */
-	@JmxAttributeMethod(description = "Last time the metrics were written")
 	public String getLastDumpTimeMillisString() {
 		if (lastDumpTimeMillis == 0) {
 			return "never";
 		} else {
-			return new SimpleDateFormat("yyyy/MM/dd HH:mm:ss z").format(new Date(lastDumpTimeMillis));
+			return ((SimpleDateFormat) DATE_FORMAT.clone()).format(new Date(lastDumpTimeMillis));
 		}
 	}
 }

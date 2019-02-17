@@ -21,9 +21,6 @@ public class ControlledMetricAccumTest {
 		String unit = "u";
 		ControlledMetricAccum metric = new ControlledMetricAccum(component, module, name, description, unit);
 		assertEquals(name, metric.getName());
-		assertEquals(name, metric.getJmxBeanName());
-		assertEquals(2, metric.getJmxFolderNames().length);
-		assertEquals(component, metric.getJmxFolderNames()[1].getValue());
 		assertEquals(description, metric.getDescription());
 		assertEquals(unit, metric.getUnit());
 	}

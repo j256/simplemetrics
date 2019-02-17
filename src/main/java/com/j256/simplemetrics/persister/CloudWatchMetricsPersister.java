@@ -25,7 +25,6 @@ import com.amazonaws.services.cloudwatch.model.MetricDatum;
 import com.amazonaws.services.cloudwatch.model.PutMetricDataRequest;
 import com.amazonaws.services.cloudwatch.model.StandardUnit;
 import com.amazonaws.services.cloudwatch.model.StatisticSet;
-import com.j256.simplejmx.common.JmxResource;
 import com.j256.simplemetrics.metric.ControlledMetric;
 import com.j256.simplemetrics.metric.ControlledMetric.AggregationType;
 import com.j256.simplemetrics.metric.MetricValueDetails;
@@ -42,8 +41,6 @@ import com.j256.simplemetrics.utils.MiscUtils;
  * 
  * @author graywatson
  */
-@JmxResource(domainName = "com.j256", folderNames = { "metrics" }, beanName = "CloudWatchPersister",
-		description = "CloudWatch Metrics Persister")
 public class CloudWatchMetricsPersister implements MetricDetailsPersister {
 
 	private static final String DEFAULT_NAME_SPACE_PREFIX = "Application";
