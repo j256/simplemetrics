@@ -21,9 +21,8 @@
 	</parent>
 	<properties>
 		<disableDoclint />
-		<!-- external package versions -->
-		<simplejmx-version>1.12</simplejmx-version>
 		<!-- optional dependencies -->
+		<simplejmx-version>1.17</simplejmx-version>
 		<aws-version>1.10.40</aws-version>
 		<gson-version>2.2.2</gson-version>
 		<!-- test dependencies -->
@@ -105,8 +104,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>2.5.1</version>
 				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
+					<source>1.7</source>
+					<target>1.7</target>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -249,6 +248,7 @@
 			<groupId>com.j256.simplejmx</groupId>
 			<artifactId>simplejmx</artifactId>
 			<version>${simplejmx-version}</version>
+			<optional>true</optional>
 		</dependency>
 		<!-- optional dependencies -->
 		<dependency>
