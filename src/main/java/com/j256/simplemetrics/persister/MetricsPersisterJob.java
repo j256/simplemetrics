@@ -37,8 +37,8 @@ public class MetricsPersisterJob implements Runnable {
 	}
 
 	/**
-	 * Should be called if the no-arg construct is being used and after the file metrics have been set. Maybe by Springs
-	 * init mechanism?
+	 * Should be called if the no-arg construct is being used and after the file metrics have been set. Maybe by
+	 * Spring's init mechanism?
 	 */
 	public void initialize() {
 		this.thread = new Thread(this, getClass().getSimpleName());
@@ -47,7 +47,8 @@ public class MetricsPersisterJob implements Runnable {
 	}
 
 	/**
-	 * Call when you want to shutdown the publisher thread.
+	 * Call when you want to shutdown the publisher thread. You should call {@link #destroyAndJoin()} if you want to
+	 * destroy the thread _and_ join with it after it has terminated.
 	 */
 	public void destroy() {
 		this.thread.interrupt();
@@ -55,9 +56,17 @@ public class MetricsPersisterJob implements Runnable {
 	}
 
 	/**
-	 * Call when you want to join with the the publisher thread.
+	 * @deprecated Should use {@link #destroyAndJoin()}.
 	 */
+	@Deprecated
 	public void join() {
+		destroyAndJoin();
+	}
+
+	/**
+	 * Call when you want to destroy the background persisting thread and then wait for it to finish.
+	 */
+	public void destroyAndJoin() {
 		destroy();
 		try {
 			this.thread.join();
@@ -67,10 +76,11 @@ public class MetricsPersisterJob implements Runnable {
 	}
 
 	/**
-	 * Run by the thread to persist the metrics.
+	 * Run by the thread to persist the metrics by calling {@link MetricsManager#persist()}.
 	 */
 	@Override
 	public void run() {
+		// initial sleep to wait for the systems to spin up before we start logging
 		if (delayTimeMillis >= 0) {
 			try {
 				Thread.sleep(delayTimeMillis);
@@ -89,12 +99,19 @@ public class MetricsPersisterJob implements Runnable {
 				// ignore I guess
 			}
 
-			try {
-				// sleep the number of millis so that we start the persisting at the same period each time
-				Thread.sleep(lastStartMillis + periodTimeMillis - System.currentTimeMillis());
-			} catch (InterruptedException e) {
-				Thread.currentThread().interrupt();
-				return;
+			// sleep the number of millis so that we start the persisting at the same period each time
+			long sleepMillis = lastStartMillis + periodTimeMillis - System.currentTimeMillis();
+			if (sleepMillis <= 0) {
+				if (Thread.currentThread().isInterrupted()) {
+					return;
+				}
+			} else {
+				try {
+					Thread.sleep(sleepMillis);
+				} catch (InterruptedException e) {
+					Thread.currentThread().interrupt();
+					return;
+				}
 			}
 		}
 	}

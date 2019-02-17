@@ -23,7 +23,7 @@ public class MetricsPersisterJobTest {
 		Thread.sleep(millis + millis / 10);
 		assertEquals(1, manager.getPersistCount());
 
-		job.join();
+		job.destroyAndJoin();
 	}
 
 	@Test
@@ -43,7 +43,7 @@ public class MetricsPersisterJobTest {
 		Thread.sleep(millis * 2 + millis / 10);
 		assertEquals(3, manager.getPersistCount());
 
-		job.join();
+		job.destroyAndJoin();
 	}
 
 	@Test
@@ -62,7 +62,7 @@ public class MetricsPersisterJobTest {
 		Thread.sleep(millis * 2 + millis / 10);
 		assertEquals(3, manager.getPersistCount());
 
-		job.join();
+		job.destroyAndJoin();
 	}
 
 	@Test
@@ -75,7 +75,7 @@ public class MetricsPersisterJobTest {
 
 		Thread.sleep(millis + millis / 10);
 
-		job.join();
+		job.destroyAndJoin();
 		assertEquals(0, manager.getPersistCount());
 	}
 }
