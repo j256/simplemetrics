@@ -49,13 +49,13 @@ and then doesn't have to not worry about how they are managed or persisted.
 
 To get started quickly using SimpleMetrics, @pxref{Quick Start}.
 @ifhtml
-There is also a @uref{http://256.com/sources/simplemetrics/docs/simplemetrics.pdf, PDF version of this documentation}.
+There is also a @uref{http://256stuff.com/sources/simplemetrics/docs/simplemetrics.pdf, PDF version of this documentation}.
 @end ifhtml
 @iftex
-There is also a @uref{http://256.com/sources/simplemetrics/docs/simplemetrics.html, HTML version of this documentation}.
+There is also a @uref{http://256stuff.com/sources/simplemetrics/docs/simplemetrics.html, HTML version of this documentation}.
 @end iftex
 
-Gray Watson @uref{http://256.com/gray/}
+Gray Watson @uref{http://256stuff.com/gray/}
 
 @menu
 * Quick Start::                Start using SimpleMetrics quickly.
@@ -75,7 +75,7 @@ To use SimpleMetrics you need to do the following steps.  For more information, 
 
 @enumerate
 
-@item Download SimpleMetrics from the @uref{http://256.com/sources/simplemetrics/releases/, SimpleMetrics release page}.
+@item Download SimpleMetrics from the @uref{http://256stuff.com/sources/simplemetrics/releases/, SimpleMetrics release page}.
 @xref{Downloading}.
 
 @item Create an instance of the @code{MetricsManager} class which manages the metrics in our application.
@@ -142,7 +142,7 @@ For somewhat more extensive instructions, @pxref{Using}.
 @cindex how to download the jars
 @cindex downloading the jars
 @cindex where to get new jars
-To get started with SimpleMetrics, you will need to download the jar file.  The @uref{http://256.com/sources/simplemetrics/releases/, SimpleMetrics
+To get started with SimpleMetrics, you will need to download the jar file.  The @uref{http://256stuff.com/sources/simplemetrics/releases/, SimpleMetrics
 release page} is the default repository but the jars are also available from the @uref{http://repo1.maven.org/maven2/com/j256/simplemetrics/,
 central maven repository}.  If you are using Maven, @pxref{Maven}.
 
@@ -329,7 +329,7 @@ want to publish is the number of open file-descriptors being used by the JVM.
 @cindex JmxServer
 The library uses the SimpleJMX library to allow for easy publishing of metric values via JMX.  It is optional
 to do so but you can set the @code{JmxServer} on the @code{MetricsManager} and metrics will be registered to the
-@code{JmxServer} and publishd into JMX folders.   For more information about SimpleJMX, see the @uref{http://256.com/sources/simplejmx/,
+@code{JmxServer} and publishd into JMX folders.   For more information about SimpleJMX, see the @uref{http://256stuff.com/sources/simplejmx/,
 SimpleJMX home page}.
 
 @c ----------------------------------------------------------------
@@ -356,6 +356,8 @@ To use SimpleMetrics with maven, include the following dependency in your @file{
 @cindex open source license
 This document is part of the SimpleMetrics project.
 
+Copyright @value{simplemetrics_year}, Gray Watson
+
 Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby
 granted, provided that this permission notice appear in all copies.
 
@@ -365,7 +367,7 @@ DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING F
 WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE
 USE OR PERFORMANCE OF THIS SOFTWARE.
 
-The author may be contacted via the @uref{http://256.com/sources/simplemetrics/, SimpleMetrics home page}.
+The author may be contacted via the @uref{http://256stuff.com/sources/simplemetrics/, SimpleMetrics home page}.
 
 @c ----------------------------------------------------------------
 @node Index of Concepts,, License, Top
