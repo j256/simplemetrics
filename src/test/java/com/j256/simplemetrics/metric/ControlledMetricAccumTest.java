@@ -104,7 +104,7 @@ public class ControlledMetricAccumTest {
 		assertTrue(metrics.contains(metric4));
 
 		assertFalse(metric.equals(null));
-		assertFalse(metric.equals(this));
+		assertFalse(metric.equals(new Object()));
 		assertFalse(metric.equals(metric2));
 		assertFalse(metric.equals(metric3));
 		assertFalse(metric.equals(metric4));
