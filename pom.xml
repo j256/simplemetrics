@@ -27,7 +27,7 @@
 		<aws-version>1.10.40</aws-version>
 		<gson-version>2.2.2</gson-version>
 		<!-- test dependencies -->
-		<junit-version>4.8.1</junit-version>
+		<junit-version>4.13.1</junit-version>
 		<easymock-version>3.4</easymock-version>
 	</properties>
 	<scm>
