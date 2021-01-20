@@ -41,6 +41,19 @@ Here's a quick code sample showing how to get started.
 	
 	// the persister will log the value of hitCounter every 60 seconds automatically
 
+# Maven Configuration
+
+``` xml
+<dependencies>
+	<dependency>
+		<groupId>com.j256.simplemetrics</groupId>
+		<artifactId>simplemetrics</artifactId>
+		<!-- NOTE: change the version to the most recent release version from the repo -->
+		<version>1.10</version>
+	</dependency>
+</dependencies>
+```
+
 # ChangeLog Release Notes
 
 See the [ChangeLog.txt file](src/main/javadoc/doc-files/changelog.txt).
