@@ -32,3 +32,12 @@ jobs:
           name: Test checks publishing to github
           command: mvn -X test-check-publisher:publish
           when: always
+      - run:
+      	  name: java version
+	  command: java -version
+      - run:
+      	  name: update version to 1.7
+	  command: sudo update-java-alternatives -s java-1.7.0-openjdk-amd64
+      - run:
+      	  name: java version
+	  command: java -version
