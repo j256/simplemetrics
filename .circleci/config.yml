@@ -33,11 +33,14 @@ jobs:
           command: mvn -X test-check-publisher:publish
           when: always
       - run:
-      	  name: java version
-	  command: java -version
+          name: java version
+          command: java -version
+          when: always
       - run:
-      	  name: update version to 1.7
-	  command: sudo update-java-alternatives -s java-1.7.0-openjdk-amd64
+          name: update version to 1.7
+          command: sudo update-java-alternatives -s java-1.7.0-openjdk-amd64
+          when: always
       - run:
-      	  name: java version
-	  command: java -version
+          name: java version
+          command: java -version
+          when: always
