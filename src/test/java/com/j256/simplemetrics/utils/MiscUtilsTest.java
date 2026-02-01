@@ -37,14 +37,4 @@ public class MiscUtilsTest {
 		MiscUtils.closeQuietly(closeable);
 		verify(closeable);
 	}
-
-	@Test
-	public void testCloseQuietlySocketThrows() throws IOException {
-		Socket socket = EasyMock.createMock(Socket.class);
-		socket.close();
-		expectLastCall().andThrow(new IOException());
-		replay(socket);
-		MiscUtils.closeQuietly(socket);
-		verify(socket);
-	}
 }

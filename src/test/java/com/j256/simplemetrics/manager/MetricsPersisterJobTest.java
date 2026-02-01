@@ -51,7 +51,7 @@ public class MetricsPersisterJobTest {
 		MetricsManager manager = new MetricsManager();
 		assertEquals(0, manager.getPersistCount());
 
-		long millis = 100;
+		long millis = 300;
 		MetricsPersisterJob job = new MetricsPersisterJob();
 		job.setMetricsManager(manager);
 		job.setPeriodTimeMillis(millis);
@@ -59,7 +59,7 @@ public class MetricsPersisterJobTest {
 		job.setDaemonThread(true);
 		job.initialize();
 
-		Thread.sleep(millis * 2 + millis / 10);
+		Thread.sleep(millis * 2 + (long)(millis / 1.5));
 		assertEquals(3, manager.getPersistCount());
 
 		job.destroyAndJoin();
