@@ -112,9 +112,9 @@ git push --delete origin $tag 2> /dev/null
 read cont
 if [ "$cont" = "" -o "$cont" = "y" ]; then
     cd $LOCAL_DIR
-    mvn -P st release:clean || exit 1
-    mvn -P st release:prepare || ( /bin/echo "Maybe use mvn release:rollback to rollback"; exit 1 )
-    mvn -P st release:perform || ( /bin/echo "Maybe use mvn release:rollback to rollback"; exit 1 )
+    mvn release:clean || exit 1
+    mvn release:prepare || ( /bin/echo "Maybe use mvn release:rollback to rollback"; exit 1 )
+    mvn release:perform || ( /bin/echo "Maybe use mvn release:rollback to rollback"; exit 1 )
     /bin/echo ""
     /bin/echo ""
 fi
