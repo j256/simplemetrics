@@ -34,15 +34,6 @@ if [ $? -ne 0 ]; then
 fi
 
 #############################################################
-# check maven settings
-
-grep sonatype-nexus-snapshots $HOME/.m2/settings.xml > /dev/null 2>&1
-if [ $? -ne 0 ]; then
-    /bin/echo "Can't find sonatype info in the maven settings.xml file"
-    bad=1
-fi
-
-#############################################################
 
 release=$(grep version pom.xml | grep SNAPSHOT | head -1 | cut -f2 -d\> | cut -f1 -d\-)
 
@@ -124,7 +115,6 @@ if [ "$cont" = "" -o "$cont" = "y" ]; then
     mvn -P st release:clean || exit 1
     mvn -P st release:prepare || ( /bin/echo "Maybe use mvn release:rollback to rollback"; exit 1 )
     mvn -P st release:perform || ( /bin/echo "Maybe use mvn release:rollback to rollback"; exit 1 )
-
     /bin/echo ""
     /bin/echo ""
 fi
