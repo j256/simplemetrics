@@ -20,7 +20,7 @@ public class ControlledMetricJmxTest {
 				new ControlledMetricJmx(metric, "com.j256", new JmxFolderName[] { new JmxFolderName("metrics") });
 		assertEquals(name, metricJmx.getName());
 		assertEquals(name, metricJmx.getJmxBeanName());
-		assertEquals(2, metricJmx.getJmxFolderNames().length);
+		assertEquals(3, metricJmx.getJmxFolderNames().length);
 		assertEquals(component, metricJmx.getJmxFolderNames()[1].getValue());
 		assertEquals(description, metricJmx.getDescription());
 		assertEquals(unit, metricJmx.getUnit());
