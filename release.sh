@@ -3,6 +3,8 @@
 # Release script
 #
 
+set -e
+
 LIBRARY="simplemetrics"
 LOCAL_DIR="$HOME/svn/local/$LIBRARY"
 
