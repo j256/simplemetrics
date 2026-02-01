@@ -130,7 +130,7 @@
 						&gt;Creative Commons Attribution-Share Alike 3.0
 						License.
 						&lt;/a&gt; </bottom>
-					<additionalparam>-tag inheritDoc:X ${disableDoclint}</additionalparam>
+					<additionalparam>-tag inheritDoc:X -Xdoclint:none</additionalparam>
 					<excludePackageNames>
 					</excludePackageNames>
 				</configuration>
