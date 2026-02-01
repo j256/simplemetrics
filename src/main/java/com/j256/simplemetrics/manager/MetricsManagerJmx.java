@@ -14,7 +14,8 @@ import com.j256.simplemetrics.metric.ControlledMetric;
 import com.j256.simplemetrics.metric.ControlledMetricJmx;
 
 /**
- * Class which optionally handles the JMX publishing of all of the metrics as JMX beans as well as the metrics-manager.
+ * Class which optionally handles the JMX publishing of all of the metrics as JMX beans as well as the metrics-manager
+ * if the optional SimpleJmx library is available.
  *
  * @author graywatson
  */
