@@ -7,7 +7,7 @@ import com.j256.simplejmx.common.JmxResource;
 import com.j256.simplejmx.common.JmxSelfNaming;
 
 /**
- * JMX information for the file-metrics publisher.
+ * JMX information for the file-metrics publisher if the optional SimpleJmx library is a dependency.
  * 
  * @author graywatson
  */

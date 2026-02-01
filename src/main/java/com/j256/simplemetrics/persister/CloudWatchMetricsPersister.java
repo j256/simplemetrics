@@ -15,20 +15,18 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.AWSCredentialsProvider;
-import com.amazonaws.internal.StaticCredentialsProvider;
-import com.amazonaws.services.cloudwatch.AmazonCloudWatch;
-import com.amazonaws.services.cloudwatch.AmazonCloudWatchClient;
-import com.amazonaws.services.cloudwatch.model.Dimension;
-import com.amazonaws.services.cloudwatch.model.MetricDatum;
-import com.amazonaws.services.cloudwatch.model.PutMetricDataRequest;
-import com.amazonaws.services.cloudwatch.model.StandardUnit;
-import com.amazonaws.services.cloudwatch.model.StatisticSet;
 import com.j256.simplemetrics.metric.ControlledMetric;
 import com.j256.simplemetrics.metric.ControlledMetric.AggregationType;
 import com.j256.simplemetrics.metric.MetricValueDetails;
 import com.j256.simplemetrics.utils.MiscUtils;
+
+import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
+import software.amazon.awssdk.services.cloudwatch.model.Dimension;
+import software.amazon.awssdk.services.cloudwatch.model.MetricDatum;
+import software.amazon.awssdk.services.cloudwatch.model.MetricDatum.Builder;
+import software.amazon.awssdk.services.cloudwatch.model.PutMetricDataRequest;
+import software.amazon.awssdk.services.cloudwatch.model.StandardUnit;
+import software.amazon.awssdk.services.cloudwatch.model.StatisticSet;
 
 /**
  * Class which persists our metrics to Amazon's AWS CloudWatch cloud service. This requires the aws-java-sdk package to
@@ -38,8 +36,6 @@ import com.j256.simplemetrics.utils.MiscUtils;
  * <b>NOTE:</b> If you are using the no-arg constructor (like with Spring) you will need to make sure that
  * {@link #initialize()} is called.
  * </p>
- * 
- * @author graywatson
  */
 public class CloudWatchMetricsPersister implements MetricDetailsPersister {
 
@@ -48,7 +44,7 @@ public class CloudWatchMetricsPersister implements MetricDetailsPersister {
 	private static final String COMPONENT_DIMENSION = "Component";
 	private static final String MODULE_DIMENSION = "Module";
 	static final int MAX_NUM_DATUM_ALLOWED_PER_POST = 20;
-	private static final StandardUnit DEFAULT_AWS_UNIT = StandardUnit.Count;
+	private static final StandardUnit DEFAULT_AWS_UNIT = StandardUnit.COUNT;
 	static final double ZERO_NUM_SAMPLES_REPLACEMENT = 0.000000001D;
 
 	private static final String AWS_INSTANCE_INFO_IP = "169.254.169.254";
@@ -61,10 +57,9 @@ public class CloudWatchMetricsPersister implements MetricDetailsPersister {
 
 	private String applicationName = "unknown";
 	private String nameSpacePrefix = DEFAULT_NAME_SPACE_PREFIX;
-	private AWSCredentialsProvider awsCredentialsProvider;
 	private boolean addInstanceData = true;
 
-	private AmazonCloudWatch cloudWatchClient;
+	private CloudWatchClient cloudWatchClient;
 	private static String instanceId;
 
 	static {
@@ -78,31 +73,26 @@ public class CloudWatchMetricsPersister implements MetricDetailsPersister {
 		}
 
 		// force some mappings
-		AWS_UNIT_MAP.put("kb", StandardUnit.Kilobytes);
-		AWS_UNIT_MAP.put("mb", StandardUnit.Megabytes);
-		AWS_UNIT_MAP.put("gb", StandardUnit.Gigabytes);
-		AWS_UNIT_MAP.put("mbit", StandardUnit.Megabits);
-		AWS_UNIT_MAP.put("millis", StandardUnit.Milliseconds);
-		AWS_UNIT_MAP.put("ms", StandardUnit.Milliseconds);
-		AWS_UNIT_MAP.put("msec", StandardUnit.Milliseconds);
-		AWS_UNIT_MAP.put("msecs", StandardUnit.Milliseconds);
-		AWS_UNIT_MAP.put("bps", StandardUnit.BytesSecond);
-		AWS_UNIT_MAP.put("%", StandardUnit.Percent);
-		AWS_UNIT_MAP.put("percentage", StandardUnit.Percent);
-		AWS_UNIT_MAP.put("many", StandardUnit.Count);
+		AWS_UNIT_MAP.put("kb", StandardUnit.KILOBYTES);
+		AWS_UNIT_MAP.put("mb", StandardUnit.MEGABYTES);
+		AWS_UNIT_MAP.put("gb", StandardUnit.GIGABYTES);
+		AWS_UNIT_MAP.put("mbit", StandardUnit.MEGABITS);
+		AWS_UNIT_MAP.put("millis", StandardUnit.MILLISECONDS);
+		AWS_UNIT_MAP.put("ms", StandardUnit.MILLISECONDS);
+		AWS_UNIT_MAP.put("msec", StandardUnit.MILLISECONDS);
+		AWS_UNIT_MAP.put("msecs", StandardUnit.MILLISECONDS);
+		AWS_UNIT_MAP.put("bps", StandardUnit.BYTES_SECOND);
+		AWS_UNIT_MAP.put("%", StandardUnit.PERCENT);
+		AWS_UNIT_MAP.put("percentage", StandardUnit.PERCENT);
+		AWS_UNIT_MAP.put("count", StandardUnit.COUNT);
+		AWS_UNIT_MAP.put("many", StandardUnit.COUNT);
 	}
 
 	public CloudWatchMetricsPersister() {
 		// for spring
 	}
 
-	public CloudWatchMetricsPersister(AWSCredentials awsCredentials, String applicationName, boolean addInstanceData) {
-		this(new StaticCredentialsProvider(awsCredentials), applicationName, addInstanceData);
-	}
-
-	public CloudWatchMetricsPersister(AWSCredentialsProvider awsCredentialsProvider, String applicationName,
-			boolean addInstanceData) {
-		this.awsCredentialsProvider = awsCredentialsProvider;
+	public CloudWatchMetricsPersister(String applicationName, boolean addInstanceData) {
 		this.applicationName = applicationName;
 		this.addInstanceData = addInstanceData;
 		initialize();
@@ -114,7 +104,7 @@ public class CloudWatchMetricsPersister implements MetricDetailsPersister {
 	 */
 	public void initialize() {
 		if (cloudWatchClient == null) {
-			cloudWatchClient = new AmazonCloudWatchClient(awsCredentialsProvider);
+			cloudWatchClient = CloudWatchClient.builder().build();
 		}
 		if (addInstanceData) {
 			instanceId = downloadInstanceId(AWS_CONNECT_TIMEOUT_MILLIS);
@@ -150,8 +140,9 @@ public class CloudWatchMetricsPersister implements MetricDetailsPersister {
 				} else {
 					requestDatumList = datumList.subList(startIndex, endIndex);
 				}
+
 				PutMetricDataRequest request =
-						new PutMetricDataRequest().withNamespace(nameSpace).withMetricData(requestDatumList);
+						PutMetricDataRequest.builder().namespace(nameSpace).metricData(requestDatumList).build();
 				try {
 					cloudWatchClient.putMetricData(request);
 				} catch (Exception e) {
@@ -159,21 +150,6 @@ public class CloudWatchMetricsPersister implements MetricDetailsPersister {
 				}
 			}
 		}
-	}
-
-	/**
-	 * Set the credentials to use when publishing to AWS.
-	 */
-	// @NotRequired("either this or the cloudWatchClient needs to be set")
-	public void setAwsCredentials(AWSCredentials awsCredentials) {
-		this.awsCredentialsProvider = new StaticCredentialsProvider(awsCredentials);
-	}
-
-	/**
-	 * Set the credentials provider.
-	 */
-	public void setAwsCredentialsProvider(AWSCredentialsProvider awsCredentialsProvider) {
-		this.awsCredentialsProvider = awsCredentialsProvider;
 	}
 
 	/**
@@ -201,10 +177,10 @@ public class CloudWatchMetricsPersister implements MetricDetailsPersister {
 	}
 
 	/**
-	 * Set the client to use to publish the metrics.
+	 * For testing purposes.
 	 */
 	// @NotRequired("Default is create one in initialize() with the credentials")
-	public void setCloudWatchClient(AmazonCloudWatch cloudWatchClient) {
+	public void setCloudWatchClient(CloudWatchClient cloudWatchClient) {
 		this.cloudWatchClient = cloudWatchClient;
 	}
 
@@ -251,18 +227,18 @@ public class CloudWatchMetricsPersister implements MetricDetailsPersister {
 				max = 1.0;
 			}
 
-			MetricDatum datum =
-					new MetricDatum().withMetricName(metric.getName()).withUnit(convertUnit(metric.getUnit()));
+			Builder datumBuilder =
+					MetricDatum.builder().metricName(metric.getName()).unit(convertUnit(metric.getUnit()));
 			List<Dimension> dimensions = new ArrayList<Dimension>(3 /* max */);
-			dimensions.add(new Dimension().withName(COMPONENT_DIMENSION).withValue(metric.getComponent()));
+			dimensions.add(Dimension.builder().name(COMPONENT_DIMENSION).value(metric.getComponent()).build());
 			if (metric.getModule() != null) {
-				dimensions.add(new Dimension().withName(MODULE_DIMENSION).withValue(metric.getModule()));
+				dimensions.add(Dimension.builder().name(MODULE_DIMENSION).value(metric.getModule()).build());
 			}
-			datum.withDimensions(dimensions);
+			datumBuilder.dimensions(dimensions);
 
 			// create a statisticSet or just a value
 			if (numSamples == 1) {
-				datum.withValue(value);
+				datumBuilder.value(value);
 			} else {
 				double sampleCount = numSamples;
 				if (numSamples == 0) {
@@ -274,35 +250,38 @@ public class CloudWatchMetricsPersister implements MetricDetailsPersister {
 				}
 				// we do the multiplication here because CloudWatch wants a sum
 				double valueSum = value * numSamples;
-				datum.withStatisticValues(new StatisticSet().withMinimum(min)
-						.withMaximum(max)
-						.withSampleCount(sampleCount)
-						.withSum(valueSum));
+				datumBuilder.statisticValues(StatisticSet.builder()
+						.minimum(min)
+						.maximum(max)
+						.sampleCount(sampleCount)
+						.sum(valueSum)
+						.build());
 			}
 
+			MetricDatum datum = datumBuilder.build();
 			nameSpaceMetrics.add(datum);
 
 			// copy our metric and add another one in with the instance-id
 			if (instanceId != null) {
-				MetricDatum instanceDatum = copyDatum(datum);
-				dimensions.add(new Dimension().withName(INSTANCE_ID_DIMENSION).withValue(instanceId));
-				instanceDatum.withDimensions(dimensions);
-				nameSpaceMetrics.add(instanceDatum);
+				MetricDatum.Builder instanceDatumBuilder = copyDatum(datum);
+				dimensions.add(Dimension.builder().name(INSTANCE_ID_DIMENSION).value(instanceId).build());
+				instanceDatumBuilder.dimensions(dimensions);
+				nameSpaceMetrics.add(instanceDatumBuilder.build());
 			}
 		}
 
 		return metricMap;
 	}
 
-	private MetricDatum copyDatum(MetricDatum datum) {
-		MetricDatum copy = new MetricDatum().withMetricName(datum.getMetricName()).withUnit(datum.getUnit());
-		Double datumValue = datum.getValue();
+	private MetricDatum.Builder copyDatum(MetricDatum datum) {
+		MetricDatum.Builder copyBuilder = MetricDatum.builder().metricName(datum.metricName()).unit(datum.unit());
+		Double datumValue = datum.value();
 		if (datumValue == null) {
-			copy.withStatisticValues(datum.getStatisticValues());
+			copyBuilder.statisticValues(datum.statisticValues());
 		} else {
-			copy.withValue(datumValue);
+			copyBuilder.value(datumValue);
 		}
-		return copy;
+		return copyBuilder;
 	}
 
 	/**
@@ -310,7 +289,7 @@ public class CloudWatchMetricsPersister implements MetricDetailsPersister {
 	 */
 	private StandardUnit convertUnit(String unitString) {
 		if (unitString == null) {
-			return StandardUnit.None;
+			return StandardUnit.NONE;
 		}
 		String lowerUnitString = unitString.toLowerCase();
 		StandardUnit unit = AWS_UNIT_MAP.get(lowerUnitString);

@@ -1,6 +1,7 @@
 package com.j256.simplemetrics.persister;
 
 import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 
@@ -10,21 +11,18 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.AWSCredentialsProviderChain;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.internal.StaticCredentialsProvider;
-import com.amazonaws.services.cloudwatch.AmazonCloudWatch;
-import com.amazonaws.services.cloudwatch.model.Dimension;
-import com.amazonaws.services.cloudwatch.model.MetricDatum;
-import com.amazonaws.services.cloudwatch.model.PutMetricDataRequest;
-import com.amazonaws.services.cloudwatch.model.StandardUnit;
-import com.amazonaws.services.cloudwatch.model.StatisticSet;
 import com.j256.simplemetrics.manager.MetricsManager;
 import com.j256.simplemetrics.metric.ControlledMetric;
 import com.j256.simplemetrics.metric.ControlledMetric.AggregationType;
 import com.j256.simplemetrics.metric.ControlledMetricAccum;
 import com.j256.simplemetrics.metric.ControlledMetricValue;
+
+import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
+import software.amazon.awssdk.services.cloudwatch.model.Dimension;
+import software.amazon.awssdk.services.cloudwatch.model.MetricDatum;
+import software.amazon.awssdk.services.cloudwatch.model.PutMetricDataRequest;
+import software.amazon.awssdk.services.cloudwatch.model.StandardUnit;
+import software.amazon.awssdk.services.cloudwatch.model.StatisticSet;
 
 public class CloudWatchMetricsPersisterTest {
 
@@ -34,7 +32,7 @@ public class CloudWatchMetricsPersisterTest {
 		CloudWatchMetricsPersister persister = new CloudWatchMetricsPersister();
 		String appName = getClass().getSimpleName();
 		persister.setApplicationName(appName);
-		AmazonCloudWatch cloudWatchClient = createMock(AmazonCloudWatch.class);
+		CloudWatchClient cloudWatchClient = createMock(CloudWatchClient.class);
 		persister.setCloudWatchClient(cloudWatchClient);
 		persister.setAddInstanceData(true);
 		String nameSpacePrefix = "ns";
@@ -42,7 +40,7 @@ public class CloudWatchMetricsPersisterTest {
 		persister.initialize();
 		manager.setMetricDetailsPersisters(new MetricDetailsPersister[] { persister });
 		String comp = "test";
-		StandardUnit unit = StandardUnit.Count;
+		StandardUnit unit = StandardUnit.COUNT;
 		int value = 3;
 		int NUM_METRICS = CloudWatchMetricsPersister.MAX_NUM_DATUM_ALLOWED_PER_POST;
 		for (int i = 0; i < NUM_METRICS; i++) {
@@ -64,13 +62,13 @@ public class CloudWatchMetricsPersisterTest {
 
 		List<MetricDatum> data = new ArrayList<MetricDatum>();
 		for (ControlledMetric<?, ?> metric : manager.getMetricValueDetailsMap().keySet()) {
-			MetricDatum datum = new MetricDatum();
-			datum.setMetricName(metric.getName());
+			MetricDatum.Builder datumBuilder = MetricDatum.builder();
+			datumBuilder.metricName(metric.getName());
 			if (metric.getModule() == null) {
-				datum.withDimensions(new Dimension().withName("Component").withValue(metric.getComponent()));
+				datumBuilder.dimensions(Dimension.builder().name("Component").value(metric.getComponent()).build());
 			} else {
-				datum.withDimensions(new Dimension().withName("Component").withValue(metric.getComponent()),
-						new Dimension().withName("Module").withValue(metric.getModule()));
+				datumBuilder.dimensions(Dimension.builder().name("Component").value(metric.getComponent()).build(),
+						Dimension.builder().name("Module").value(metric.getModule()).build());
 			}
 			if (metric.getAggregationType() == AggregationType.SUM) {
 				double sampleCount = metric.getValue().doubleValue();
@@ -82,46 +80,34 @@ public class CloudWatchMetricsPersisterTest {
 				if (metric.getValue().longValue() == 0) {
 					sampleCount = CloudWatchMetricsPersister.ZERO_NUM_SAMPLES_REPLACEMENT;
 				}
-				datum.withStatisticValues(
-						new StatisticSet().withSampleCount(sampleCount).withMinimum(1.0).withMaximum(1.0).withSum(sum));
+				datumBuilder.statisticValues(
+						StatisticSet.builder().sampleCount(sampleCount).minimum(1.0).maximum(1.0).sum(sum).build());
 			} else {
-				datum.setValue(Double.valueOf(value));
+				datumBuilder.value(Double.valueOf(value));
 			}
 			if (metric.getUnit() == null) {
-				datum.withUnit(StandardUnit.None);
+				datumBuilder.unit(StandardUnit.NONE);
 			} else {
-				datum.withUnit(StandardUnit.Count);
+				datumBuilder.unit(StandardUnit.COUNT);
 			}
-			data.add(datum);
+			data.add(datumBuilder.build());
 			if (data.size() >= CloudWatchMetricsPersister.MAX_NUM_DATUM_ALLOWED_PER_POST) {
-				PutMetricDataRequest request = new PutMetricDataRequest();
-				request.setNamespace(nameSpacePrefix + ": " + appName);
-				request.setMetricData(data);
-				cloudWatchClient.putMetricData(request);
+				PutMetricDataRequest.Builder builder = PutMetricDataRequest.builder();
+				builder.namespace(nameSpacePrefix + ": " + appName);
+				builder.metricData(data);
+				expect(cloudWatchClient.putMetricData(builder.build())).andReturn(null);
 				data = new ArrayList<MetricDatum>();
 			}
 		}
 		if (data.size() > 0) {
-			PutMetricDataRequest request = new PutMetricDataRequest();
-			request.setNamespace(nameSpacePrefix + ": " + appName);
-			request.setMetricData(data);
-			cloudWatchClient.putMetricData(request);
+			PutMetricDataRequest.Builder builder = PutMetricDataRequest.builder();
+			builder.namespace(nameSpacePrefix + ": " + appName);
+			builder.metricData(data);
+			expect(cloudWatchClient.putMetricData(builder.build())).andReturn(null);
 		}
 
 		replay(cloudWatchClient);
 		manager.persist();
 		verify(cloudWatchClient);
 	}
-
-	@Test
-	public void testCoverage() {
-		AWSCredentials creds = new BasicAWSCredentials("key", "secret");
-		CloudWatchMetricsPersister persister = new CloudWatchMetricsPersister(creds, "app", true);
-		StaticCredentialsProvider credProv = new StaticCredentialsProvider(creds);
-		persister = new CloudWatchMetricsPersister(new AWSCredentialsProviderChain(credProv), "app", true);
-		persister = new CloudWatchMetricsPersister();
-		persister.setAwsCredentials(creds);
-		persister.setAwsCredentialsProvider(credProv);
-	}
-
 }
