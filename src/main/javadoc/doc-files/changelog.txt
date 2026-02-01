@@ -1,3 +1,10 @@
+2.1: 1/31/2026
+	* Added module name which was missing from the JMX folder-names in the optional JMX exports.
+	* Updated the SimpleJmx optional dependency.
+	* Had to move to JDK 8 because my version won't generate 7 files.  Grumble.
+	* Fixed a race condition in the MetricsManager with the metrics listeners.
+	* Bumped the major release because of the JDK upgrade.
+
 1.9: 2/17/2019
 	* Moved to Java 1.7 requirement.
 	* Split out the SimpleJmx annotations into separate classes to make it an optional dependency, updated version.

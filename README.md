@@ -43,13 +43,15 @@ Here's a quick code sample showing how to get started.
 
 # Maven Configuration
 
+Maven packages are published via [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.j256.simplemetrics/simplemetrics/badge.svg?style=flat-square)](https://maven-badges.herokuapp.com/maven-central/com.j256.simplemetrics/simplemetrics/) [![javadoc](https://javadoc.io/badge2/com.j256.simplemetrics/simplemetrics/javadoc.svg)](https://javadoc.io/doc/com.j256.simplemetrics/simplemetrics)
+
 ``` xml
 <dependencies>
 	<dependency>
 		<groupId>com.j256.simplemetrics</groupId>
 		<artifactId>simplemetrics</artifactId>
 		<!-- NOTE: change the version to the most recent release version from the repo -->
-		<version>1.10</version>
+		<version>2.1</version>
 	</dependency>
 </dependencies>
 ```
