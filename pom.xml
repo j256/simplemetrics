@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.j256.simplemetrics</groupId>
 	<artifactId>simplemetrics</artifactId>
-	<version>2.1</version>
+	<version>2.2-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>Simple Metrics</name>
 	<url>https://256stuff.com/sources/simplemetrics/</url>
@@ -30,7 +30,7 @@
 		<url>https://github.com/j256/simplemetrics</url>
 		<connection>scm:git:ssh://git@github.com/j256/simplemetrics.git</connection>
 		<developerConnection>scm:git:ssh://git@github.com/j256/simplemetrics.git</developerConnection>
-	  <tag>simplemetrics-2.1</tag>
+	  <tag>HEAD</tag>
   </scm>
 	<developers>
 		<developer>
