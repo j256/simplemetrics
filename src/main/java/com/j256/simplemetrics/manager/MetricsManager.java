@@ -75,6 +75,13 @@ public class MetricsManager {
 		synchronized (registerListener) {
 			registerListeners.add(registerListener);
 		}
+		if (!metrics.isEmpty()) {
+			synchronized (metrics) {
+				for (ControlledMetric<?, ?> metric : metrics) {
+					registerListener.metricRegistered(metric);
+				}
+			}
+		}
 	}
 
 	/**
@@ -253,9 +260,7 @@ public class MetricsManager {
 	public void setMetricDetailsPersisters(MetricDetailsPersister[] metricDetailsPersisters) {
 		this.metricDetailsPersisters = metricDetailsPersisters;
 	}
-	
 
-	
 	public String[] getMetricValues() {
 		// update the metrics
 		updateMetrics();
