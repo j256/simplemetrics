@@ -3,8 +3,6 @@
 # Release script
 #
 
-set -e
-
 LIBRARY="simplemetrics"
 LOCAL_DIR="$HOME/svn/local/$LIBRARY"
 
@@ -115,8 +113,8 @@ read cont
 if [ "$cont" = "" -o "$cont" = "y" ]; then
     cd $LOCAL_DIR
     mvn release:clean || exit 1
-    mvn release:prepare || ( /bin/echo "Maybe use mvn release:rollback to rollback"; exit 1 )
-    mvn release:perform || ( /bin/echo "Maybe use mvn release:rollback to rollback"; exit 1 )
+    mvn release:prepare || { /bin/echo "Maybe use mvn release:rollback to rollback"; exit 1 }
+    mvn release:perform || { /bin/echo "Maybe use mvn release:rollback to rollback"; exit 1 }
     /bin/echo ""
     /bin/echo ""
 fi
