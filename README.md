@@ -1,7 +1,7 @@
 Simple Java Metrics
 ===================
 
-[![Maven Central](https://img.shields.io/maven-central/v/simplemetrics/simplemetrics?style=flat-square)](https://mvnrepository.com/artifact/com.j256.simplemetrics/simplemetrics/latest)
+[![Maven Central](https://img.shields.io/maven-central/v/com.j256.simplemetrics/simplemetrics?style=flat-square)](https://mvnrepository.com/artifact/com.j256.simplemetrics/simplemetrics/latest)
 [![javadoc](https://javadoc.io/badge2/com.j256.simplemetrics/simplemetrics/javadoc.svg)](https://javadoc.io/doc/com.j256.simplemetrics/simplemetrics)
 [![ChangeLog](https://img.shields.io/github/v/release/j256/simplemetrics?label=changelog&display_name=release)](https://github.com/j256/simplemetrics/blob/master/src/main/javadoc/doc-files/changelog.txt)
 [![Documentation](https://img.shields.io/github/v/release/j256/simplemetrics?label=documentation&display_name=release)](https://htmlpreview.github.io/?https://github.com/j256/simplemetrics/blob/master/src/main/javadoc/doc-files/simplemetrics.html)
