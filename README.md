@@ -66,4 +66,4 @@ Maven packages are published via [Maven Central](https://mvnrepository.com/artif
 
 # ChangeLog Release Notes
 
-See the [ChangeLog.txt file](src/main/javadoc/doc-files/changelog.txt).
+See the [ChangeLog file](src/main/javadoc/doc-files/changelog.txt).
