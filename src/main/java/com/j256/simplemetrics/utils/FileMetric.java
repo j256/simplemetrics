@@ -334,10 +334,8 @@ public class FileMetric {
 
 	private Number extractNumberFromFile() throws IOException {
 		String line;
-		BufferedReader reader = null;
 		Matcher matcher = null;
-		try {
-			reader = new BufferedReader(new FileReader(metricFile));
+		try (BufferedReader reader = new BufferedReader(new FileReader(metricFile));) {
 			int lineCount = 0;
 			while (true) {
 				line = reader.readLine();
@@ -371,8 +369,6 @@ public class FileMetric {
 			}
 		} catch (IOException e) {
 			throw new IOException("Problems reading metric " + metricName + " from file " + metricFile, e);
-		} finally {
-			MiscUtils.closeQuietly(reader);
 		}
 		if (line == null) {
 			if (prefix == null) {

@@ -47,11 +47,9 @@ public class TextFileMetricsPersister implements MetricValuesPersister {
 		if (appendSysTimeMillis) {
 			logName = logFileNamePrefix + timeMillis;
 		}
-		Writer writer = null;
 		// write to a temp file
 		File outputFile = new File(outputDirectory, logName + ".t");
-		try {
-			writer = new BufferedWriter(new FileWriter(outputFile));
+		try (Writer writer = new BufferedWriter(new FileWriter(outputFile));) {
 			for (Map.Entry<ControlledMetric<?, ?>, Number> entry : metricValues.entrySet()) {
 				ControlledMetric<?, ?> metric = entry.getKey();
 				if (showDescription) {
@@ -64,8 +62,6 @@ public class TextFileMetricsPersister implements MetricValuesPersister {
 			}
 		} catch (IOException e) {
 			throw new IOException("Could not dump logfile to " + logName, e);
-		} finally {
-			MiscUtils.closeQuietly(writer);
 		}
 
 		// rename to our permanent name

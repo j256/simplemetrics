@@ -52,7 +52,7 @@ public class CloudWatchMetricsPersister implements MetricDetailsPersister {
 	private static final int AWS_CONNECT_TIMEOUT_MILLIS = 2000;
 
 	// makes sure that we are running in EC2 and extracts the instance-id name
-	private static final Pattern INSTANCE_ID_RESULT_REGEX = Pattern.compile("(?s).*Server: EC2ws.*\r\n\r\n(.*)");
+	private static final Pattern INSTANCE_ID_RESULT_REGEX = Pattern.compile("(?s).*Server: EC2ws.*\r?\n\r?\n(i-.*)");
 	private static final Map<String, StandardUnit> AWS_UNIT_MAP = new HashMap<String, StandardUnit>();
 
 	private String applicationName = "unknown";
@@ -305,33 +305,29 @@ public class CloudWatchMetricsPersister implements MetricDetailsPersister {
 	 * HttpClient but I didn't want to pay for the dependency.
 	 */
 	private static String downloadInstanceId(long connectTimeoutMillis) {
-		Socket clientSocket = new Socket();
-		Reader reader = null;
-		Writer writer = null;
-		try {
+		try (Socket clientSocket = new Socket();) {
 			clientSocket.connect(new InetSocketAddress(Inet4Address.getByName(AWS_INSTANCE_INFO_IP), 80), 1000);
-			reader = new InputStreamReader(clientSocket.getInputStream());
-			writer = new OutputStreamWriter(clientSocket.getOutputStream());
-			writer.append("GET " + INSTANCE_ID_FETCH_PATH + " HTTP/1.1\r\n" //
-					+ "Host: " + AWS_INSTANCE_INFO_IP + "\r\n" //
-					+ "Connection: close\r\n\r\n");
-			writer.flush();
-			char[] buf = new char[1024];
-			int numRead = reader.read(buf);
-			String result = new String(buf, 0, numRead);
-			Matcher matcher = INSTANCE_ID_RESULT_REGEX.matcher(result);
-			if (matcher.matches()) {
-				return matcher.group(1);
-			} else {
-				return "doesn't match";
+			try (Reader reader = new InputStreamReader(clientSocket.getInputStream());
+					Writer writer = new OutputStreamWriter(clientSocket.getOutputStream());) {
+				writer.append("GET " + INSTANCE_ID_FETCH_PATH + " HTTP/1.1\r\n" //
+						+ "Host: " + AWS_INSTANCE_INFO_IP + "\r\n" //
+						+ "Connection: close\r\n\n");
+				writer.flush();
+
+				// read in the whole server response including headers
+				char[] buf = new char[1024];
+				int numRead = reader.read(buf);
+				String result = new String(buf, 0, numRead);
+				Matcher matcher = INSTANCE_ID_RESULT_REGEX.matcher(result);
+				if (matcher.matches()) {
+					return matcher.group(1);
+				} else {
+					return null;
+				}
 			}
 		} catch (IOException ioe) {
 			// probably could not connect
 			return null;
-		} finally {
-			MiscUtils.closeQuietly(reader);
-			MiscUtils.closeQuietly(writer);
-			MiscUtils.closeQuietly(clientSocket);
 		}
 	}
 }

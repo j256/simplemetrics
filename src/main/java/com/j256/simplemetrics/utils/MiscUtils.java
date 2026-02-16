@@ -1,9 +1,5 @@
 package com.j256.simplemetrics.utils;
 
-import java.io.Closeable;
-import java.io.IOException;
-import java.net.Socket;
-
 import com.j256.simplemetrics.metric.ControlledMetric;
 
 /**
@@ -12,32 +8,6 @@ import com.j256.simplemetrics.metric.ControlledMetric;
  * @author graywatson
  */
 public class MiscUtils {
-
-	/**
-	 * Close something quietly.
-	 */
-	public static void closeQuietly(Closeable closeable) {
-		if (closeable != null) {
-			try {
-				closeable.close();
-			} catch (IOException ioe) {
-				// ignore
-			}
-		}
-	}
-
-	/**
-	 * Close socket quietly.
-	 */
-	public static void closeQuietly(Socket socket) {
-		if (socket != null) {
-			try {
-				socket.close();
-			} catch (IOException ioe) {
-				// ignore
-			}
-		}
-	}
 
 	/**
 	 * Return true if the string is null, empty, or all whitespace, otherwise false.
