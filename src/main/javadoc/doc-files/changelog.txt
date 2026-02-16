@@ -1,3 +1,6 @@
+2.3: 2/16/2026
+	* Had to re-release to fix some javadoc issues.  Grrrr.
+
 2.2: 2/16/2026
 	* Tweaked the optional cloud-watch metrics persister instance downloading to work with ECS as well.
 

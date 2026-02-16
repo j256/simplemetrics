@@ -59,7 +59,7 @@ Maven packages are published via [Maven Central](https://mvnrepository.com/artif
 		<groupId>com.j256.simplemetrics</groupId>
 		<artifactId>simplemetrics</artifactId>
 		<!-- NOTE: change the version to the most recent release version from the repo -->
-		<version>2.2</version>
+		<version>2.3</version>
 	</dependency>
 </dependencies>
 ```
