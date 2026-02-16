@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.j256.simplemetrics</groupId>
 	<artifactId>simplemetrics</artifactId>
@@ -17,7 +19,10 @@
 		</license>
 	</licenses>
 	<properties>
-		<disableDoclint />
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<maven.compiler.source>18</maven.compiler.source>
+		<maven.compiler.target>18</maven.compiler.target>
 		<!-- optional dependencies -->
 		<simplejmx-version>3.1</simplejmx-version>
 		<awssdk-version>2.41.9</awssdk-version>
@@ -30,8 +35,8 @@
 		<url>https://github.com/j256/simplemetrics</url>
 		<connection>scm:git:ssh://git@github.com/j256/simplemetrics.git</connection>
 		<developerConnection>scm:git:ssh://git@github.com/j256/simplemetrics.git</developerConnection>
-	  <tag>HEAD</tag>
-  </scm>
+		<tag>HEAD</tag>
+	</scm>
 	<developers>
 		<developer>
 			<id>gray</id>
@@ -115,12 +120,10 @@
 						<goals>
 							<goal>jar</goal>
 						</goals>
-						<configuration>
-							<additionalparam>-tag inheritDoc:X -Xdoclint:none</additionalparam>
-						</configuration>
 					</execution>
 				</executions>
 				<configuration>
+					<source>${maven.compiler.source}</source>
 					<bottom>
 						This content is licensed by Gray Watson under the
 						&lt;a
@@ -129,8 +132,10 @@
 						License.
 						&lt;/a&gt; </bottom>
 					<additionalparam>-tag inheritDoc:X -Xdoclint:none</additionalparam>
-					<excludePackageNames>
-					</excludePackageNames>
+					<links>
+						<link>
+							https://docs.oracle.com/en/java/javase/${maven.compiler.source}/docs/api/</link>
+					</links>
 				</configuration>
 			</plugin>
 			<plugin>

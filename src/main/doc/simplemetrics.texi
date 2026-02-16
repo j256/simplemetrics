@@ -6,7 +6,7 @@
 @c %**end of header
 
 @c ----------------------------------------------------------------
-@set simplemetrics_version 2.1
+@set simplemetrics_version 2.2
 @set simplemetrics_year 2026
 @set simplemetrics_date February @value{simplemetrics_year}
 @set package SimpleMetrics

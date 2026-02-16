@@ -1,5 +1,5 @@
-2.2: ?/??/2026
-	* Tweaked the optional cloud-watch metrics persister now that I am consuming it again.
+2.2: 2/16/2026
+	* Tweaked the optional cloud-watch metrics persister instance downloading to work with ECS as well.
 
 2.1: 1/31/2026
 	* Added module name which was missing from the JMX folder-names in the optional JMX exports.
