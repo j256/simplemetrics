@@ -304,9 +304,10 @@ public class CloudWatchMetricsPersister implements MetricDetailsPersister {
 	 * Download the instance-id from AWS special IP which is available if running in EC2. We could have used a
 	 * HttpClient but I didn't want to pay for the dependency.
 	 */
-	private static String downloadInstanceId(long connectTimeoutMillis) {
+	private static String downloadInstanceId(int connectTimeoutMillis) {
 		try (Socket clientSocket = new Socket();) {
-			clientSocket.connect(new InetSocketAddress(Inet4Address.getByName(AWS_INSTANCE_INFO_IP), 80), 1000);
+			clientSocket.connect(new InetSocketAddress(Inet4Address.getByName(AWS_INSTANCE_INFO_IP), 80),
+					connectTimeoutMillis);
 			try (Reader reader = new InputStreamReader(clientSocket.getInputStream());
 					Writer writer = new OutputStreamWriter(clientSocket.getOutputStream());) {
 				writer.append("GET " + INSTANCE_ID_FETCH_PATH + " HTTP/1.1\r\n" //
