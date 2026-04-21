@@ -19,8 +19,8 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<maven.compiler.source>18</maven.compiler.source>
-		<maven.compiler.target>18</maven.compiler.target>
+		<maven.compiler.source>8</maven.compiler.source>
+		<maven.compiler.target>8</maven.compiler.target>
 		<!-- optional dependencies -->
 		<simplejmx-version>3.1</simplejmx-version>
 		<awssdk-version>2.41.9</awssdk-version>
@@ -132,10 +132,6 @@
 						&lt;/a&gt; </bottom>
 					<doclint>none</doclint>
 					<docfilessubdirs>true</docfilessubdirs>
-					<links>
-						<link>
-							https://docs.oracle.com/en/java/javase/${maven.compiler.source}/docs/api/</link>
-					</links>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -202,7 +198,7 @@
 			<plugin>
 				<groupId>com.j256.testcheckpublisher</groupId>
 				<artifactId>test-check-publisher-maven-plugin</artifactId>
-				<version>1.5</version>
+				<version>1.6</version>
 			</plugin>
 		</plugins>
 		<pluginManagement>
