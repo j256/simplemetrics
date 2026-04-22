@@ -6,7 +6,7 @@ Simple Java Metrics
 [![ChangeLog](https://img.shields.io/github/v/release/j256/simplemetrics?label=changelog&display_name=release)](https://github.com/j256/simplemetrics/blob/master/src/main/javadoc/doc-files/changelog.txt)
 [![Documentation](https://img.shields.io/github/v/release/j256/simplemetrics?label=documentation&display_name=release)](https://htmlpreview.github.io/?https://github.com/j256/simplemetrics/blob/master/src/main/javadoc/doc-files/simplemetrics.html)
 [![CodeCov](https://img.shields.io/codecov/c/github/j256/simplemetrics.svg)](https://codecov.io/github/j256/simplemetrics/)
-[![CI](https://github.com/j256/simplemetrics/actions/workflows/main.yml/badge.svg)](https://github.com/j256/simplemetrics/actions/workflows/main.yml)
+[![CI](https://github.com/j256/simplemetrics/actions/workflows/maven.yml/badge.svg)](https://github.com/j256/simplemetrics/actions/workflows/maven.yml)
 [![GitHub License](https://img.shields.io/github/license/j256/simplemetrics)](https://github.com/j256/simplemetrics/blob/master/LICENSE.txt)
 
 This package provides some Java classes to help with the providing application metrics.
