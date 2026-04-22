@@ -8,7 +8,7 @@ package com.j256.simplemetrics.metric;
  * ...
  * long millis = timer.start();
  * dao.createEntry(...);
- * timer.end(millis);
+ * timer.stopAndAdd(millis);
  * </pre>
  * 
  * The rest is done by the class and the metric system.
@@ -32,7 +32,8 @@ public class ControlledMetricTimer extends ControlledMetricValue {
 	}
 
 	/**
-	 * Start the timer on a particular event. You should wrap the start and the end around the event you want to track.
+	 * Start the timer on a particular event. You should call the {@link #stopAndAdd(long)} method after the event that
+	 * you want to track completes.
 	 * 
 	 * @return Millis which should be passed to {@link #stop(long)} as the argument.
 	 */
@@ -41,14 +42,22 @@ public class ControlledMetricTimer extends ControlledMetricValue {
 	}
 
 	/**
-	 * End the timer on a particular event. This will calculate the time difference and add this to the counter.
+	 * @deprecated Please use {@link #stopAndAdd(long)}.
+	 */
+	@Deprecated
+	public long stop(long startMillis) {
+		return stopAndAdd(startMillis);
+	}
+
+	/**
+	 * Stop the timer of a particular event. This will calculate the time difference and add this to the counter.
 	 * 
 	 * @param startMillis
 	 *            Value returned from a previous call to {@link #start()}.
 	 * 
 	 * @return the calculated time difference added to the counter
 	 */
-	public long stop(long startMillis) {
+	public long stopAndAdd(long startMillis) {
 		long elapsed = System.currentTimeMillis() - startMillis;
 		adjustValue(elapsed);
 		return elapsed;
