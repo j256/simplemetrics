@@ -20,7 +20,9 @@ import com.j256.simplemetrics.metric.ControlledMetric.AggregationType;
 import com.j256.simplemetrics.metric.MetricValueDetails;
 import com.j256.simplemetrics.utils.MiscUtils;
 
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
+import software.amazon.awssdk.services.cloudwatch.CloudWatchClientBuilder;
 import software.amazon.awssdk.services.cloudwatch.model.Dimension;
 import software.amazon.awssdk.services.cloudwatch.model.MetricDatum;
 import software.amazon.awssdk.services.cloudwatch.model.MetricDatum.Builder;
@@ -50,6 +52,7 @@ public class CloudWatchMetricsPersister implements MetricDetailsPersister {
 	private static final String AWS_INSTANCE_INFO_IP = "169.254.169.254";
 	private static final String INSTANCE_ID_FETCH_PATH = "/latest/meta-data/instance-id";
 	private static final int AWS_CONNECT_TIMEOUT_MILLIS = 2000;
+	private static final String AWS_REGION_ENV_VAR = "AWS_REGION";
 
 	// makes sure that we are running in EC2 and extracts the instance-id name
 	private static final Pattern INSTANCE_ID_RESULT_REGEX = Pattern.compile("(?s).*Server: EC2ws.*\r?\n\r?\n(i-.*)");
@@ -58,6 +61,7 @@ public class CloudWatchMetricsPersister implements MetricDetailsPersister {
 	private String applicationName = "unknown";
 	private String nameSpacePrefix = DEFAULT_NAME_SPACE_PREFIX;
 	private boolean addInstanceData = true;
+	private String awsRegion;
 
 	private CloudWatchClient cloudWatchClient;
 	private static String instanceId;
@@ -104,7 +108,18 @@ public class CloudWatchMetricsPersister implements MetricDetailsPersister {
 	 */
 	public void initialize() {
 		if (cloudWatchClient == null) {
-			cloudWatchClient = CloudWatchClient.builder().build();
+			CloudWatchClientBuilder builder = CloudWatchClient.builder();
+			if (awsRegion == null) {
+				awsRegion = System.getenv(AWS_REGION_ENV_VAR);
+			}
+			if (awsRegion != null) {
+				builder.region(Region.of(awsRegion));
+			}
+			try {
+				cloudWatchClient = builder.build();
+			} catch (Exception e) {
+				throw new RuntimeException("Could not build CloudWatch client", e);
+			}
 		}
 		if (addInstanceData) {
 			instanceId = downloadInstanceId(AWS_CONNECT_TIMEOUT_MILLIS);
@@ -182,6 +197,10 @@ public class CloudWatchMetricsPersister implements MetricDetailsPersister {
 	// @NotRequired("Default is create one in initialize() with the credentials")
 	public void setCloudWatchClient(CloudWatchClient cloudWatchClient) {
 		this.cloudWatchClient = cloudWatchClient;
+	}
+
+	public void setAwsRegion(String awsRegion) {
+		this.awsRegion = awsRegion;
 	}
 
 	/**
